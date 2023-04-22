@@ -1,0 +1,23 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+pyodbc = "*"
+cx-oracle = "*"
+pandas = "*"
+openpyxl = "*"
+pathlib = "*"
+sqlalchemy = "*"
+numpy = "==1.21.6"
+scipy = "*"
+xlrd = "*"
+python-docx = "*"
+matplotlib = "*"
+msaccessdb = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.9"

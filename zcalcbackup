@@ -1,0 +1,314 @@
+from sys import stderr
+from webbrowser import get
+import numpy as np
+import db
+import MR_cal as mr
+
+def get_data(con, id):
+    cursor = con.cursor()
+    getdata_str = "select D1, D2, D3, D4, D5, D6, D7, D8, D9 from deflections WHERE (ID, POINT, DROP_NO) IN (SELECT ID, POINT, DROP_NO FROM DEFLECTIONS_CALC WHERE ID = "+ str(id)+ ")"
+    print(getdata_str)
+    cursor.execute(getdata_str)
+    res = cursor.fetchall()
+    sensordata = np.array(res)
+    # print(sensordata.shape)
+    # tmp = [5]*(sensordata.shape[0])
+    # tmp = 0.874*sensordata[:, 0]
+    # sensordata = np.insert(sensordata, 0, tmp, axis = 1)
+    
+    # SELECT LOAD FROM DEFLECTIONS  WHERE (ID, POINT, DROP_NO) IN (SELECT ID, POINT, DROP_NO FROM DEFLECTIONS_CALC WHERE ID = 1);
+    getdata_str = "SELECT LOAD FROM DEFLECTIONS  WHERE (ID, POINT, DROP_NO) IN (SELECT ID, POINT, DROP_NO FROM DEFLECTIONS_CALC WHERE ID = "+ str(id) + ")"
+    cursor.execute(getdata_str)
+    res = cursor.fetchall()
+    # print(res)
+    load = np.array(res)
+    # print(load)
+    print(np.shape(load))
+    # load_corr = 9000/load
+    # sensordata = load_corr * sensordata
+    # print(sensordata)
+    
+
+    getdata_str = "SELECT STRESS FROM DEFLECTIONS  WHERE (ID, POINT, DROP_NO) IN (SELECT ID, POINT, DROP_NO FROM DEFLECTIONS_CALC WHERE ID = "+ str(id) + ")"
+    cursor.execute(getdata_str)
+    res = cursor.fetchall()
+    pressure = np.array(res)
+    pressure_corr = 82.06/pressure
+    print("******\nSensordata")
+    print(sensordata)
+    sensordata = pressure_corr * sensordata
+    tempcorr = 1.084 #1.177 #0.874
+    tmp = tempcorr*sensordata[:, 0]
+    sensordata = np.insert(sensordata, 0, tmp, axis = 1)
+    sensordata = np.round(sensordata, decimals = 2)
+    print("Displaying stress too")
+    print(pressure)
+    print("******\nSensordata")
+    print(sensordata)
+
+    #### reshaping
+    load = np.reshape(load, (load.shape[0],))
+    load = np.array([9004.432] * load.shape[0])
+    pressure = np.reshape(pressure, (pressure.shape[0],))
+
+    pressure_for_calc = np.array(pressure.shape[0]*[82.06])
+    pressure_for_calc = np.reshape(pressure_for_calc, (pressure.shape[0],))
+    
+    
+    getdata_str = "SELECT H1 FROM MOD_EST WHERE (ID, POINT, DROP_NO) IN (SELECT ID, POINT, DROP_NO FROM DEFLECTIONS_CALC WHERE ID = "+ str(id) + ")"
+    cursor.execute(getdata_str)
+    res = cursor.fetchall()
+    thickness = np.array(res)[0][0]
+    print(thickness)
+    cal_obj = mr.cal_mr_sn(sensordata,pressure_for_calc, load, thickness)
+    cal_obj.main_cal()
+    return sensordata, pressure, load, cal_obj
+    # print("***************")
+    # print(load.shape)
+    # print(pressure.shape)
+    # print("*****************SHOULD MATCH*****************")
+    # print(sensordata)
+
+    # print(load)
+    # print(pressure)
+    # print(cal_obj.sn)
+
+def get_E(con, id, pavtype):
+    mod_limits = {"asphalt": 1000, "concrete": 5000, "middle": 150, "subgrade": 80}
+    adj_elmod = 0.918
+
+    cursor = con.cursor()
+    getdata_str = "select H1, H2, H3, H4, E1, E2, E3, E4 from MOD_EST WHERE (ID, POINT, DROP_NO) IN (SELECT ID, POINT, DROP_NO FROM DEFLECTIONS_CALC WHERE ID = "+ str(id)+ ")"
+    cursor.execute(getdata_str)
+    res = cursor.fetchall()
+    arr = np.array(res)
+    arr = np.transpose(arr)
+    print(arr)
+    print("************TRANSPOSE*************")
+    print(np.transpose(arr))
+    layers = None
+    limits = None
+    pavtype = pavtype.lower()
+    if (np.all(arr[1:4, :] == 0)):
+        layers = 2
+        if (pavtype == "asphalt"):
+            limits = [mod_limits["asphalt"], mod_limits["subgrade"]]
+        elif (pavtype == "concrete"):
+            limits = [mod_limits["concrete"], mod_limits["subgrade"]]
+    elif (np.all(arr[2:4, :] == 0)):
+        layers = 3
+        if (pavtype == "asphalt"):
+            limits = [mod_limits["asphalt"], mod_limits["middle"], mod_limits["subgrade"]]
+        elif (pavtype == "concrete"):
+            limits = [mod_limits["concrete"], mod_limits["middle"], mod_limits["subgrade"]]
+        elif (pavtype == "composite"):
+            limits = [mod_limits["asphalt"], mod_limits["concrete"], mod_limits["subgrade"]]
+    elif (np.all(arr[3:4] == 0)):
+        layers = 4
+        limits = [mod_limits["asphalt"], mod_limits["concrete"], mod_limits["middle"], mod_limits["subgrade"]]
+    
+    e = arr[4:8]
+
+    # e = np.minimum(e, )
+
+    con.commit()
+    cursor.close()
+
+# get_E(db.connect(), 1, "asphalt")
+
+def set_vars(testDesc, pavtype, pavcond):
+    esal = 422,564
+    initservability = None
+    termservability = None
+    if pavtype.lower() == "rigid":
+        initservability = 4.5
+    else:
+        initservability = 4.2
+    if (testDesc[0] == 'S'):
+        termservability = 2
+    else:
+        termservability = 2.5
+    std = None
+    if pavtype.lower() == "rigid":
+        std = 0.35
+    else:
+        std = 0.45
+    ## Setting IRI to a fixed value right now because I think pavcond is always set to Fair
+    iri = 130
+    
+def insitu_cbr(mr):
+    mrnp =  np.array(mr)
+    insitu = np.minimum(np.full(np.shape(mrnp), 7), mrnp*1000/4500)
+    return insitu
+
+def aashto_esals(insitu, ashtoo):
+    # sample =  (10^(9.36*(LOG(AB2+1))-0.2+((LOG(0.63))/(0.4+(1094/((AB2+1)^5.19))))+2.32*(LOG(Q2*1000/3))-8.07))
+    tmp = np.array(insitu)
+    tmp2 = np.array(ashtoo)
+    # esals = np.power(10, (9.36*np.log(tmp+1) - 0.2 + ((np.log(0.63))/(0.4+(1094/(np.power(tmp+1, 5.19))))) + 2.32*(np.log(ashtoo*1000/3) -8.07)))
+    esals =  np.power(10, (9.36*np.log10(tmp+1) - 0.2 + ((np.log10(0.63))/(0.4+(1094/(np.power(tmp+1, 5.19))))) + 2.32*(np.log10(tmp2*1000/3.0)) - 8.07))
+    # print(esals)
+    return esals
+
+def indot_esals(surf):
+
+    surfnp = np.array(surf)
+    # (5.6*10^10)/(D2^4.6)
+    esals = (5.6*(10**10)/(np.power(surfnp, 4.6)))
+    return esals
+
+def limit_esals(ashto_esals):
+    lim_esal = None
+    ###=IF(AC2="","",(IF(AC2>40000000,40000000,AC2)))
+    lim_esal = np.array(ashto_esals)
+    print(lim_esal)
+    min_lim_esal = np.minimum(np.full(np.shape(lim_esal), 40000000), lim_esal)
+    return min_lim_esal
+
+def insitu_mr(mr_ashto):
+    mr = np.array(mr_ashto)
+    mr = np.minimum(np.full(np.shape(mr) , 31500), mr*1000/3)
+    return mr
+
+def get_log(sgd):
+    log = np.array(sgd)
+    log = np.log10(log)
+    return log
+
+def getSurfaceDefCrit(con, id):
+    cursor = con.cursor()
+    getdata_str = "select ROADTYPE from MISC WHERE ID = "+ str(id)
+    cursor.execute(getdata_str)
+    road = cursor.fetchall()[0][0]
+    defcrit = None
+    if (road == 'i'):
+        defcrit = 8
+    elif (road == 'u'):
+        defcrit = 10
+    elif (road == s):
+        defcrit = 12
+
+# def getSgdCrit(sgd):
+#     logsgd = np.log10(sgd)
+
+def getstats(arr):
+    mean = np.mean(arr, axis = 0)
+    stddev = np.std(arr, axis = 0)
+    max = np.max(arr, axis = 0)
+    min = np.min(arr, axis = 0)
+    return [mean, stddev, max, min]
+
+def putdata(con, data, id):
+    sensordata = data["sensordata"]
+    # print(sensordata)
+    idarr = np.array([sensordata.shape[0]*[id]])
+    print("*********ID***********")
+    # print(idarr)
+    tmparr = np.concatenate((np.transpose(idarr), sensordata), axis = 1)
+    tmparr = np.concatenate((tmparr, np.transpose([data["load"]])), axis = 1)
+    tmparr = np.concatenate((tmparr, np.transpose([data["pressure"]])), axis = 1)
+    tmparr = np.concatenate((tmparr, np.transpose([data["sn"]])), axis = 1)
+    tmparr = np.concatenate((tmparr, np.transpose([data["mr"]])), axis = 1)
+    tmparr = np.concatenate((tmparr, np.transpose([data["cbrarr"]])), axis = 1)
+    tmparr = np.concatenate((tmparr, np.transpose([data["aash_esals"]])), axis = 1)
+    tmparr = np.concatenate((tmparr, np.transpose([data["ind_esals"]])), axis = 1)
+    tmparr = np.concatenate((tmparr, np.transpose([data["insitumr"]])), axis = 1)
+    tmparr = np.concatenate((tmparr, np.transpose([data["logsgd"]])), axis = 1)
+    tmparr = np.concatenate((tmparr, np.transpose([data["logmr"]])), axis = 1)
+    # tmparr = np.transpose(tmparr)
+    print(tmparr.shape)
+    arr = list(map(tuple, tmparr))
+    cursor = con.cursor()
+    print(arr)
+    cursor.executemany("INSERT INTO CALC VALUES (:1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14, :15, :16, :17, :18, :19, :20, :21)", arr)
+    con.commit()
+    cursor.close()       
+    # sensordata = sensordata.tolist()
+    # cursor = con.cursor()
+    # cursor.executemany("INSERT IN CALC ")
+
+def putstats(con, data, id):
+    arr = []
+
+    print("********************")
+    print(data["sensorstats"])
+    print(len(data["sensorstats"]))
+    print("********************")
+    # arr.append([id, "sensorstats"]+data["sensorstats"].tolist())
+    arr.append([id, "mr"]+data["mr_stats"])
+    arr.append([id, "sn"]+data["sn_stats"])
+    arr.append([id, "cbr"]+data["cbr_stats"])
+    arr.append([id, "aash_esals"]+data["aash_esals"])
+    arr.append([id, "ind_esals"]+data["ind_esals"])
+    arr.append([id, "lim_esals"]+data["lim_esal"])
+    arr.append([id, "insitumr"]+data["insitumr"])
+    # arr = np.transpose(arr)
+    print(np.shape(arr))
+    arr = list(map(tuple, arr))
+    print(arr)
+    cursor = con.cursor()
+    cursor.executemany("INSERT INTO STATS VALUES (:1, :2, :3, :4, :5, :6)", arr)
+    con.commit()
+    cursor.close()
+
+
+def calc(con, id):
+    sensordata, pressure, load, cal_obj = get_data(con, id)
+    sn = cal_obj.sn
+    mr = cal_obj.mr
+    cbrarr = insitu_cbr(mr)
+    aash_esals = aashto_esals(sn, mr)
+    ind_esals = indot_esals(sensordata[:,0])
+    lim_esals = limit_esals(aash_esals)
+    insitumr = insitu_mr(mr)
+    logsgd = get_log(sensordata[:,8])
+    logmr = get_log(mr)
+
+    #####cbr how to get? what is CoV?
+    cbr = 3
+    mr_again = 3 * 4.5
+    logmr_again = np.log10(mr_again)
+    reg_line = np.polyfit(logmr, logsgd, 1)
+    print(reg_line)
+    print("logmr_again: ", str(logmr_again))
+    subgd_calc = 10**(logmr_again*reg_line[0]+reg_line[1])
+    # print(subgd_calc)
+
+    sensor_stats = getstats(sensordata)
+    # print("Sensorstats: ", sensor_stats)
+    mr_stats = getstats(mr)
+    sn_stats = getstats(sn)
+    cbr_stats = getstats(cbrarr)
+    aash_esals_stats = getstats(aash_esals)
+    ind_esals_stats = getstats(ind_esals)
+    lim_esals_stats = getstats(lim_esals)
+    insitu_mr_stats = getstats(insitumr)
+    print("Surface Deflection =>")
+    print(sensordata[:, 0])
+    print("SN =>")
+    print(sn)
+    print("MR =>")
+    print(mr)
+    print("SUBGD_CALC => ")
+    print(subgd_calc)
+    tmp = {"sensordata": sensordata, "mr": mr, "sn": sn, "aash_esals": aash_esals, "ind_esals": ind_esals, "lim_esals": lim_esals, "insitumr": insitumr, "logsgd": logsgd, "logmr": logmr, "cbrarr": cbrarr, "pressure": pressure, "load": load}
+    # putdata(con, tmp, id)
+    tmpstats = {"sensorstats": sensor_stats, "mr_stats": mr_stats, "sn_stats": sn_stats, "cbr_stats": cbr_stats, "aash_esals": aash_esals_stats, "ind_esals": ind_esals_stats, "lim_esal": lim_esals_stats, "insitumr": insitu_mr_stats, "subgd_calc": subgd_calc}
+    # putstats(con, tmpstats, id)
+
+    # print(sensordata[:, 0])
+    print(aash_esals)
+    print(lim_esals)
+    print(cbrarr)
+    print(insitumr)
+    return tmp
+
+
+
+
+
+
+
+# get_data(db.connect(), 1)
+# getSurfaceDefCrit(db.connect(), 1)
+# calc(db.connect(), 1)
