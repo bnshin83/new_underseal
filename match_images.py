@@ -1,7 +1,7 @@
 import os, bisect, shutil
 from collections import defaultdict
 
-def match_image_chainage(f25_path,ll_obj,df):
+def match_image_chainage(f25_path,ll_obj,df, server_root):
     """
     Need to know:
         1. F25 file name
@@ -39,7 +39,7 @@ def match_image_chainage(f25_path,ll_obj,df):
                     print('Copying images ...')
                     source_path = os.path.join(ll_no_folder,f25_basename_no_extension_name,'Cam1')
                     # print('[Debug info]: source_path:{}'.format(source_path))
-                    server_root = "\\\\dotwebp016vw/data/FWD/"
+                    # server_root = "\\\\dotwebp016vw/data/FWD/"
                     dist_path = os.path.join(server_root,req_no,sub_item,f25_basename_no_extension_name,'Cam1')
                     # print('[Debug info]: dist_path:{}'.format(dist_path))
                     if not os.path.exists(dist_path):

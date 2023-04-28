@@ -99,7 +99,7 @@ def read_pavtype(path, f25_path):
     mde_conn.close()
     return pav_e1, pav_e2
 
-def read_mde(con, path, f25_path, id, ll_obj, img_matching=True):
+def read_mde(con, path, f25_path, id, ll_obj, server_root, img_matching=True):
     mde = {}
     pre, ext = os.path.splitext(path)
     base = os.path.basename(f25_path)
@@ -142,7 +142,7 @@ def read_mde(con, path, f25_path, id, ll_obj, img_matching=True):
     # INCLUDE IMAGE MATCHING HERE
     ### Image matching part ###
     if img_matching:
-        dmi_img_dict, img_dmi_dict, success_match, nomatch_message = match_image_chainage(f25_path, ll_obj, df)
+        dmi_img_dict, img_dmi_dict, success_match, nomatch_message = match_image_chainage(f25_path, ll_obj, df, server_root)
         if success_match:
             imgnames_list = []
             for chainage in df['Chainage'].tolist():

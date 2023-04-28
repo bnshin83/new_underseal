@@ -4,9 +4,13 @@ import cx_Oracle
 import numpy as np
 import sys, os
 
-def connect():    
-    cx_Oracle.init_oracle_client(lib_dir=r"C:\Users\bshin\Documents\instantclient-basic-windows.x64-21.3.0.0.0\instantclient_21_3")
-    con = cx_Oracle.connect(user='stda', password = 'drwsspadts1031$', dsn="dotorad007vl.state.in.us:1621/INDOT3DEV")
+def connect(dev_env):
+    if dev_env:
+        cx_Oracle.init_oracle_client(lib_dir=r"D:\ChromeDownload\instantclient_19_14")
+        con = cx_Oracle.connect(user='c##wen', password = 'Purduehamp4147', dsn="localhost:1522/orcl")
+    else:
+        cx_Oracle.init_oracle_client(lib_dir=r"C:\Users\bshin\Documents\instantclient-basic-windows.x64-21.3.0.0.0\instantclient_21_3")
+        con = cx_Oracle.connect(user='stda', password = 'drwsspadts1031$', dsn="dotorad007vl.state.in.us:1621/INDOT3DEV")
     return con
 
 def putcalc(con, data, id, pcc_mod, rxn_subg):
@@ -60,7 +64,7 @@ def putcalc(con, data, id, pcc_mod, rxn_subg):
     # print(arr)
     cursor = con.cursor()
     # print(arr)
-    cursor.executemany("INSERT INTO stda.stda_CALCULATIONS VALUES (NULL, :1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14, :15, :16, :17, :18, :19, :20, :21, :22, :23, :24, :25, :26, :27, :28, :29, :30, :31, :32, :33, :34)", arr) #30
+    cursor.executemany("INSERT INTO stda_CALCULATIONS VALUES (NULL, :1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14, :15, :16, :17, :18, :19, :20, :21, :22, :23, :24, :25, :26, :27, :28, :29, :30, :31, :32, :33, :34, :35)", arr) #30
     con.commit()
     cursor.close()       
     # sensordata = sensordata.tolist()
@@ -95,7 +99,7 @@ def putstats(con, data, id):
     arr = list(map(tuple, arr))
     # print(arr)
     cursor = con.cursor()
-    cursor.executemany("INSERT INTO stda.stda_STATS VALUES (NULL, :1, :2, :3, :4, :5, :6, :7, :8, :9,:10, :11)", arr)#7
+    cursor.executemany("INSERT INTO stda_STATS VALUES (NULL, :1, :2, :3, :4, :5, :6, :7, :8, :9,:10, :11)", arr)#7
     con.commit()
     cursor.close()
 
@@ -120,12 +124,12 @@ def putmde(con, mde, stats_data, id, commit=0):
     # print("Entering data to deflections")
     # print(arr)
     # print(id)
-    cursor.executemany("INSERT INTO stda.stda_DEFLECTIONS VALUES (NULL, :1, :2, TO_TIMESTAMP(:3, 'YYYY-MM-DD HH24:MI:SS'), :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14, :15, :16, :17, :18, :19, :20, CAST(:1 as INT), :22, CAST(:1 as INT), :24)", arr) #was till 20
+    cursor.executemany("INSERT INTO stda_DEFLECTIONS VALUES (NULL, :1, :2, TO_TIMESTAMP(:3, 'YYYY-MM-DD HH24:MI:SS'), :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14, :15, :16, :17, :18, :19, :20, CAST(:1 as INT), :22, CAST(:1 as INT), :24)", arr) #was till 20
 
     ##********************************************
     arr = list(map(tuple, mde["deflections_calc"]))
     # print("Entering data to deflections calc")
-    cursor.executemany("INSERT INTO stda.stda_CALCULATED_DEFLECTIONS VALUES (NULL, :1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14, :15, :16, :17, :18, :19, :20, :21)", arr)#17
+    cursor.executemany("INSERT INTO stda_CALCULATED_DEFLECTIONS VALUES (NULL, :1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14, :15, :16, :17, :18, :19, :20, :21)", arr)#17
     ##********************************************
     arr = mde['mod_est']
     arr = list(map(tuple, arr))
@@ -135,7 +139,7 @@ def putmde(con, mde, stats_data, id, commit=0):
     #     arr_psi[:,i] = np.around(arr_psi[:,i].astype(np.double)*1000)
     # arr = list(map(tuple, arr_psi))
     # print("Entering data to mod est")
-    cursor.executemany("INSERT INTO stda.stda_MODULI_ESTIMATED VALUES (NULL, :1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14, :15, :16, :17, :18, :19, :20, :21, :22, :23, :24, :25)", arr)#21
+    cursor.executemany("INSERT INTO stda_MODULI_ESTIMATED VALUES (NULL, :1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14, :15, :16, :17, :18, :19, :20, :21, :22, :23, :24, :25)", arr)#21
     ##********************************************
     # print(mde["misc"])
     arr = mde["misc"][0]
@@ -151,7 +155,7 @@ def putmde(con, mde, stats_data, id, commit=0):
     # print("Printing misc")
     # print(arr)
     # print("Entering data to misc")
-    cursor.executemany("INSERT INTO stda.stda_MISC VALUES (NULL, :1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14, :15, :16, :17, :18, :19, :20, :21, :22, :23, :24, :25, :26, :27, :28, :29, :30, :31, :32, :33, :34, :35, :36)", arr)#30
+    cursor.executemany("INSERT INTO stda_MISC VALUES (NULL, :1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14, :15, :16, :17, :18, :19, :20, :21, :22, :23, :24, :25, :26, :27, :28, :29, :30, :31, :32, :33, :34, :35, :36)", arr)#30
     ##********************************************
     if commit:
         con.commit()
@@ -174,7 +178,7 @@ def putimg(con, ll_obj, id, year, lane_type, commit=0):
             img_url = 'https://resapps.indot.in.gov/photoviewer/data/FWD/' + image_filepath.replace('\\','/')
             row_temp = (id, request_id, dir, round(img_dmi_dict[image_filepath]*3.28084), img_url, -1, None, -1, None, lane_type)
             arr.append(row_temp)
-        sql_str = "INSERT INTO stda.stda_img VALUES (NULL, :1, :2, :3, :4, :5, CAST(:1 as INT), :7, CAST(:1 as INT), :9, :10)"
+        sql_str = "INSERT INTO stda_img VALUES (NULL, :1, :2, :3, :4, :5, CAST(:1 as INT), :7, CAST(:1 as INT), :9, :10)"
         cursor.executemany(sql_str, arr)
         if commit:
             con.commit()

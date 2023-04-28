@@ -23,7 +23,7 @@ import numpy as np
 
 
 def delete_rows(con, tablename, id, verbose=1):
-    # if(tablename != "stda.stda_LONGLIST"):
+    # if(tablename != "stda_LONGLIST"):
     #     delstr = "DELETE FROM "+str(tablename)+" WHERE LONGLIST_ID = "+str(id)
     # else:
     #     delstr = "DELETE FROM "+str(tablename)+" WHERE ID = "+str(id)
@@ -140,7 +140,7 @@ def upload_single_result(args, f25_path,ll_no,year, con, warn_log_file_path, com
         else:
             print("LL-{}-{}: Error in performing calculations, please check".format(ll_no, year))
             print(traceback_str)
-            delete_rows(con, "stda.stda_LONGLIST", id)
+            delete_rows(con, "stda_LONGLIST", id)
             sys.exit(-1)
     # Populate the LONGLIST table and get LONGLIST_ID (END)
 
@@ -153,13 +153,13 @@ def upload_single_result(args, f25_path,ll_no,year, con, warn_log_file_path, com
     rxn_subg = None
 
     try:
-        mde, roadtype, roadname, ll_obj = read_mde(con, mde_path, f25_path, id, ll_obj)
+        mde, roadtype, roadname, ll_obj = read_mde(con, mde_path, f25_path, id, ll_obj, args.server_root)
         ll_obj["roadname"] = roadname
     except:
         traceback_str = traceback.format_exc()
         print("LL-{}-{}: Error in reading mde, please check".format(ll_no, year))
         print(traceback_str)
-        delete_rows(con, "stda.stda_LONGLIST", id)
+        delete_rows(con, "stda_LONGLIST", id)
         sys.exit(-1)
     if 'mde_duplicate' in ll_obj:
         with open(warn_log_file_path, "a+") as f:
@@ -182,7 +182,7 @@ def upload_single_result(args, f25_path,ll_no,year, con, warn_log_file_path, com
         traceback_str = traceback.format_exc()
         print("LL-{}-{}: Error in performing calculations, please check".format(ll_no, year))
         print(traceback_str)
-        delete_rows(con, "stda.stda_LONGLIST", id)
+        delete_rows(con, "stda_LONGLIST", id)
         sys.exit(-1)
 
     try:
@@ -194,14 +194,14 @@ def upload_single_result(args, f25_path,ll_no,year, con, warn_log_file_path, com
         traceback_str = traceback.format_exc()
         print("LL-{}-{}: Error in putting mde into DB, please check".format(ll_no, year))
         print(traceback_str)
-        delete_rows(con, "stda.stda_DEFLECTIONS", id)
-        delete_rows(con, "stda.stda_CALCULATED_DEFLECTIONS", id)
-        delete_rows(con, "stda.stda_MODULI_ESTIMATED", id)
-        delete_rows(con, "stda.stda_MISC", id)
-        delete_rows(con, "stda.stda_CALCULATIONS", id)
-        delete_rows(con, "stda.stda_STATS", id)
-        delete_rows(con, "stda.stda_LONGLIST", id)
-        delete_rows(con, "stda.stda_IMG", id)
+        delete_rows(con, "stda_DEFLECTIONS", id)
+        delete_rows(con, "stda_CALCULATED_DEFLECTIONS", id)
+        delete_rows(con, "stda_MODULI_ESTIMATED", id)
+        delete_rows(con, "stda_MISC", id)
+        delete_rows(con, "stda_CALCULATIONS", id)
+        delete_rows(con, "stda_STATS", id)
+        delete_rows(con, "stda_LONGLIST", id)
+        delete_rows(con, "stda_IMG", id)
         sys.exit(-1)
 
     # Image matching table
@@ -214,13 +214,13 @@ def upload_single_result(args, f25_path,ll_no,year, con, warn_log_file_path, com
         traceback_str = traceback.format_exc()
         print("LL-{}-{}: Error in putting image matching into DB, please check".format(ll_no, year))
         print(traceback_str)
-        delete_rows(con, "stda.stda_DEFLECTIONS", id)
-        delete_rows(con, "stda.stda_CALCULATED_DEFLECTIONS", id)
-        delete_rows(con, "stda.stda_MODULI_ESTIMATED", id)
-        delete_rows(con, "stda.stda_MISC", id)
-        delete_rows(con, "stda.stda_CALCULATIONS", id)
-        delete_rows(con, "stda.stda_STATS", id)
-        delete_rows(con, "stda.stda_IMG", id)
+        delete_rows(con, "stda_DEFLECTIONS", id)
+        delete_rows(con, "stda_CALCULATED_DEFLECTIONS", id)
+        delete_rows(con, "stda_MODULI_ESTIMATED", id)
+        delete_rows(con, "stda_MISC", id)
+        delete_rows(con, "stda_CALCULATIONS", id)
+        delete_rows(con, "stda_STATS", id)
+        delete_rows(con, "stda_IMG", id)
 
         sys.exit(-1)
 
@@ -233,14 +233,14 @@ def upload_single_result(args, f25_path,ll_no,year, con, warn_log_file_path, com
         traceback_str = traceback.format_exc()
         print("LL-{}-{}: Error in putting calculation and stats into DB, please check".format(ll_no, year))
         print(traceback_str)
-        delete_rows(con, "stda.stda._DEFLECTIONS", id)
-        delete_rows(con, "stda.stda_CALCULATED_DEFLECTIONS", id)
-        delete_rows(con, "stda.stda_MODULI_ESTIMATED", id)
-        delete_rows(con, "stda.stda_MISC", id)
-        delete_rows(con, "stda.stda_CALCULATIONS", id)
-        delete_rows(con, "stda.stda_STATS", id)
-        delete_rows(con, "stda.stda_LONGLIST", id)
-        delete_rows(con, "stda.stda_IMG", id)
+        delete_rows(con, "stda._DEFLECTIONS", id)
+        delete_rows(con, "stda_CALCULATED_DEFLECTIONS", id)
+        delete_rows(con, "stda_MODULI_ESTIMATED", id)
+        delete_rows(con, "stda_MISC", id)
+        delete_rows(con, "stda_CALCULATIONS", id)
+        delete_rows(con, "stda_STATS", id)
+        delete_rows(con, "stda_LONGLIST", id)
+        delete_rows(con, "stda_IMG", id)
         sys.exit(-1)
 
     # disable/enable report generation
@@ -254,14 +254,14 @@ def upload_single_result(args, f25_path,ll_no,year, con, warn_log_file_path, com
             traceback_str = traceback.format_exc()
             print("LL-{}-{}: Failed to generate report, please check flow".format(ll_no, year))
             print(traceback_str)
-            delete_rows(con, "stda.stda_DEFLECTIONS", id)
-            delete_rows(con, "stda.stda_CALCULATED_DEFLECTIONS", id)
-            delete_rows(con, "stda.stda_MODULI_ESTIMATED", id)
-            delete_rows(con, "stda.stda_MISC", id)
-            delete_rows(con, "stda.stda_CALCULATIONS", id)
-            delete_rows(con, "stda.stda_STATS", id)
-            delete_rows(con, "stda.stda_LONGLIST", id)
-            delete_rows(con, "stda.stda_IMG", id)
+            delete_rows(con, "stda_DEFLECTIONS", id)
+            delete_rows(con, "stda_CALCULATED_DEFLECTIONS", id)
+            delete_rows(con, "stda_MODULI_ESTIMATED", id)
+            delete_rows(con, "stda_MISC", id)
+            delete_rows(con, "stda_CALCULATIONS", id)
+            delete_rows(con, "stda_STATS", id)
+            delete_rows(con, "stda_LONGLIST", id)
+            delete_rows(con, "stda_IMG", id)
             sys.exit(-1)
 
 if __name__ == "__main__":
@@ -272,6 +272,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Upload result in batch mode')
     parser.add_argument('--gen_report', action='store_true')
     parser.add_argument('--debug', action='store_true')
+    parser.add_argument('--server_root', type=str, default="\\\\dotwebp016vw/data/FWD/")
+    parser.add_argument('--dev_env', action='store_true')
     args = parser.parse_args()
 
     # Read from external .txt where every line consists of the following:
@@ -298,7 +300,7 @@ if __name__ == "__main__":
     if os.path.exists(warn_log_file_path):
         os.remove(warn_log_file_path)
 
-    con = db.connect()
+    con = db.connect(args.dev_env)
 
     with open(txt_path,'r') as file:
         Lines = file.readlines()
@@ -341,14 +343,14 @@ if __name__ == "__main__":
                     print('(Start of error log)#############LL-{} from year {}#######################'.format(ll_no,year),file=f)
                     print('Input F25 path: {}\n'.format(f25_path),file=f)
                     print(traceback_str,file=f)
-                    delete_rows(con, "stda.stda_DEFLECTIONS", id, verbose = 0)
-                    delete_rows(con, "stda.stda_CALCULATED_DEFLECTIONS", id, verbose=0)
-                    delete_rows(con, "stda.stda_MODULI_ESTIMATED", id, verbose = 0)
-                    delete_rows(con, "stda.stda_MISC", id, verbose = 0)
-                    delete_rows(con, "stda.stda_CALCULATIONS", id, verbose = 0)
-                    delete_rows(con, "stda.stda_STATS", id, verbose = 0)
-                    delete_rows(con, "stda.stda_LONGLIST", id, verbose = 0)
-                    delete_rows(con, "stda.stda_IMG", id)
+                    delete_rows(con, "stda_DEFLECTIONS", id, verbose = 0)
+                    delete_rows(con, "stda_CALCULATED_DEFLECTIONS", id, verbose=0)
+                    delete_rows(con, "stda_MODULI_ESTIMATED", id, verbose = 0)
+                    delete_rows(con, "stda_MISC", id, verbose = 0)
+                    delete_rows(con, "stda_CALCULATIONS", id, verbose = 0)
+                    delete_rows(con, "stda_STATS", id, verbose = 0)
+                    delete_rows(con, "stda_LONGLIST", id, verbose = 0)
+                    delete_rows(con, "stda_IMG", id)
                     print('Due to unexpected error, LL-{} from year {} is deleted...'.format(ll_no,year),file=f)
                     print('(End of error log)#############LL-{} from year {}#######################\n\n'.format(ll_no,year),file=f)
 

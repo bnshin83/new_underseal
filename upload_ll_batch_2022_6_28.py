@@ -13,10 +13,14 @@ import numpy as np
 
 import traceback
 
+import argparse
 
+parser = argparse.ArgumentParser(description='Upload LL entires batch mode')
+parser.add_argument('--dev_env', action='store_true')
+args = parser.parse_args()
 
 COMMIT = 1
-CON = db.connect()
+CON = db.connect(args.dev_env)
 
 def delete_rows(con, tablename, id):
     delstr = "DELETE FROM "+str(tablename)+" WHERE LONGLIST_INFO_ID = "+str(id)

@@ -2,7 +2,7 @@ import db
 
 def get_ll_from_db(con, ll_no, year):
     cursor = con.cursor()
-    sqlstr = """SELECT longlist_no FROM stda.stda_longlist_info
+    sqlstr = """SELECT longlist_no FROM stda_longlist_info
     WHERE (longlist_no={} AND year={})""".format(ll_no,year)
 
     cursor.execute(sqlstr)
@@ -39,7 +39,7 @@ def read_db_from_ll_no_year(con, table_name, col_name, ll_no, year):
 def get_unique_ll_no_list(con,year):
     result_temp = []
     cursor = con.cursor()
-    sqlstr = """SELECT DISTINCT longlist_no FROM stda.stda_longlist_info WHERE year={}""".format(year)
+    sqlstr = """SELECT DISTINCT longlist_no FROM stda_longlist_info WHERE year={}""".format(year)
     cursor.execute(sqlstr)
 
     for result in cursor:

@@ -45,7 +45,7 @@ def compose_ll_entry_string(ll_no, f25_path, year, start_gps, end_gps, pavtype):
         lane_type = 'UNKNOWN'
 
     if start_gps[0] is not None:
-        sqlstr = """INSERT INTO stda.stda_LONGLIST
+        sqlstr = """INSERT INTO stda_LONGLIST
         VALUES (NULL,""" + ll_no + """, 
         '""" + str(year) + """', 
         '""" + dir + """',
@@ -61,7 +61,7 @@ def compose_ll_entry_string(ll_no, f25_path, year, start_gps, end_gps, pavtype):
         # print(sqlstr)
 
         idstr = """
-        SELECT LONGLIST_ID FROM stda.stda_LONGLIST
+        SELECT LONGLIST_ID FROM stda_LONGLIST
         WHERE LONGLIST_NO=""" + ll_no + """ AND 
         YEAR='""" + str(year) + """' AND 
         DIRECTION='""" + dir + """' AND
@@ -75,7 +75,7 @@ def compose_ll_entry_string(ll_no, f25_path, year, start_gps, end_gps, pavtype):
         """
     # In case we don't have GPS data
     else:
-        sqlstr = """INSERT INTO stda.stda_LONGLIST
+        sqlstr = """INSERT INTO stda_LONGLIST
         VALUES (NULL,""" + ll_no + """, 
         '""" + str(year) + """', 
         '""" + dir + """', 
@@ -91,7 +91,7 @@ def compose_ll_entry_string(ll_no, f25_path, year, start_gps, end_gps, pavtype):
         # print(sqlstr)
 
         idstr = """
-        SELECT LONGLIST_ID FROM stda.stda_LONGLIST
+        SELECT LONGLIST_ID FROM stda_LONGLIST
         WHERE LONGLIST_NO=""" + ll_no + """ AND 
         YEAR='""" + str(year) + """' AND 
         DIRECTION='""" + dir + """' AND

@@ -47,15 +47,17 @@ def temp_correction(temp, thickness):
     
 
 
-def get_E(mde, pavtype, adj_e):
+def get_E(mde, pavtype, adj_e, special_case=False):
 
     mod_limits = {"asphalt": 1000, "concrete": 5000, "middle": 150, "subgrade": 80}
     arr = np.array(mde["mod_est"])
-    arr = arr[:, [3, 4, 5, 6, 9, 10, 11, 12]]
+    arr = arr[:, [3, 4, 5, 6, 9, 10, 11, 12, 13]]
     arr = arr.astype(float)
     arr = np.transpose(arr)
     # print(arr)
 
+    if special_case:
+        return arr[4:9, :]
 
     layers = None
     limits = None
@@ -78,7 +80,7 @@ def get_E(mde, pavtype, adj_e):
         layers = 4
         limits = [mod_limits["asphalt"], mod_limits["concrete"], mod_limits["middle"], mod_limits["subgrade"]]
     
-    e = arr[4:8, :]
+    e = arr[4:9, :]
     # print('e:',e)
     # print('e.shape:',e.shape)
     limits_mult = np.array(np.shape(e)[1]*[limits])

@@ -17,7 +17,7 @@ def check_single_ll(con, ll_no, year, excel_path):
     db_dict= {}
 
     result_list = read_db(con,
-                          table_name='STDA.STDA_longlist_info',
+                          table_name='stda_longlist_info',
                           col_name='traffic_ctrl, operator, operator_comment, test_status',
                           cond_name='longlist_no',
                           cond_value=ll_no,
@@ -39,7 +39,7 @@ def check_single_ll(con, ll_no, year, excel_path):
         if excel_row_dict[key_name] != db_dict[key_name]:
             print(ll_no)
             update_db(con,
-                      table_name="STDA.STDA_longlist_info",
+                      table_name="stda_longlist_info",
                       update_col=key_name,
                       new_value=excel_row_dict[key_name],
                       ll_no=ll_no,
@@ -51,6 +51,11 @@ def check_single_ll(con, ll_no, year, excel_path):
 if __name__=='__main__':
     from tkinter import *
     from tkinter import filedialog, simpledialog
+    import argparse
+
+    parser = argparse.ArgumentParser(description='Upload result in batch mode')
+    parser.add_argument('--dev_env', action='store_true')
+    args = parser.parse_args()
 
     root = Tk()
     root.focus_force()
@@ -87,7 +92,7 @@ if __name__=='__main__':
     ## The data type for year is now string instead of int!!!!!!!
     root.focus_force()
     print('Sync year:',year)
-    CON = db.connect()
+    CON = db.connect(args.dev_env)
     ll_no_list = get_unique_ll_no_list(CON,year)
     for ll_no in ll_no_list:
         check_single_ll(CON, ll_no, year, exl_path)

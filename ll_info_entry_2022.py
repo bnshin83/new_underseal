@@ -64,7 +64,7 @@ def compose_ll_info_entry_string(row, year):
         }
 
     # Use double single quote to escape single quote in sqlstr like it is done in .replace("'","''")
-    sqlstr = """INSERT INTO STDA.STDA_LONGLIST_INFO
+    sqlstr = """INSERT INTO stda_LONGLIST_INFO
     VALUES (NULL, """ + str(excel.return_value(row, 'Long List Number')) + """, 
     '""" + year + """', 
     '""" + str(excel.return_value(row, 'Request Number')) + """', 
@@ -88,7 +88,7 @@ def compose_ll_info_entry_string(row, year):
     # """ + "1" + """,
     # '""" + "NULL" + """')"""
 
-    idstr = """SELECT LONGLIST_INFO_ID FROM STDA.STDA_LONGLIST_INFO
+    idstr = """SELECT LONGLIST_INFO_ID FROM stda_LONGLIST_INFO
     WHERE LONGLIST_NO=""" + str(excel.return_value(row, 'Long List Number')) + """ AND  
     YEAR='""" + year + """' AND  
     REQUEST_NO='""" + str(excel.return_value(row, 'Request Number')) + """' AND 
