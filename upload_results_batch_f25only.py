@@ -108,13 +108,37 @@ def upload_single_result(args, f25_path,ll_no,year, con, warn_log_file_path, com
     # Decide Pavement type
     e1,e2= read_pavtype(mde_path, f25_path)
     
-    # 2000 is the threshold for concrete
-    if e1 >= 2000:
-        pavtype = 'concrete'
-    elif e2 >= 2000:
-        pavtype = 'composite'
+    if not args.special_case:
+        # 2000 is the threshold for concrete
+        if e1 >= 2000:
+            pavtype = 'concrete'
+        elif e2 >= 2000:
+            pavtype = 'composite'
+        else:
+            pavtype = 'asphalt'
     else:
-        pavtype = 'asphalt'
+        # If it is the special case, manual enter the pavement type
+        #### (Begin) Tkinter code to take user input
+        root = tk.Tk()
+        root.geometry("400x400")
+        root.update_idletasks()
+
+        def close_window():
+            root.quit()
+
+        tk.Label(root, text="Choose the pavement type.", font=('Calibri 10')).pack()
+        options = ["asphalt", "concrete", "composite"]
+        clicked = tk.StringVar(root)
+        clicked.set('asphalt')
+        drop = tk.OptionMenu(root, clicked, *options)
+        drop.pack()
+        Button(root,text='OK',command=close_window).pack(pady=10)
+        root.bind("<Return>", lambda x: root.quit())
+        root.mainloop()
+
+        pavtype = str(clicked.get())
+        ### Code for input pavement type (END)
+        #### (End) Tkinter code to take user input
 
     print('e1={}, e2={}'.format(e1,e2))
     print('pavement type is: {}'.format(pavtype))
@@ -177,7 +201,7 @@ def upload_single_result(args, f25_path,ll_no,year, con, warn_log_file_path, com
     # Read MDE (END)
 
     try:
-        calc_data, stats_data, mde, pcc_mod, rxn_subg = calc(con, id, pavtype, roadtype, row, mde)
+        calc_data, stats_data, mde, pcc_mod, rxn_subg = calc(con, id, pavtype, roadtype, row, mde, args.special_case)
     except:
         traceback_str = traceback.format_exc()
         print("LL-{}-{}: Error in performing calculations, please check".format(ll_no, year))
@@ -249,7 +273,7 @@ def upload_single_result(args, f25_path,ll_no,year, con, warn_log_file_path, com
     if args.gen_report:
         try:
             # print('[before gen_report] mde deflections chainage: {}'.format(mde['deflections'][:,1]))
-            report.gen_report(ll_obj, mde, calc_data, stats_data, mde_path, f25_path, ll_no, year, con)
+            report.gen_report(ll_obj, mde, calc_data, stats_data, mde_path, f25_path, ll_no, year, con, args.special_case)
         except:
             traceback_str = traceback.format_exc()
             print("LL-{}-{}: Failed to generate report, please check flow".format(ll_no, year))
@@ -272,6 +296,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Upload result in batch mode')
     parser.add_argument('--gen_report', action='store_true')
     parser.add_argument('--debug', action='store_true')
+    parser.add_argument('--special_case', action='store_true')
     parser.add_argument('--server_root', type=str, default="\\\\dotwebp016vw/data/FWD/")
     parser.add_argument('--dev_env', action='store_true')
     args = parser.parse_args()

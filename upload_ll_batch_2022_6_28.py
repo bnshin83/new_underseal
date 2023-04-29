@@ -97,9 +97,7 @@ def upload_ll_batch(con):
             break
     
     #### (Begin) Tkinter code to take user input
-    def get_inp_str(event):
-        global inp_str
-        inp_str = myEntry.get()
+    def close_window():
         root.quit()
     
     root= Tk()
@@ -107,12 +105,13 @@ def upload_ll_batch(con):
     myEntry = Entry(root)
     myEntry.focus_force()
     myEntry.pack()
-    Button(root,text='OK',command=get_inp_str).pack(pady=10)
-    root.bind('<Return>', get_inp_str)
+    Button(root,text='OK',command=close_window).pack(pady=10)
+    root.bind('<Return>', lambda x: root.quit())
     root.mainloop()
     #### (End) Tkinter code to take user input
 
     # extract user input
+    inp_str = myEntry.get()
     input_list = [elem for elem in inp_str.split(',')]
 
     ll_no_list = []

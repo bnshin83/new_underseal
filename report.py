@@ -881,7 +881,7 @@ def comments_page(ll, mde_path, comments, document):
     document.add_paragraph(''.join(comments))
     return document
 
-def gen_report(ll, mde, calc_data, stats_data, mde_path, f25_path, ll_no, year, con):
+def gen_report(ll, mde, calc_data, stats_data, mde_path, f25_path, ll_no, year, con, special_case):
     comments_arr, dmi_val, rp_val = comments.get_comments(f25_path)
     report_page4.assign_values(rp_val, dmi_val)
     rp_str = get_rp_str(rp_val, dmi_val)
@@ -904,7 +904,7 @@ def gen_report(ll, mde, calc_data, stats_data, mde_path, f25_path, ll_no, year, 
 
     #(to be modify)# change the "calc_data" in this line to "post underseal" data
     # Asphalt donesn't have post design page
-    if(ll["pavtype"]!="asphalt"):
+    if(ll["pavtype"]!="asphalt" and (not special_case)):
         document = report_page4.overlay_design_page(document, ll, calc_data, report_page4.dir_str(ll["dir"][:2]), mde_path, post_design=True)
         document.add_page_break()
 

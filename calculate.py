@@ -47,7 +47,7 @@ def temp_correction(temp, thickness):
     
 
 
-def get_E(mde, pavtype, adj_e, special_case=False):
+def get_E(mde, pavtype, adj_e, special_case):
 
     mod_limits = {"asphalt": 1000, "concrete": 5000, "middle": 150, "subgrade": 80}
     arr = np.array(mde["mod_est"])
@@ -478,7 +478,7 @@ def writeAndExecute(mde, pavtype, roadtype, row, sensordata):
     return temp_corr, adj_elm, pcc_mod, rxn_subg
         
 
-def calc(con, id, pavtype, roadtype, row, mde):
+def calc(con, id, pavtype, roadtype, row, mde, special_case):
     deflections, sensordata, pressure, load, cal_obj, point, drop_no, adj_elm, pcc_mod, rxn_subg = get_data(mde, pavtype, roadtype, row)
     # deflections, sensordata, pressure, load, cal_obj, point, drop_no = get_data(con, id)
     # print("Points again")
@@ -501,7 +501,7 @@ def calc(con, id, pavtype, roadtype, row, mde):
     # print(reg_line)
     # print("logmr_again: ", str(logmr_again))
     subgd_calc = 10**(logmr_again*reg_line[0]+reg_line[1])
-    e = get_E(mde, pavtype, adj_elm)
+    e = get_E(mde, pavtype, adj_elm, special_case)
 
     sensor_stats = getstats(sensordata)
     mr_stats = getstats(mr)
@@ -536,7 +536,7 @@ def calc(con, id, pavtype, roadtype, row, mde):
     # putstats(con, stats_data, id)
     invalid_table = []
     new_stats = []
-    if(pavtype!="asphalt"):
+    if(pavtype!="asphalt" and (not special_case)):
         invalid_table, new_stats = getInvalidSections(mde, calc_data, d0crit, subgd_calc, pavtype)
     calc_data["invalid_table"] = invalid_table
     calc_data["new_stats"] = new_stats
