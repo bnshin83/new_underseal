@@ -49,14 +49,16 @@ def putcalc(con, data, id, pcc_mod, rxn_subg):
     tmparr = np.concatenate((tmparr, np.transpose([data["insitumr"]])), axis = 1)
     tmparr = np.concatenate((tmparr, np.transpose([data["logsgd"]])), axis = 1)
     tmparr = np.concatenate((tmparr, np.transpose([data["logmr"]])), axis = 1)
-    tmparr = np.concatenate((tmparr, np.transpose(data["e"])), axis = 1)
+    tmparr = np.concatenate((tmparr, np.transpose(data["e"][0:4,:])), axis = 1)
     tmparr = np.concatenate((tmparr, np.transpose(pcc_mod)), axis = 1)
     tmparr = np.concatenate((tmparr, np.transpose(rxn_subg)), axis = 1)
     tmparr = np.concatenate((tmparr, np.transpose(minus1_arr)), axis = 1)
     tmparr = np.concatenate((tmparr, np.transpose(null_arr)), axis = 1)
     tmparr = np.concatenate((tmparr, np.transpose(minus1_arr)), axis = 1)
     tmparr = np.concatenate((tmparr, np.transpose(null_arr)), axis = 1)
+    tmparr = np.concatenate((tmparr, np.transpose(data["e"][4:5,:])), axis = 1)
     
+    # print("Shape of data['e']",data["e"].shape)
     
     # tmparr = np.transpose(tmparr)
     # print(tmparr.shape)
