@@ -1,5 +1,5 @@
 import db
-from ll_entry_2022_6_28 import ll_entry
+from ll_query import ll_query
 from mde_entry import read_mde,getGPS, read_pavtype
 from calculate import calc
 # from writefiles import writeELMOD_FWD, writeLCC, writeLCC0, writeLCC1
@@ -7,7 +7,6 @@ from calculate import calc
 import pickle as pkl
 import report
 import os, sys
-from query_db import update_pavtype
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -151,9 +150,9 @@ def upload_single_result(args, f25_path,ll_no,year, con, warn_log_file_path, com
     try:
         global id
         if args.debug:
-            id,dir, lane_type = ll_entry(con, ll_no, f25_path, year, start_gps, end_gps, pavtype,commit=0)
+            id,dir, lane_type = ll_query(con, ll_no, f25_path, year, start_gps, end_gps, pavtype,commit=0)
         else:
-            id,dir,lane_type = ll_entry(con, ll_no, f25_path, year, start_gps, end_gps, pavtype,commit=1) # change to commit=1 when in production
+            id,dir,lane_type = ll_query(con, ll_no, f25_path, year, start_gps, end_gps, pavtype,commit=1) # change to commit=1 when in production
         ll_obj['dir'] = dir
     except:
         traceback_str = traceback.format_exc()
@@ -195,13 +194,13 @@ def upload_single_result(args, f25_path,ll_no,year, con, warn_log_file_path, com
             print(ll_obj['nomatch_msg']+'\n',file=f)
 
 
-    row = unused_var_dict['row']
+    # row = unused_var_dict['row']
     
     # writeLCC(mde, pavtype)
     # Read MDE (END)
 
     try:
-        calc_data, stats_data, mde, pcc_mod, rxn_subg = calc(con, id, pavtype, roadtype, row, mde, args.special_case)
+        calc_data, stats_data, mde, pcc_mod, rxn_subg = calc(con, id, pavtype, roadtype, ll_obj, mde, args.special_case)
     except:
         traceback_str = traceback.format_exc()
         print("LL-{}-{}: Error in performing calculations, please check".format(ll_no, year))

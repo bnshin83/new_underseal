@@ -13,17 +13,10 @@ python upload_results_batch_f25only.py --gen_report --server_root D:/indot_proj/
 python correct_f25_format.py --root_folder "V:\FWD\Underseal\Data\2022\READY"
 
 <load Long List>
-python upload_ll_batch_2022_6_28.py
+python upload_ll_batch.py
 
 <sync>
 python sync_ll_2022_6_28.py 
-
-
-
-<upload batch upload results>
-python upload_results_batch.py
-
-
 
 stda
 drwsspadts1031$

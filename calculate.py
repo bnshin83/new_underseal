@@ -298,7 +298,7 @@ def putstats(con, data, id):
     cursor.close()
 
 
-def get_data(mde, pavtype, roadtype, row):
+def get_data(mde, pavtype, roadtype, ll_obj):
 
     points_drops = np.array(mde["deflections_calc"][:, 3:5])
     deflections_all = np.array(mde["deflections"])
@@ -323,7 +323,7 @@ def get_data(mde, pavtype, roadtype, row):
     h4 = mod_est[:, 6].astype(float)
     thickness = h1[0] + h2[0] + h3[0] + h4[0]
     temp = np.mean(temp)
-    tempcorr, adj_elm, pcc_mod, rxn_subg = writeAndExecute(mde, pavtype, roadtype, row, sensordata)
+    tempcorr, adj_elm, pcc_mod, rxn_subg = writeAndExecute(mde, pavtype, roadtype, ll_obj, sensordata)
     # print("TEMP Corr: ", tempcorr)
     # print("Adj Elm: ", adj_elm)
     # tempcorr = temp_correction(temp, thickness)
@@ -422,28 +422,17 @@ def getInvalidSections(mde, calc_data, d0crit, subgdcrit, pavtype):
     # print(invalid_table)
     return invalid_table, new_stats
 
-
-
-# try:
-
-
-#     except Exception as e:
-#         print("Error in running YGJ exe. Please check")
-#         print(e)
-#         delete_rows(con, "LONGLIST", id)
-#         sys.exit(-1)
-
 def blockPrint():
     sys.stdout = open(os.devnull, 'w')
 def enablePrint():
     sys.stdout = sys.__stdout__
 
-def writeAndExecute(mde, pavtype, roadtype, row, sensordata):
+def writeAndExecute(mde, pavtype, roadtype, ll_obj, sensordata):
    # Block the print during execution of Egon's code
     # blockPrint()
     writeLCC(mde, pavtype)
     writeLCC0()
-    writeLCC1(roadtype, pavtype, row)
+    writeLCC1(roadtype, pavtype, ll_obj)
     writeELMOD_FWD(mde, sensordata)
     subprocess.call("C:/Aashto/YGJ.exe")
     # Restore the print after execution of Egon's code
@@ -473,13 +462,13 @@ def writeAndExecute(mde, pavtype, roadtype, row, sensordata):
             line = f.readline()
             # print(line)
     
-    # print("PCC MOD incoming")
+    # print("PCC MOD incoming")P
     # print(pcc_mod)
     return temp_corr, adj_elm, pcc_mod, rxn_subg
         
 
-def calc(con, id, pavtype, roadtype, row, mde, special_case):
-    deflections, sensordata, pressure, load, cal_obj, point, drop_no, adj_elm, pcc_mod, rxn_subg = get_data(mde, pavtype, roadtype, row)
+def calc(con, id, pavtype, roadtype, ll_obj, mde, special_case):
+    deflections, sensordata, pressure, load, cal_obj, point, drop_no, adj_elm, pcc_mod, rxn_subg = get_data(mde, pavtype, roadtype, ll_obj)
     # deflections, sensordata, pressure, load, cal_obj, point, drop_no = get_data(con, id)
     # print("Points again")
     # print(point)

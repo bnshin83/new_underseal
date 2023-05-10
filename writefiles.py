@@ -60,8 +60,8 @@ def writeLCC0():
     with open("C:/Aashto/LCC0.dat", 'w') as f:
         f.write(prstr)
 
-def writeLCC1(testDesc, pavtype, row):
-    esal = calc_esal(row)
+def writeLCC1(testDesc, pavtype, ll_obj):
+    esal = calc_esal(ll_obj)
     initservability, termservability, std, iri  = set_vars(testDesc, pavtype)
     prstr = str(esal) + " " + str(initservability) + " " + str(termservability) + " " + str(std)
     with open("C:/Aashto/LCC1.dat", 'w') as f:

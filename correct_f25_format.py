@@ -1,9 +1,4 @@
-import db
-import excel
 import os
-import pandas as pd
-import numpy as np
-import shutil
 
 def correct_f25_format(f25_path):
     f25file = open(f25_path, "r")

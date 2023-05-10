@@ -1,4 +1,4 @@
-import db
+# This script contains Utils for database query  
 
 def get_ll_from_db(con, ll_no, year):
     cursor = con.cursor()

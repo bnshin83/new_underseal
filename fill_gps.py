@@ -62,11 +62,11 @@ def put_gps(con, csv_path):
             WHERE longlist_id = :longlist_id_val AND chainage_ft = :chainage_ft_val
             """
 
-    cursor.executemany(query, [{"gpsx_val": row[0], 
-                                "gpsy_val": row[1], 
+    cursor.executemany(query, [{"gpsx_val": sql_arr_row[0], 
+                                "gpsy_val": sql_arr_row[1], 
                                 "longlist_id_val": id, 
-                                "chainage_ft_val": row[2]} 
-                                for row in sql_arr])
+                                "chainage_ft_val": sql_arr_row[2]} 
+                                for sql_arr_row in sql_arr])
     
     con.commit()
     cursor.close()

@@ -248,8 +248,3 @@ def read_mde(con, path, f25_path, id, ll_obj, server_root, img_matching=True):
     mde_conn.close()
     return mde, base[0].lower(), base.split()[0], ll_obj
     
-    
-
-# read_mde(db.connect(), './test.accdb', 'SR-17 NB RP-47+18 to RP-50+41.F25', 2)
-# init_mde_tables(db.connect())
-# connect_sqlalchemy()

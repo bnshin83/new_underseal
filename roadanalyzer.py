@@ -26,9 +26,9 @@ def set_vars(testDesc, pavtype):
         iri = 130
     return initservability, termservability, std, iri  
 
-def calc_esal(row):
+def calc_esal(ll_obj):
     try:
-        trucks = int(excel.return_value(row, 'Traffic (Trucks per day)'))
+        trucks = int(ll_obj["traffic"])
     except:
         trucks = 1
     # print("Trucks: ", trucks)
