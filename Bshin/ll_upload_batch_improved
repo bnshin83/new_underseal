@@ -1,0 +1,37 @@
+Absolutely, here's a detailed walk-through of your script:
+
+**Imports and Configurations**
+
+1. The script begins by importing necessary Python libraries that are used throughout the script:
+
+    - `os`, `sys`, `string`, `warnings`, `pickle as pkl`, `argparse`, `traceback`: Standard Python libraries for various functions like operating system interaction, system-specific parameters, string operations, warning control, data serialization and deserialization, command-line parsing, and error handling respectively.
+    
+    - `numpy as np`: A third-party library for numerical computations.
+    
+    - `Tkinter`: A standard Python interface to the Tk GUI toolkit. It is used here to create a GUI for user input.
+    
+    - `db`: Presumably, a custom module to handle database operations.
+    
+    - `ll_info_entry`: Another custom module, presumably used to process and prepare data for database entry.
+
+2. The script suppresses warnings by using the `warnings.filterwarnings("ignore")` statement.
+
+3. The script sets up an argument parser using `argparse` to handle command-line arguments, specifically for a `--dev_env` argument.
+
+4. The script connects to a database using the `db.connect` function. The `--dev_env` argument is passed as a parameter to this function.
+
+**Function Definitions**
+
+1. `delete_rows(con, tablename, id)`: This function deletes rows from the specified database table where the `LONGLIST_INFO_ID` matches the provided id. It commits the changes and then closes the database cursor.
+
+2. `upload_single_ll(con, exl_path=None, ll_no=None, year=None)`: This function uploads a single entry to the database from an Excel file. It first checks if the required parameters are provided, raises an error if not. It then attempts to upload the data using the `ll_info_entry` function. If the data upload is unsuccessful, it prints an error message and deletes the corresponding entries from the database.
+
+3. `get_input_list()`: This function creates a simple Tkinter GUI to get a list of LL numbers from the user. It returns the user input as a string.
+
+4. `parse_input_list(input_str)`: This function parses the input string from the user, converting it into a set of individual LL numbers.
+
+5. `upload_ll_batch(con)`: This function is the main driver of the script. It opens a file dialog to select an Excel file, extracts the year from the file name, gets a list of LL numbers from the user, and then uploads each LL number to the database by calling `upload_single_ll`. It handles exceptions that may occur during the upload.
+
+**Script Execution**
+
+The script finally calls the `upload_ll_batch` function to start the batch upload process, using the database connection established at the beginning of the script.
