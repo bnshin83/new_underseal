@@ -2,7 +2,9 @@
 cd C:\Users\bshin\Documents\Underseal_new
 2
 pipenv shell
-3 
+3
+cd new_underseal
+4
 python upload_results_batch_f25only.py --gen_report
 python upload_results_batch_f25only.py --gen_report --debug
 python upload_results_batch_f25only.py

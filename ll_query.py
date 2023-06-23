@@ -14,7 +14,7 @@ def check_f25_filename(f25_str):
     pattern = r'^RP-\d+\+-?\d+\.?\d? to RP-\d+\+-?\d+\.?\d?'
     assert re.match(pattern,f25_str), 'F25 filename does not meet requirement'
 
-def compose_ll_entry_string(ll_no, f25_path, year, start_gps, end_gps, pavtype):
+def compose_ll_entry_string(ll_no, f25_path, year, start_gps, end_gps, pavtype, args):
     base_f25_path = os.path.basename(f25_path)
     # new logic to check direction and lane info
     # Check if the f25 name matches the pattern
@@ -44,7 +44,11 @@ def compose_ll_entry_string(ll_no, f25_path, year, start_gps, end_gps, pavtype):
     elif 'ramp' in lane_info.lower():
         lane_type = 'RAMP'
     else:
-        lane_type = 'UNKNOWN'
+        # If it is special case, use whatever after 5th white space as lane_type
+        if args.special_case:
+            lane_type = lane_info
+        else:
+            lane_type = 'UNKNOWN'
 
     if start_gps[0] is not None:
         sqlstr = """INSERT INTO stda_LONGLIST
@@ -97,16 +101,16 @@ def compose_ll_entry_string(ll_no, f25_path, year, start_gps, end_gps, pavtype):
         YEAR='""" + str(year) + """' AND 
         DIRECTION='""" + dir + """' AND
         PAVTYPE='""" + pavtype + """' AND
-        F25_INFO='""" + base_f25_path[:-4] + """' AND 
+        F25_INFO='""" + base_f25_path[:-4] + """'
         """
 
     # print(idstr)
     return sqlstr, idstr, dir, lane_type
 
-def ll_query(con, ll_no, f25_path, year, start_gps, end_gps, pavtype, commit=0):
+def ll_query(con, ll_no, f25_path, year, start_gps, end_gps, pavtype, args, commit=0):
 
     cursor = con.cursor()
-    sqlstr, idstr, dir, lane_type = compose_ll_entry_string(ll_no, f25_path, year, start_gps, end_gps, pavtype)
+    sqlstr, idstr, dir, lane_type = compose_ll_entry_string(ll_no, f25_path, year, start_gps, end_gps, pavtype, args)
     cursor.execute(sqlstr)
     cursor.execute(idstr)
     

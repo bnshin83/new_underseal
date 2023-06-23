@@ -150,9 +150,9 @@ def upload_single_result(args, f25_path,ll_no,year, con, warn_log_file_path, com
     try:
         global id
         if args.debug:
-            id,dir, lane_type = ll_query(con, ll_no, f25_path, year, start_gps, end_gps, pavtype,commit=0)
+            id,dir, lane_type = ll_query(con, ll_no, f25_path, year, start_gps, end_gps, pavtype, args, commit=0)
         else:
-            id,dir,lane_type = ll_query(con, ll_no, f25_path, year, start_gps, end_gps, pavtype,commit=1) # change to commit=1 when in production
+            id,dir,lane_type = ll_query(con, ll_no, f25_path, year, start_gps, end_gps, pavtype, args, commit=1) # change to commit=1 when in production
         ll_obj['dir'] = dir
     except:
         traceback_str = traceback.format_exc()
