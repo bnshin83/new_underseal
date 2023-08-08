@@ -37,7 +37,7 @@ def delete_rows(con, tablename, id, verbose=1):
     if verbose == 1:
         print("Removed illegal entries from ", tablename, "with id ", str(id))
 
-def upload_single_result(args, f25_path,ll_no,year, con, warn_log_file_path, commit=0):
+def upload_single_result(args, f25_path, req_no, ll_no, year, con, warn_log_file_path, error_log_file_path, commit=0):
 
     # Specify default path to result folder here. 
     # result_folder = './Results/'
@@ -79,9 +79,9 @@ def upload_single_result(args, f25_path,ll_no,year, con, warn_log_file_path, com
 
     # ll_no, year = inp_str.split(',')
 
-    print('(Input) LL NO: {} , Year: {}'.format(ll_no,year))
+    print('(Input) Request NO. {}, LL NO: {} , Year: {}'.format(req_no, ll_no, year))
 
-    pkl_filename = os.path.join('./unused_var_dict/', 'LL-{}-{}.pkl'.format(ll_no,year))
+    pkl_filename = os.path.join('./unused_var_dict/', '{}.pkl'.format(req_no))
     if not os.path.exists(pkl_filename):
         raise Exception('LL no and year combination is invalid. Can not find corresponding pickle file.')
 
@@ -89,14 +89,6 @@ def upload_single_result(args, f25_path,ll_no,year, con, warn_log_file_path, com
         unused_var_dict = pkl.load(f)
 
     mde_path = f25_path[:-3] + 'mde'
-
-    assert mde_path != None, "Please give mde path"
-    assert f25_path != None, "Please give f25 path"
-    assert ll_no != None, "Please give long list number"
-    # assert exl_path != None, "Please give excel sheet path"
-
-    # Fix the f25 format issue, 3 spaces in front of 1,2,3
-    
 
     # Extract Start and End GPS
     gpsx,gpsy = getGPS(f25_path)
@@ -157,14 +149,14 @@ def upload_single_result(args, f25_path,ll_no,year, con, warn_log_file_path, com
     except:
         traceback_str = traceback.format_exc()
         if 'unique constraint' in traceback_str:
-            print('Repeat entry of LL-{}-{}, this input is ignored...'.format(ll_no, year))
+            print('Repeat entry of LL-{}-{} (Request NO. {}), this input is ignored...'.format(ll_no, year, req_no))
             # skip this entry and proceed with other entires
             return 
         else:
-            print("LL-{}-{}: Error in performing calculations, please check".format(ll_no, year))
-            print(traceback_str)
+            # print(traceback_str)
             delete_rows(con, "stda_LONGLIST", id)
-            sys.exit(-1)
+            raise Exception("LL-{}-{} (Request NO. {}): Error in performing calculations, please check. \n Trace Back: \n {}".format(ll_no, year, req_no,traceback_str))
+        
     # Populate the LONGLIST table and get LONGLIST_ID (END)
 
     # Read MDE (START)
@@ -180,10 +172,10 @@ def upload_single_result(args, f25_path,ll_no,year, con, warn_log_file_path, com
         ll_obj["roadname"] = roadname
     except:
         traceback_str = traceback.format_exc()
-        print("LL-{}-{}: Error in reading mde, please check".format(ll_no, year))
-        print(traceback_str)
+        # print(traceback_str)
         delete_rows(con, "stda_LONGLIST", id)
-        sys.exit(-1)
+        raise Exception("LL-{}-{} (Request NO. {}): Error in reading mde, please check. \n Trace Back: \n {}".format(ll_no, year, req_no, traceback_str))
+        # sys.exit(-1)
     if 'mde_duplicate' in ll_obj:
         with open(warn_log_file_path, "a+") as f:
             print('Input F25 path: {}'.format(f25_path),file=f)
@@ -203,10 +195,10 @@ def upload_single_result(args, f25_path,ll_no,year, con, warn_log_file_path, com
         calc_data, stats_data, mde, pcc_mod, rxn_subg = calc(con, id, pavtype, roadtype, ll_obj, mde, args.special_case)
     except:
         traceback_str = traceback.format_exc()
-        print("LL-{}-{}: Error in performing calculations, please check".format(ll_no, year))
-        print(traceback_str)
+        # print(traceback_str)
         delete_rows(con, "stda_LONGLIST", id)
-        sys.exit(-1)
+        raise Exception("LL-{}-{} (Request NO. {}): Error in performing calculations, please check. \n Trace Back: \n {}".format(ll_no, year, req_no, traceback_str))
+        # sys.exit(-1)
 
     try:
         if(commit):
@@ -215,8 +207,7 @@ def upload_single_result(args, f25_path,ll_no,year, con, warn_log_file_path, com
             # print('[after put mde] mde deflections chainage: {}'.format(mde['deflections'][:,1]))
     except:
         traceback_str = traceback.format_exc()
-        print("LL-{}-{}: Error in putting mde into DB, please check".format(ll_no, year))
-        print(traceback_str)
+        # print(traceback_str)
         delete_rows(con, "stda_DEFLECTIONS", id)
         delete_rows(con, "stda_CALCULATED_DEFLECTIONS", id)
         delete_rows(con, "stda_MODULI_ESTIMATED", id)
@@ -225,7 +216,8 @@ def upload_single_result(args, f25_path,ll_no,year, con, warn_log_file_path, com
         delete_rows(con, "stda_STATS", id)
         delete_rows(con, "stda_LONGLIST", id)
         delete_rows(con, "stda_IMG", id)
-        sys.exit(-1)
+        raise Exception("LL-{}-{} (Request NO. {}): Error in putting mde into DB, please check\n Trace Back: \n {}".format(ll_no, year, req_no, traceback_str))
+        # sys.exit(-1)
 
     # Image matching table
     try:
@@ -235,8 +227,8 @@ def upload_single_result(args, f25_path,ll_no,year, con, warn_log_file_path, com
             # print('[after put img] mde deflections chainage: {}'.format(mde['deflections'][:,1]))
     except:
         traceback_str = traceback.format_exc()
-        print("LL-{}-{}: Error in putting image matching into DB, please check".format(ll_no, year))
-        print(traceback_str)
+        
+        # print(traceback_str)
         delete_rows(con, "stda_DEFLECTIONS", id)
         delete_rows(con, "stda_CALCULATED_DEFLECTIONS", id)
         delete_rows(con, "stda_MODULI_ESTIMATED", id)
@@ -244,8 +236,8 @@ def upload_single_result(args, f25_path,ll_no,year, con, warn_log_file_path, com
         delete_rows(con, "stda_CALCULATIONS", id)
         delete_rows(con, "stda_STATS", id)
         delete_rows(con, "stda_IMG", id)
-
-        sys.exit(-1)
+        raise Exception("LL-{}-{} (Request NO. {}): Error in putting image matching into DB, please check. \n Trace Back: \n {}".format(ll_no, year, req_no, traceback_str))
+        # sys.exit(-1)
 
 
     try:
@@ -254,8 +246,7 @@ def upload_single_result(args, f25_path,ll_no,year, con, warn_log_file_path, com
             db.putstats(con, stats_data, id)
     except:
         traceback_str = traceback.format_exc()
-        print("LL-{}-{}: Error in putting calculation and stats into DB, please check".format(ll_no, year))
-        print(traceback_str)
+        # print(traceback_str)
         delete_rows(con, "stda._DEFLECTIONS", id)
         delete_rows(con, "stda_CALCULATED_DEFLECTIONS", id)
         delete_rows(con, "stda_MODULI_ESTIMATED", id)
@@ -264,7 +255,8 @@ def upload_single_result(args, f25_path,ll_no,year, con, warn_log_file_path, com
         delete_rows(con, "stda_STATS", id)
         delete_rows(con, "stda_LONGLIST", id)
         delete_rows(con, "stda_IMG", id)
-        sys.exit(-1)
+        raise Exception("LL-{}-{} (Request NO. {}): Error in putting calculation and stats into DB, please check. \n Trace Back: \n {}".format(ll_no, year, req_no, traceback_str))
+        # sys.exit(-1)
 
     # disable/enable report generation
     print('Report generation: ', args.gen_report)
@@ -275,7 +267,6 @@ def upload_single_result(args, f25_path,ll_no,year, con, warn_log_file_path, com
             report.gen_report(ll_obj, mde, calc_data, stats_data, mde_path, f25_path, ll_no, year, con, args.special_case)
         except:
             traceback_str = traceback.format_exc()
-            print("LL-{}-{}: Failed to generate report, please check flow".format(ll_no, year))
             print(traceback_str)
             delete_rows(con, "stda_DEFLECTIONS", id)
             delete_rows(con, "stda_CALCULATED_DEFLECTIONS", id)
@@ -285,7 +276,8 @@ def upload_single_result(args, f25_path,ll_no,year, con, warn_log_file_path, com
             delete_rows(con, "stda_STATS", id)
             delete_rows(con, "stda_LONGLIST", id)
             delete_rows(con, "stda_IMG", id)
-            sys.exit(-1)
+            raise Exception("LL-{}-{} (Request NO. {}): Failed to generate report, please check flow. \n Trace Back: \n{}".format(ll_no, year, req_no,traceback_str))
+            # sys.exit(-1)
 
 if __name__ == "__main__":
     
@@ -342,6 +334,8 @@ if __name__ == "__main__":
         f25_path, year = line, int('20'+year_2digits_str)
         # Extract the ll_no using regex
         ll_no_temp = re.findall(r'LL\s?-?\s?(\d+)', split_temp[-2])
+        # extract Request NO., and remove the white space
+        req_no = split_temp[-3].replace(" ", "")
         # print('ll_no_temp: {}'.format(ll_no_temp))
         assert len(ll_no_temp) == 1, print('Something wrong when extracting the LL no from path...')
         ll_no =  ll_no_temp[0]
@@ -355,16 +349,16 @@ if __name__ == "__main__":
 
         try:
             if args.debug:
-                upload_single_result(args, f25_path, ll_no, year, con, warn_log_file_path, commit=0)
+                upload_single_result(args, f25_path, req_no, ll_no, year, con, warn_log_file_path, commit=0)
             else:
-                upload_single_result(args, f25_path, ll_no, year, con, warn_log_file_path, commit=1) # change to commit=1 when in production
+                upload_single_result(args, f25_path, req_no, ll_no, year, con, warn_log_file_path, commit=1) # change to commit=1 when in production
         except:
             traceback_str = traceback.format_exc()
             if 'unique constraint' in traceback_str:
                 print('Repeat entry of {}-{}, this input is ignored...'.format(ll_no,year))
             else:
                 with open(log_error_file_path, "a+") as f:
-                    print('(Start of error log)#############LL-{} from year {}#######################'.format(ll_no,year),file=f)
+                    print('(Start of error log)#############LL-{} from year {} (Request NO. {})#######################'.format(ll_no,year,req_no),file=f)
                     print('Input F25 path: {}\n'.format(f25_path),file=f)
                     print(traceback_str,file=f)
                     delete_rows(con, "stda_DEFLECTIONS", id, verbose = 0)
@@ -376,6 +370,6 @@ if __name__ == "__main__":
                     delete_rows(con, "stda_LONGLIST", id, verbose = 0)
                     delete_rows(con, "stda_IMG", id)
                     print('Due to unexpected error, LL-{} from year {} is deleted...'.format(ll_no,year),file=f)
-                    print('(End of error log)#############LL-{} from year {}#######################\n\n'.format(ll_no,year),file=f)
+                    print('(End of error log)#############LL-{} from year {} (Request NO. {})#######################\n\n'.format(ll_no,year,req_no),file=f)
 
         # print("Line{}: {}".format(count, line.strip()))

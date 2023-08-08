@@ -2,10 +2,9 @@
 
 import pandas as pd
 
-def return_row(path, ll, worksheet = "Test Request Overview",ll_col_name='Long List Number'):
-    df = pd.read_excel(path, sheet_name = worksheet)
-    # print("Reached return_row")
-    return df.loc[df[ll_col_name]==ll]
+def return_ll_info_row(ll_info_df, ll_no_col_name, req_no):
+    # print("Reached return_ll_info_row")
+    return ll_info_df.loc[ll_info_df[ll_no_col_name]==req_no]
 
 def return_value(row, srch):
     # print("returning value")

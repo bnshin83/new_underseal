@@ -27,7 +27,7 @@ def check_single_ll(con, ll_no, year, excel_path):
     db_dict['operator_comment'] = result_list[2]
     db_dict['test_status'] = result_list[3]
 
-    excel_row = excel.return_row(excel_path,ll_no,"Test Request Overview")
+    excel_row = excel.return_ll_info_row(excel_path,ll_no,"Test Request Overview")
     excel_row_dict['traffic_ctrl'] = str(excel.return_value(excel_row,'Traffic Control Scheduled (Put only single day)'))
     excel_row_dict['operator'] = str(excel.return_value(excel_row,'Operator'))
     excel_row_dict['operator_comment'] = str(excel.return_value(excel_row,'Operator comments'))

@@ -4,15 +4,15 @@ import db
 import excel
 import os
 import datetime
+import re
 
-def compose_ll_info_entry_string(row, year):
+def compose_ll_info_entry_string(row, xls_filename_year, combine_flag):
     """
-    year: In the format of 2022, 2023, ... (Type is string)
+    year is decided by reading the first two digits of the request number
     """
 
-    if int(year)>2022:
+    if int(xls_filename_year)>2022 and not combine_flag:
         ll = {"llno": str(excel.return_value(row, 'LL')),
-              "year": year,
               "test status": str(excel.return_value(row, 'Status')),
               "req no": str(excel.return_value(row, 'RequestID')),
               "route": str(excel.return_value(row, 'Route')),
@@ -29,9 +29,9 @@ def compose_ll_info_entry_string(row, year):
               "traffic_ctrl":str(excel.return_value(row, 'DateScheduled')),
               "operator": excel.return_value(row, 'Operators'),
             }
-    elif int(year)<=2022:
+
+    elif int(xls_filename_year)<=2022:
         ll = {"llno": str(excel.return_value(row, 'Long List Number')),
-              "year": year,
               "test status": str(excel.return_value(row, 'Status')),
               "req no": str(excel.return_value(row, 'Request Number')),
               "route": str(excel.return_value(row, 'Route')),
@@ -49,10 +49,15 @@ def compose_ll_info_entry_string(row, year):
               "operator": excel.return_value(row, 'Operator'),
         }
 
+    # extract year after request id is extracted
+    year_2digits_str = re.findall(r'D(\d{2})', ll["req no"])[0]
+    year_str = '20'+year_2digits_str
+    ll["year"] = year_str
+
     # Use double single quote to escape single quote in sqlstr like it is done in .replace("'","''")
     sqlstr = """INSERT INTO stda_LONGLIST_INFO
     VALUES (NULL, """ + str(ll["llno"]) + """, 
-    '""" + year + """', 
+    '""" + year_str + """', 
     '""" + str(ll["req no"]) + """', 
     '""" + str(ll["test status"]) + """', 
     '""" + str(ll["route"]) + """', 
@@ -72,7 +77,7 @@ def compose_ll_info_entry_string(row, year):
 
     idstr = """SELECT LONGLIST_INFO_ID FROM stda_LONGLIST_INFO
     WHERE LONGLIST_NO=""" + str(ll["llno"]) + """ AND  
-    YEAR='""" + year + """' AND  
+    YEAR='""" + year_str + """' AND  
     REQUEST_NO='""" + str(ll["req no"]) + """' AND 
     ROUTE='""" + str(ll["route"]) + """' AND 
     RP_FROM='""" + str(ll["rp from"]) + """' AND 
@@ -88,15 +93,12 @@ def compose_ll_info_entry_string(row, year):
     return sqlstr, idstr, ll
 
 
-def ll_info_entry(con, excel_path, year, ll):
-    # print(excel.return_row(path,ll))
-    if int(year)>2022:
-        row = excel.return_row(excel_path, ll, worksheet="Sheet1", ll_col_name="LL")
-    else:
-        row = excel.return_row(excel_path, ll, worksheet="Test Request Overview", ll_col_name='Long List Number')
+def ll_info_entry(con, ll_info_df, ll_no_colname, ll_no, xls_filename_year, combine_flag):
+
+    row = excel.return_ll_info_row(ll_info_df, ll_no_colname, ll_no)
     cursor = con.cursor()
     # print(compose_ll_info_entry_string(row))
-    sqlstr, idstr, llobj = compose_ll_info_entry_string(row, year)
+    sqlstr, idstr, llobj = compose_ll_info_entry_string(row, xls_filename_year, combine_flag)
     cursor.execute(sqlstr)
     cursor.execute(idstr)
     
