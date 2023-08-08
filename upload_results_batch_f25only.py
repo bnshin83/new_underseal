@@ -37,7 +37,7 @@ def delete_rows(con, tablename, id, verbose=1):
     if verbose == 1:
         print("Removed illegal entries from ", tablename, "with id ", str(id))
 
-def upload_single_result(args, f25_path, req_no, ll_no, year, con, warn_log_file_path, error_log_file_path, commit=0):
+def upload_single_result(args, f25_path, req_no, ll_no, year, con, warn_log_file_path, commit=0):
 
     # Specify default path to result folder here. 
     # result_folder = './Results/'
@@ -81,7 +81,7 @@ def upload_single_result(args, f25_path, req_no, ll_no, year, con, warn_log_file
 
     print('(Input) Request NO. {}, LL NO: {} , Year: {}'.format(req_no, ll_no, year))
 
-    pkl_filename = os.path.join('./unused_var_dict/', '{}.pkl'.format(req_no))
+    pkl_filename = os.path.join('./unused_var_dict/', "LL-{}-{}".format(ll_no, year) + '.pkl')
     if not os.path.exists(pkl_filename):
         raise Exception('LL no and year combination is invalid. Can not find corresponding pickle file.')
 
@@ -296,9 +296,14 @@ if __name__ == "__main__":
     #   1. F25_path
 
     #### (Begin) Tkinter code to take user input
-    txt_path = filedialog.askopenfilename(initialdir='./',title='Select An External .txt File', 
-                                          filetypes=(("TXT files","*.txt"),("all files","*.*"))
-                                         )
+    if not args.dev_env:
+        txt_path = filedialog.askopenfilename(initialdir='./',title='Select An External .txt File', 
+                                            filetypes=(("TXT files","*.txt"),("all files","*.*"))
+                                            )
+    else:
+        txt_path = filedialog.askopenfilename(initialdir='D:/indot_proj/Underseal/result_folder/', title='Select An External .txt File', 
+                                            filetypes=(("TXT files","*.txt"),("all files","*.*"))
+                                            )
     print('txt path: ',txt_path)
     #### (End) Tkinter code to take user input
 

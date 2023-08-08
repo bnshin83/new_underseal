@@ -16,6 +16,8 @@ python correct_f25_format.py --root_folder "V:\FWD\Underseal\Data\2022\READY"
 
 <load Long List>
 python upload_ll_batch.py
+-- For developement in Wen's computer
+python upload_ll_batch.py --dev_env
 
 <sync>
 python sync_ll_2022_6_28.py 
