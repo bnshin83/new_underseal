@@ -43,7 +43,15 @@ def match_image_chainage(f25_path,ll_obj,df, server_root):
                     dist_path = os.path.join(server_root,req_no,sub_item,f25_basename_no_extension_name,'Cam1')
                     # print('[Debug info]: dist_path:{}'.format(dist_path))
                     if not os.path.exists(dist_path):
-                        shutil.copytree(source_path,dist_path)
+                        # Copy image by image, and change the extension name
+                        for img_filename in source_path:
+                            if img_filename.endswith('jpg'):
+                                shutil.copy(os.path.join(source_path,img_filename), os.path.join(dist_path,img_filename))
+                            elif img_filename.endswith('tif'):
+                                shutil.copy(os.path.join(source_path,img_filename), os.path.join(dist_path,img_filename[:-3]+'jpg'))
+                            else:
+                                continue
+                        # shutil.copytree(source_path,dist_path)
                     return dmi_img_dict, img_dmi_dict, True,None
                 else:
                     return None, None, False,"(Images not matched) No 'Cam1' folder found."
