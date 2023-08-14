@@ -43,6 +43,7 @@ def match_image_chainage(f25_path,ll_obj,df, server_root):
                     dist_path = os.path.join(server_root,req_no,sub_item,f25_basename_no_extension_name,'Cam1')
                     # print('[Debug info]: dist_path:{}'.format(dist_path))
                     if not os.path.exists(dist_path):
+                        os.makedirs(dist_path)
                         # Copy image by image, and change the extension name
                         for img_filename in os.listdir(source_path):
                             if img_filename.endswith('jpg'):
