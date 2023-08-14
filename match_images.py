@@ -108,6 +108,8 @@ def get_chainage_imgname_dict(df, image_filenames, relative_path):
     img_dmi_dict = {}
     for image_filename in image_filenames:
         # skip non-image
+        if image_filename.endswith('tif'):
+            image_filename = image_filename[:-3]+'jpg'
         if (image_filename.endswith('jpg')) or (image_filename.endswith('tif')):
             try:
                 img_chainage = float(image_filename.split(' ')[-2])
