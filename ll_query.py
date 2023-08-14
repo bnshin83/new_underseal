@@ -12,7 +12,8 @@ def check_f25_filename(f25_str):
     Need to write test case for this one
     """
     pattern = r'^RP-\d+\+-?\d+\.?\d? to RP-\d+\+-?\d+\.?\d?'
-    assert re.match(pattern,f25_str), 'F25 filename does not meet requirement'
+    if not re.match(pattern,f25_str):
+        raise Exception('F25 filename does not meet requirement')
 
 def compose_ll_entry_string(ll_no, f25_path, year, start_gps, end_gps, pavtype, args):
     base_f25_path = os.path.basename(f25_path)
@@ -20,7 +21,8 @@ def compose_ll_entry_string(ll_no, f25_path, year, start_gps, end_gps, pavtype, 
     # Check if the f25 name matches the pattern
     check_f25_filename(" ".join(base_f25_path.split(" ")[2:]))
     dir = base_f25_path.split(" ")[1]
-    assert dir in ['NB','SB','WB','EB'], 'Check if direction is included in F25 name after the first space!'
+    if dir not in ['NB','SB','WB','EB']:
+        raise Exception('Check if direction is included in F25 name after the first space!')
     lane_info = " ".join(base_f25_path.split(" ")[5:])
     lane_info = lane_info[:-4] # Use [:-4] get rid of the extention name like '.F25'
 

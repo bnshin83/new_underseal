@@ -32,7 +32,8 @@ def delete_rows(con, tablename, id):
 
 def upload_single_ll(con, ll_info_df, ll_no_colname, ll_no, combine_flag, xls_filename_year, duplicate_check_set):
 
-    assert isinstance(ll_no, int), "Please enter valid LL number"
+    if not isinstance(ll_no, int):
+        raise Exception("Please enter valid LL number")
     
     # row = None # will be used in "calc"
     roadtype = None # will be used in "calc" as argument
@@ -41,15 +42,15 @@ def upload_single_ll(con, ll_info_df, ll_no_colname, ll_no, combine_flag, xls_fi
     # pavtype='TBD'
     # assert pavtype in ['asphalt','concrete','composite']
 
-    try:
-        ll_info_id, ll_obj = ll_info_entry(con, ll_info_df, ll_no_colname, ll_no, xls_filename_year, combine_flag)
-        if(COMMIT == 0):
-            delete_rows(con, "STDA.STDA_LONGLIST_INFO", ll_info_id)
-    except Exception as e:
-        print("Couldn't read Longlist and put it back into DB. Please check")
-        print(e)
-        delete_rows(con, "STDA.STDA_LONGLIST_INFO", ll_info_id)    
-        sys.exit(-1)
+    # try:
+    ll_info_id, ll_obj = ll_info_entry(con, ll_info_df, ll_no_colname, ll_no, xls_filename_year, combine_flag)
+    if(COMMIT == 0):
+        delete_rows(con, "STDA.STDA_LONGLIST_INFO", ll_info_id)
+    # except Exception as e:
+    #     print("Couldn't read Longlist and put it back into DB. Please check")
+    #     print(e)
+    #     delete_rows(con, "STDA.STDA_LONGLIST_INFO", ll_info_id)    
+    #     sys.exit(-1)
 
     # store variable in dict for future use
     # id is the unique ll_id
@@ -95,7 +96,8 @@ def upload_ll_batch(con):
     xls_filename = os.path.basename(exl_path)
     pattern = r'(?<!\d)\d{4}(?!\d)'
     xls_filename_year_list = re.findall(pattern, xls_filename)
-    assert len(xls_filename_year_list) == 1
+    if not len(xls_filename_year_list) == 1:
+        raise Exception("Cannot find the Excel year from Excel filename")
     xls_filename_year = xls_filename_year_list[0]
     # Find if the excel if combined sheet
     combine_flag = 'combine' in os.path.basename(exl_path)
@@ -148,7 +150,8 @@ def upload_ll_batch(con):
         
     # Check if there are duplicate LL No.
     ll_no_set = set(ll_no_list)
-    assert len(ll_no_set) == len(ll_no_list)
+    if not len(ll_no_set) == len(ll_no_list):
+        raise Exception('Duplicate LL NO. Found')
 
     # Check for duplicate Request No.
     duplicate_check_set = set()

@@ -12,42 +12,47 @@ def compose_ll_info_entry_string(row, xls_filename_year, combine_flag):
     """
 
     if int(xls_filename_year)>2022 and not combine_flag:
-        ll = {"llno": str(excel.return_value(row, 'LL')),
-              "test status": str(excel.return_value(row, 'Status')),
-              "req no": str(excel.return_value(row, 'RequestID')),
-              "route": str(excel.return_value(row, 'Route')),
-              "rp from": str(excel.return_value(row, 'fromRP')),
-              "rp to": str(excel.return_value(row, 'toRP')),
-              "des no": str(excel.return_value(row, 'PK')),
-              "district": str(excel.return_value(row, 'District')),
-              "traffic": str(excel.return_value(row, 'Traffic')),
-              "contact person": str(excel.return_value(row, 'Requestor')),
-              "date req": str(excel.return_value(row, 'DateReceived')),
-              "date needed": str(excel.return_value(row, 'DateNeeded')),
-              "comments": str(excel.return_value(row, 'Requestor Note')),
-              "operator_comment": str(excel.return_value(row, 'OperatorComments')),
-              "traffic_ctrl":str(excel.return_value(row, 'DateScheduled')),
-              "operator": excel.return_value(row, 'Operators'),
+        ll = {"llno": str(excel.return_value(row, 'LL')).strip(),
+              "test status": str(excel.return_value(row, 'Status')).strip(),
+              "req no": str(excel.return_value(row, 'RequestID')).strip(),
+              "route": str(excel.return_value(row, 'Route')).strip(),
+              "rp from": str(excel.return_value(row, 'fromRP')).strip(),
+              "rp to": str(excel.return_value(row, 'toRP')).strip(),
+              "des no": str(excel.return_value(row, 'PK')).strip(),
+              "district": str(excel.return_value(row, 'District')).strip(),
+              "traffic": str(excel.return_value(row, 'Traffic')).strip(),
+              "contact person": str(excel.return_value(row, 'Requestor')).strip(),
+              "date req": str(excel.return_value(row, 'DateReceived')).strip(),
+              "date needed": str(excel.return_value(row, 'DateNeeded')).strip(),
+              "comments": str(excel.return_value(row, 'Requestor Note')).strip(),
+              "operator_comment": str(excel.return_value(row, 'OperatorComments')).strip(),
+              "traffic_ctrl":str(excel.return_value(row, 'DateScheduled')).strip(),
+              "operator": str(excel.return_value(row, 'Operators')).strip(),
             }
 
     elif int(xls_filename_year)<=2022:
-        ll = {"llno": str(excel.return_value(row, 'Long List Number')),
-              "test status": str(excel.return_value(row, 'Status')),
-              "req no": str(excel.return_value(row, 'Request Number')),
-              "route": str(excel.return_value(row, 'Route')),
-              "rp from": str(excel.return_value(row, 'RP (from)')),
-              "rp to": str(excel.return_value(row, 'RP (to)')),
-              "des no": str(excel.return_value(row, 'Contract/Des/PK Number')),
-              "district": str(excel.return_value(row, 'District')),
-              "traffic": str(excel.return_value(row, 'Traffic (Trucks per day)')),
-              "contact person": str(excel.return_value(row, 'Requested By')),
-              "date req": str(excel.return_value(row, 'Date Requested')),
-              "date needed": str(excel.return_value(row, 'Date Needed')),
-              "comments": str(excel.return_value(row, 'Comments by requestor')),
-              "operator_comment": str(excel.return_value(row, 'Operator comments')),
-              "traffic_ctrl":str(excel.return_value(row, 'Traffic Control Scheduled (Put only single day)')),
-              "operator": excel.return_value(row, 'Operator'),
+        ll = {"llno": str(excel.return_value(row, 'Long List Number')).strip(),
+              "test status": str(excel.return_value(row, 'Status')).strip(),
+              "req no": str(excel.return_value(row, 'Request Number')).strip(),
+              "route": str(excel.return_value(row, 'Route')).strip(),
+              "rp from": str(excel.return_value(row, 'RP (from)')).strip(),
+              "rp to": str(excel.return_value(row, 'RP (to)')).strip(),
+              "des no": str(excel.return_value(row, 'Contract/Des/PK Number')).strip(),
+              "district": str(excel.return_value(row, 'District')).strip(),
+              "traffic": str(excel.return_value(row, 'Traffic (Trucks per day)')).strip(),
+              "contact person": str(excel.return_value(row, 'Requested By')).strip(),
+              "date req": str(excel.return_value(row, 'Date Requested')).strip(),
+              "date needed": str(excel.return_value(row, 'Date Needed')).strip(),
+              "comments": str(excel.return_value(row, 'Comments by requestor')).strip(),
+              "operator_comment": str(excel.return_value(row, 'Operator comments')).strip(),
+              "traffic_ctrl":str(excel.return_value(row, 'Traffic Control Scheduled (Put only single day)')).strip(),
+              "operator": str(excel.return_value(row, 'Operator')).strip(),
         }
+
+    # Correct the format of route
+    pattern = r'(US|SR|I)\s?-?(\d+)'
+    replacement = r'\1-\2'
+    ll['route'] = re.sub(pattern, replacement, ll['route'])
 
     # extract year after request id is extracted
     year_2digits_str = re.findall(r'D(\d{2})', ll["req no"])[0]

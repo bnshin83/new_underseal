@@ -61,11 +61,13 @@ def get_from_rp_to_rp_str(mde_path):
     temp = os.path.splitext(os.path.basename(mde_path))[0]
 
     from_rp_match = re.findall(r'RP-(\d+)\+(-?\d+\.?\d?) to',temp)
-    assert len(from_rp_match) == 1
+    if not len(from_rp_match) == 1:
+        raise Exception('Something wrong when extracting the from RP!')
     from_rp_list = [from_rp_match[0][0],from_rp_match[0][1]]
 
     to_rp_match = re.findall(r'to RP-(\d+)\+(-?\d+\.?\d?)',temp)
-    assert len(to_rp_match) == 1
+    if not len(to_rp_match) == 1:
+        raise Exception('Something wrong when extracting the to RP!')
     to_rp_list = [to_rp_match[0][0],to_rp_match[0][1]]
 
     return from_rp_list, to_rp_list

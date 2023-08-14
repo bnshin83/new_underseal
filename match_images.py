@@ -99,16 +99,15 @@ def get_chainage_imgname_dict(df, image_filenames, relative_path):
     img_dmi_dict = {}
     for image_filename in image_filenames:
         # skip non-image
-        if not image_filename.endswith('jpg'):
-            continue
-        try:
-            img_chainage = float(image_filename.split(' ')[-2])
-        except:
-            print('Cannot convert to float image_filename: {}'.format(image_filename))
-        matched_chainage = ImageChainToChain(img_chainage, unique_chainage)
-        # print('img_dmi: {}, matched_dmi: {}'.format(img_chainage,matched_chainage))
-        image_filepath = os.path.join(relative_path,image_filename)
-        chainage_dict[matched_chainage].append(image_filepath)
-        img_dmi_dict[image_filepath] = matched_chainage
+        if (image_filename.endswith('jpg')) or (image_filename.endswith('tif')):
+            try:
+                img_chainage = float(image_filename.split(' ')[-2])
+            except:
+                print('Cannot convert to float image_filename: {}'.format(image_filename))
+            matched_chainage = ImageChainToChain(img_chainage, unique_chainage)
+            # print('img_dmi: {}, matched_dmi: {}'.format(img_chainage,matched_chainage))
+            image_filepath = os.path.join(relative_path,image_filename)
+            chainage_dict[matched_chainage].append(image_filepath)
+            img_dmi_dict[image_filepath] = matched_chainage
     
     return chainage_dict, img_dmi_dict
