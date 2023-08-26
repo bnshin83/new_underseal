@@ -412,6 +412,7 @@ def chart(rp_str, stats_data, calc_data, mde, document):
     ax.legend(bbox_to_anchor=(0,1.02,1,0.2), loc="lower left",
               mode="expand", borderaxespad=0, ncol=4, fontsize=legend_font_size)
     fig.savefig("fig.png", bbox_inches = 'tight', dpi = 600)
+    plt.close()
 
     p = document.add_paragraph()
     heading = "Deflection profile, " + rp_str

@@ -19,8 +19,7 @@ import traceback, re
 
 import numpy as np
 
-
-
+################################## Utils ##################################
 def delete_rows(con, tablename, id, verbose=1):
     # if(tablename != "stda_LONGLIST"):
     #     delstr = "DELETE FROM "+str(tablename)+" WHERE LONGLIST_ID = "+str(id)
@@ -34,47 +33,12 @@ def delete_rows(con, tablename, id, verbose=1):
     if verbose == 1:
         print("Removed illegal entries from ", tablename, "with id ", str(id))
 
-def upload_single_result(args, f25_path, req_no, ll_no, year, con, warn_log_file_path, commit=0):
+################################## Main ##################################
+def upload_single_result(args, f25_path, req_no, ll_no, year, con, commit=0):
 
-    # Specify default path to result folder here. 
-    # result_folder = './Results/'
-    # Specify default path to longlist excel here. #############
-
-    # #### (Begin) Tkinter code to take user input
-    # root = tk.Tk()
-    # root.update_idletasks()
-    # f25_path = filedialog.askopenfilename(initialdir='./',title='Select A F25 File', 
-    #                                       filetypes=(("F25 files","*.F25"),("all files","*.*"))
-    #                                      )
-
-    # def get_inp_str(*kwargs):
-    #     global inp_str,pavtype
-    #     inp_str = myEntry.get()
-    #     pavtype = str(clicked.get())
-    #     root.quit()
-    
-    # Label(root, text="Enter the LL number and the year (separate by comma)", font=('Calibri 10')).pack()
-    # myEntry = Entry(root)
-    # myEntry.focus_force()
-    # myEntry.pack()
-
-    # ### Code for input pavement type (START)
-    # tk.Label(root, text="Choose the pavement type.", font=('Calibri 10')).pack()
-    # options = ["asphalt", "concrete", "composite"]
-    # root.geometry("400x400")
-    # clicked = tk.StringVar()
-    # clicked.set('asphalt')
-    # # tk.Label(root, text="Please choose pavement type: ")
-    # drop = tk.OptionMenu(root, clicked, *options)
-    # drop.pack()
-    # # tk.Button(root, text='OK',command=_get).pack()
-    # root.bind('<Return>', get_inp_str)
-    # Button(root,text='OK',command=get_inp_str).pack(pady=10)
-    # root.mainloop()
-    # ### Code for input pavement type (END)
-    # #### (End) Tkinter code to take user input
-
-    # ll_no, year = inp_str.split(',')
+    # Preset id to none to prevent exit of batch uploading due to "id cannot find" error
+    global id
+    id = None
 
     print('(Input) Request NO. {}, LL NO: {} , Year: {}'.format(req_no, ll_no, year))
 
@@ -88,7 +52,7 @@ def upload_single_result(args, f25_path, req_no, ll_no, year, con, warn_log_file
     mde_path = f25_path[:-3] + 'mde'
 
     # Extract Start and End GPS
-    gpsx,gpsy = getGPS(f25_path)
+    gpsx, gpsy = getGPS(f25_path)
     start_gps, end_gps = (gpsx[0], gpsy[0]), (gpsx[-1], gpsy[-1])
 
     ll_obj = unused_var_dict['ll_obj']
@@ -138,7 +102,7 @@ def upload_single_result(args, f25_path, req_no, ll_no, year, con, warn_log_file
 
     # Populate the LONGLIST table and get LONGLIST_ID (START)
     # try:
-    global id
+
     if args.debug:
         id,dir, lane_type = ll_query(con, ll_no, f25_path, year, start_gps, end_gps, pavtype, args, commit=0)
     else:
@@ -166,7 +130,7 @@ def upload_single_result(args, f25_path, req_no, ll_no, year, con, warn_log_file
     rxn_subg = None
 
     # try:
-    mde, roadtype, roadname, ll_obj = read_mde(con, mde_path, f25_path, id, ll_obj, args.server_root, args.skip_img_matching)
+    mde, roadtype, roadname, ll_obj = read_mde(con, mde_path, f25_path, id, ll_obj, gpsx, gpsy, args.server_root, args.skip_img_matching)
     ll_obj["roadname"] = roadname
     # except:
     #     traceback_str = traceback.format_exc()
@@ -363,9 +327,9 @@ if __name__ == "__main__":
 
         try:
             if args.debug:
-                upload_single_result(args, f25_path, req_no, ll_no, year, con, warn_log_file_path, commit=0)
+                upload_single_result(args, f25_path, req_no, ll_no, year, con, commit=0)
             else:
-                upload_single_result(args, f25_path, req_no, ll_no, year, con, warn_log_file_path, commit=1) # change to commit=1 when in production
+                upload_single_result(args, f25_path, req_no, ll_no, year, con, commit=1) # change to commit=1 when in production
         except:
             traceback_str = traceback.format_exc()
             if 'unique constraint' in traceback_str:
@@ -375,14 +339,17 @@ if __name__ == "__main__":
                     print('(Start of error log)#############LL-{} from year {} (Request NO. {})#######################'.format(ll_no,year,req_no),file=f)
                     print('Input F25 path: {}\n'.format(f25_path),file=f)
                     print(traceback_str,file=f)
-                    delete_rows(con, "stda_DEFLECTIONS", id, verbose = 0)
-                    delete_rows(con, "stda_CALCULATED_DEFLECTIONS", id, verbose=0)
-                    delete_rows(con, "stda_MODULI_ESTIMATED", id, verbose = 0)
-                    delete_rows(con, "stda_MISC", id, verbose = 0)
-                    delete_rows(con, "stda_CALCULATIONS", id, verbose = 0)
-                    delete_rows(con, "stda_STATS", id, verbose = 0)
-                    delete_rows(con, "stda_LONGLIST", id, verbose = 0)
-                    delete_rows(con, "stda_IMG", id, verbose = 0)
+                    # If there is error happen before uploading anything, there is nothing to delete.
+                    # It would cause error and exit the batch uploading if we try to delete something that does not exist
+                    if id:
+                        delete_rows(con, "stda_DEFLECTIONS", id, verbose = 0)
+                        delete_rows(con, "stda_CALCULATED_DEFLECTIONS", id, verbose=0)
+                        delete_rows(con, "stda_MODULI_ESTIMATED", id, verbose = 0)
+                        delete_rows(con, "stda_MISC", id, verbose = 0)
+                        delete_rows(con, "stda_CALCULATIONS", id, verbose = 0)
+                        delete_rows(con, "stda_STATS", id, verbose = 0)
+                        delete_rows(con, "stda_LONGLIST", id, verbose = 0)
+                        delete_rows(con, "stda_IMG", id, verbose = 0)
                     print('Due to unexpected error, LL-{} from year {} is deleted...'.format(ll_no,year),file=f)
                     print('(End of error log)#############LL-{} from year {} (Request NO. {})#######################\n\n'.format(ll_no,year,req_no),file=f)
 

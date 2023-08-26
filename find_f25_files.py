@@ -92,7 +92,7 @@ if __name__=="__main__":
                                                 title='Select A Year Folder'
                                                 )
     
-    error_log = os.path.join(historical_dir,'error.txt')
+    error_log = os.path.join(historical_dir,'find_all_F25_error.txt')
 
     con = db.connect(args.dev_env)
 

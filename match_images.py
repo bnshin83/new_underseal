@@ -52,6 +52,7 @@ def match_image_chainage(f25_path,ll_obj,df, server_root):
                             elif img_filename.endswith('tif'): 
                                 im = Image.open(os.path.join(source_path, img_filename))
                                 im.save(os.path.join(dist_path, img_filename[:-3]+'jpg'))
+                                im.close()
                             else:
                                 continue
                         # shutil.copytree(source_path,dist_path)
@@ -112,7 +113,7 @@ def get_chainage_imgname_dict(df, image_filenames, relative_path):
         # skip non-image
         if image_filename.endswith('tif'):
             image_filename = image_filename[:-3]+'jpg'
-        if (image_filename.endswith('jpg')) or (image_filename.endswith('tif')):
+        if image_filename.endswith('jpg'):
             try:
                 img_chainage = float(image_filename.split(' ')[-2])
             except:

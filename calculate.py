@@ -299,8 +299,11 @@ def putstats(con, data, id):
 
 
 def get_data(mde, pavtype, roadtype, ll_obj):
-
+    #           0         1                2       3       4      5      6      7      8      9     10     11     12     13    14          15       16           17         18           19        20
+    # columns: id | Section | CalculationNum | Drop | Point | No1c | No2c | No3c | No4c | No5c | No6c | No7c | No8c | No9c | RMS | Back_type | Stress | minus1_arr | null_arr | minus1_arr | null_arr
     points_drops = np.array(mde["deflections_calc"][:, 3:5])
+    #            0          1         2               3         4        5      6    7    8    9   10   11   12   13   14   15        16               17     18     19           20         21           22        23         
+    # columns: id | Chainage | TheTime |  Temperature2 | Drop No | Stress | Load | D1 | D2 | D3 | D4 | D5 | D6 | D7 | D8 | D9 | PointNo | AirTemperature | gpsx | gpsy | minus1_arr | null_arr | minus1_arr | null_arr
     deflections_all = np.array(mde["deflections"])
     # print('Shape of deflections_all: {}'.format(deflections_all.shape))
     deflections = np.array([tmp for tmp in deflections_all if(list(map(int, tmp[[4,16]])) in points_drops.tolist())])
