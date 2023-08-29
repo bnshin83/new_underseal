@@ -24,28 +24,25 @@ def getGPS(f25_path):
     while i<len(lines):
         # Add more constraint to read gps data
         if int((lines[i].split(',')[0])) == 5280:
-            i += 1
-            line_split = lines[i].split(',')
+            line_split_5280 = lines[i].split(',')
+            tmpgpsx = float(line_split_5280[3])
+            tmpgpsy = float(line_split_5280[4])
+            i += 1 
             # Confirm chainage exists
+            line_split = lines[i].split(',')
             if int(line_split[0]) == 5301:
                 # Assume chainages are int
                 chainage = int(line_split[5])
-                i += 2
-                # Confirm drop exists
-                line_split = lines[i].split(',')
-                if int(line_split[0]) == 5303:
-                    tmpgpsx = float(line_split[3])
-                    tmpgpsy = float(line_split[4])
+                i += 3
+                drop_no = 1
+                # Only append the gps data if the first int of next line after 5303 is equal to drop number
+                while(i<len(lines) and int((lines[i].split(',')[0]))==drop_no):
+                    if drop_no == 1:
+                        # Ensure latest info overwrite previous ones
+                        gpsx_dict[chainage] = tmpgpsx
+                        gpsy_dict[chainage] = tmpgpsy
                     i += 1
-                    drop_no = 1
-                    # Only append the gps data if the first int of next line after 5303 is equal to drop number
-                    while(i<len(lines) and int((lines[i].split(',')[0]))==drop_no):
-                        if drop_no == 1:
-                            # Ensure latest info overwrite previous ones
-                            gpsx_dict[chainage] = tmpgpsx
-                            gpsy_dict[chainage] = tmpgpsy
-                        i += 1
-                        drop_no += 1
+                    drop_no += 1
         else:
             i += 1
     
