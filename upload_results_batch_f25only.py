@@ -255,7 +255,7 @@ if __name__ == "__main__":
     parser.add_argument('--debug', action='store_true')
     parser.add_argument('--special_case', action='store_true')
     parser.add_argument('--server_root', type=str, default="\\\\dotwebp016vw/data/FWD/")
-    parser.add_argument('--dev_env', type=str, default="shin",choices=['dev', 'shin', 'ecn'])
+    parser.add_argument('--dev_env', type=str, default="shin",choices=['dev_wen', 'shin', 'ecn_wen','ecn_shin'])
     parser.add_argument('--skip_img_matching', action='store_true')
     args = parser.parse_args()
 
