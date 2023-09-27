@@ -263,7 +263,7 @@ if __name__ == "__main__":
     #   1. F25_path
 
     #### (Begin) Tkinter code to take user input
-    if args.dev_env == 'dev':
+    if args.dev_env != 'dev_wen':
         txt_path = filedialog.askopenfilename(initialdir='./',title='Select An External .txt File', 
                                             filetypes=(("TXT files","*.txt"),("all files","*.*"))
                                             )

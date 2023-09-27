@@ -91,7 +91,7 @@ if __name__=="__main__":
     parser.add_argument('--dev_env', type=str, default="shin",choices=['dev_wen', 'shin', 'ecn_wen','ecn_shin'])
     args = parser.parse_args()
 
-    if args.dev_env == 'dev':
+    if args.dev_env == 'dev_wen':
         historical_dir = filedialog.askdirectory(initialdir='D:/indot_proj/Underseal/result_folder/historical_data/',
                                                 title='Select A Year Folder'
                                                 )
