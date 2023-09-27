@@ -52,8 +52,11 @@ def upload_single_result(args, f25_path, req_no, ll_no, year, con, commit=0):
     mde_path = f25_path[:-3] + 'mde'
 
     # Extract Start and End GPS
-    gpsx, gpsy = getGPS(f25_path)
-    start_gps, end_gps = (gpsx[0], gpsy[0]), (gpsx[-1], gpsy[-1])
+    gpsx, gpsy, gpsx_dict, gpsy_dict = getGPS(f25_path)
+    if len(gpsx)>0 and len(gpsy)>0:
+        start_gps, end_gps = (gpsx[0], gpsy[0]), (gpsx[-1], gpsy[-1])
+    else:
+        start_gps, end_gps = None, None
 
     ll_obj = unused_var_dict['ll_obj']
 
@@ -130,7 +133,7 @@ def upload_single_result(args, f25_path, req_no, ll_no, year, con, commit=0):
     rxn_subg = None
 
     # try:
-    mde, roadtype, roadname, ll_obj = read_mde(con, mde_path, f25_path, id, ll_obj, gpsx, gpsy, args.server_root, args.skip_img_matching)
+    mde, roadtype, roadname, ll_obj = read_mde(con, mde_path, f25_path, id, ll_obj, gpsx, gpsy, gpsx_dict, gpsy_dict, args.server_root, args.skip_img_matching)
     ll_obj["roadname"] = roadname
     # except:
     #     traceback_str = traceback.format_exc()
@@ -252,7 +255,7 @@ if __name__ == "__main__":
     parser.add_argument('--debug', action='store_true')
     parser.add_argument('--special_case', action='store_true')
     parser.add_argument('--server_root', type=str, default="\\\\dotwebp016vw/data/FWD/")
-    parser.add_argument('--dev_env', action='store_true')
+    parser.add_argument('--dev_env', type=str, default="shin",choices=['dev', 'shin', 'ecn'])
     parser.add_argument('--skip_img_matching', action='store_true')
     args = parser.parse_args()
 
@@ -260,7 +263,7 @@ if __name__ == "__main__":
     #   1. F25_path
 
     #### (Begin) Tkinter code to take user input
-    if not args.dev_env:
+    if args.dev_env == 'dev':
         txt_path = filedialog.askopenfilename(initialdir='./',title='Select An External .txt File', 
                                             filetypes=(("TXT files","*.txt"),("all files","*.*"))
                                             )
@@ -276,14 +279,18 @@ if __name__ == "__main__":
     input_txt_filename = os.path.basename(txt_path)[:-4]
     error_log_file = input_txt_filename +"_error_log.txt"
     warn_log_file = input_txt_filename +"_warn_log.txt"
+    filename_error_log_file = input_txt_filename +"_filename_error_log.txt"
     log_error_file_path = os.path.join(err_log_dir,error_log_file)
     warn_log_file_path = os.path.join(err_log_dir,warn_log_file)
+    filename_error_log_path = os.path.join(err_log_dir,filename_error_log_file)
     print('Error log is saved in: {}'.format(log_error_file_path))
     if os.path.exists(log_error_file_path):
         print('Overwrite previous error log!!!')
         os.remove(log_error_file_path)
     if os.path.exists(warn_log_file_path):
         os.remove(warn_log_file_path)
+    if os.path.exists(filename_error_log_path):
+        os.remove(filename_error_log_path)
 
     con = db.connect(args.dev_env)
 
@@ -334,6 +341,9 @@ if __name__ == "__main__":
             traceback_str = traceback.format_exc()
             if 'unique constraint' in traceback_str:
                 print('Repeat entry of {}-{}, this input is ignored...'.format(ll_no,year))
+            elif "F25 filename does not meet requirement" in traceback_str:
+                with open(filename_error_log_path, "a+") as filename_log_f:
+                    print("{}\n".format(f25_path),file=filename_log_f)
             else:
                 with open(log_error_file_path, "a+") as f:
                     print('(Start of error log)#############LL-{} from year {} (Request NO. {})#######################'.format(ll_no,year,req_no),file=f)
@@ -352,6 +362,7 @@ if __name__ == "__main__":
                         delete_rows(con, "stda_IMG", id, verbose = 0)
                     print('Due to unexpected error, LL-{} from year {} is deleted...'.format(ll_no,year),file=f)
                     print('(End of error log)#############LL-{} from year {} (Request NO. {})#######################\n\n'.format(ll_no,year,req_no),file=f)
+                
 
         # print("Line{}: {}".format(count, line.strip()))
 

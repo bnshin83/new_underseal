@@ -5,9 +5,27 @@ import numpy as np
 import sys, os
 
 def connect(dev_env):
-    if dev_env:
+    if dev_env=='dev':
         cx_Oracle.init_oracle_client(lib_dir=r"D:\ChromeDownload\instantclient_19_14")
         con = cx_Oracle.connect(user='c##wen', password = 'Purduehamp4147', dsn="localhost:1522/orcl")
+    elif dev_env=='ecn':
+        dsn = """
+                (DESCRIPTION =
+                  (ADDRESS_LIST =
+                    (ADDRESS =
+                      (PROTOCOL = TCP)
+                      (HOST = oracle.ecn.purdue.edu)
+                      (PORT = 1521)
+                    )
+                  )
+                  (CONNECT_DATA =
+                    (sid = primary)
+                    (SERVICE_NAME = primary.ecn.purdue.edu)
+                  )
+                )
+              """
+        cx_Oracle.init_oracle_client(lib_dir=r"D:\ChromeDownload\instantclient_21_11")
+        con = cx_Oracle.connect(user='SPR4450', password = 'emerald-olive-944', dsn=dsn)
     else:
         cx_Oracle.init_oracle_client(lib_dir=r"C:\Users\bshin\Documents\instantclient-basic-windows.x64-21.3.0.0.0\instantclient_21_3")
         con = cx_Oracle.connect(user='stda', password = 'drwsspadts1031$', dsn="dotorad007vl.state.in.us:1621/INDOT3DEV")

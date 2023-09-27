@@ -79,7 +79,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Upload misssing GPS data in batch mode')
     parser.add_argument('--debug', action='store_true')
-    parser.add_argument('--dev_env', action='store_true')
+    parser.add_argument('--dev_env', type=str, default="shin",choices=['dev', 'shin', 'ecn'])
     args = parser.parse_args()
 
     batch_csv_txt = filedialog.askopenfilename(initialdir='./',title='Select An External .txt File', 

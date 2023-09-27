@@ -54,7 +54,7 @@ if __name__=='__main__':
     import argparse
 
     parser = argparse.ArgumentParser(description='Upload result in batch mode')
-    parser.add_argument('--dev_env', action='store_true')
+    parser.add_argument('--dev_env', type=str, default="shin",choices=['dev', 'shin', 'ecn'])
     args = parser.parse_args()
 
     root = Tk()

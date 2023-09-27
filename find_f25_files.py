@@ -7,6 +7,11 @@ import re
 
 def extract_f25_filename(con, historical_dir,error_log):
     input_txt = os.path.join(historical_dir,"result_upload_input.txt")
+    if os.path.exists(input_txt):
+        os.remove(input_txt)
+    if os.path.exists(error_log):
+        os.remove(error_log)
+
     for req_no in os.listdir(historical_dir):
         if not os.path.isdir(os.path.join(historical_dir,req_no)):
             continue
@@ -17,9 +22,12 @@ def extract_f25_filename(con, historical_dir,error_log):
                  """
         cursor = con.cursor()
         cursor.execute(sqlstr)
+        ll_no = None
         for result in cursor:
             ll_no = result[0]
         cursor.close()
+        if not ll_no:
+            print('cannot find coresponding req_no {} in DB.'.format(req_no))
         # open pkl file
         pkl_folder = './unused_var_dict/'
         year_2digits_str = re.findall(r'D(\d{2})', req_no)[0]
@@ -80,10 +88,10 @@ if __name__=="__main__":
     import argparse
 
     parser = argparse.ArgumentParser(description='Upload result in batch mode')
-    parser.add_argument('--dev_env', action='store_true')
+    parser.add_argument('--dev_env', type=str, default="shin",choices=['dev', 'shin', 'ecn'])
     args = parser.parse_args()
 
-    if args.dev_env:
+    if args.dev_env == 'dev':
         historical_dir = filedialog.askdirectory(initialdir='D:/indot_proj/Underseal/result_folder/historical_data/',
                                                 title='Select A Year Folder'
                                                 )

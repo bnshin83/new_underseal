@@ -16,7 +16,7 @@ import pandas as pd
 import re
 
 parser = argparse.ArgumentParser(description='Upload LL entires batch mode')
-parser.add_argument('--dev_env', action='store_true')
+parser.add_argument('--dev_env', type=str, default="shin",choices=['dev', 'shin', 'ecn'])
 args = parser.parse_args()
 
 COMMIT = 1
