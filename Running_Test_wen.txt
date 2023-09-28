@@ -10,14 +10,17 @@ python upload_results_batch_f25only.py --gen_report --debug
 python upload_results_batch_f25only.py
 
 For developement on Wen's local computer
-python upload_results_batch_f25only.py --gen_report --server_root D:/indot_proj/virtual_img_server/ --dev_env --special_case
+python upload_results_batch_f25only.py --gen_report --server_root D:/indot_proj/virtual_img_server/ --dev_env dev --special_case
 
 python correct_f25_format.py --root_folder "V:\FWD\Underseal\Data\2022\READY"
 
 <load Long List>
 python upload_ll_batch.py
 -- For developement in Wen's computer
-python upload_ll_batch.py --dev_env
+python upload_ll_batch.py --dev_env dev
+
+<Historical Data Upload in Dev Environment>
+python upload_results_batch_f25only.py --server_root D:/indot_proj/virtual_img_server/ --dev_env dev --skip_img_matching
 
 <sync>
 python sync_ll_2022_6_28.py 

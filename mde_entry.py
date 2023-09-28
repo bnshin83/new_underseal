@@ -13,6 +13,8 @@ def getGPS(f25_path):
     """
     f25file = open(f25_path, "r")
     lines = f25file.readlines()
+    # Filter out empty lines (lines containing only newline characters)
+    lines = [line for line in lines if line.strip()]
     gpsx = []
     gpsy = []
     tmpgpsx = None
@@ -23,7 +25,14 @@ def getGPS(f25_path):
     i = 40
     while i<len(lines):
         # Add more constraint to read gps data
-        if int((lines[i].split(',')[0])) == 5280:
+        # if there are trouble reading the header number, skip the line
+        try:
+            header_num = int((lines[i].split(',')[0]))
+        except:
+            header_num = None
+            raise Exception("Error occurs when extracting header number at line {}".format(i+1))
+        
+        if header_num == 5280:
             line_split_5280 = lines[i].split(',')
             tmpgpsx = float(line_split_5280[3])
             tmpgpsy = float(line_split_5280[4])
@@ -32,7 +41,12 @@ def getGPS(f25_path):
             line_split = lines[i].split(',')
             if int(line_split[0]) == 5301:
                 # Assume chainages are int
-                chainage = int(line_split[5])
+                try:
+                    chainage = int(line_split[5])
+                except:
+                    raise Exception("Failed to convert chainage to int type at line {} in F25 file. "
+                                    "Expected to extract chainage info from line starting with 5301, "
+                                    "but the information is missing.".format(i+1))
                 i += 3
                 drop_no = 1
                 # Only append the gps data if the first int of next line after 5303 is equal to drop number
@@ -46,13 +60,33 @@ def getGPS(f25_path):
         else:
             i += 1
     
+    # doing for loop outside the while to ensure 
+    # the same gps is filled to all 3 drops even if the drop number in f25 is short of 3
     for chainage in gpsx_dict.keys():
         gpsx.extend([gpsx_dict[chainage]]*3)
         gpsy.extend([gpsy_dict[chainage]]*3)
 
     f25file.close()
 
-    return gpsx, gpsy
+    return gpsx, gpsy, gpsx_dict, gpsy_dict
+
+def fill_missing_gps(gpsx_dict,gpsy_dict,df):
+    filled_gps_x, filled_gps_y= [], []
+    chainage_list = df['Chainage'].tolist()
+    for chainage in chainage_list:
+        chainage = int(chainage)
+        # Fill gpsx
+        if chainage not in gpsx_dict:
+            filled_gps_x.append(None)
+        else:
+            filled_gps_x.append(gpsx_dict[chainage])
+        # Fill gpsy
+        if chainage not in gpsy_dict:
+            filled_gps_y.append(None)
+        else:
+            filled_gps_y.append(gpsy_dict[chainage])
+    return filled_gps_x, filled_gps_y
+
 
 def getUnits(f25_path):
     f25file = open(f25_path, "r")
@@ -105,7 +139,7 @@ def read_pavtype(path, f25_path):
     mde_conn.close()
     return pav_e1, pav_e2
 
-def read_mde(con, path, f25_path, id, ll_obj, gpsx, gpsy, server_root,  skip_img_matching=False):
+def read_mde(con, path, f25_path, id, ll_obj, gpsx, gpsy, gpsx_dict, gpsy_dict, server_root, skip_img_matching=False):
     """
     reuse the gpsx and gpsy that has been extracted at the begining of the result uploading
     """
@@ -168,6 +202,13 @@ def read_mde(con, path, f25_path, id, ll_obj, gpsx, gpsy, server_root,  skip_img
     # Fill null and -1 array according to new dataframe
     null_arr = df.shape[0]*[None]
     minus1_arr = df.shape[0]*[-1]
+    # check for missing gps data and fill them with Null for now
+    # case F25 missing
+    if len(gpsx) != len(gpsy):
+        raise Exception("length of GPSX does not equal to length of GPSY")
+    if len(df['Chainage'].tolist()) != len(gpsx):
+        gpsx, gpsy = fill_missing_gps(gpsx_dict,gpsy_dict,df)
+
     arr = [df.shape[0]*[id], df['Chainage'].tolist(), list(map(str,(df['TheTime'].tolist()))),\
            df['Temperature2'].tolist(), df['Drop No'].tolist(),df['Stress'].tolist(), df['Load'].tolist(),\
            df['D1'].tolist(), df['D2'].tolist(), df['D3'].tolist(), df['D4'].tolist(), df['D5'].tolist(),\
@@ -178,8 +219,7 @@ def read_mde(con, path, f25_path, id, ll_obj, gpsx, gpsy, server_root,  skip_img
     # Debug when converting list inside list to numpy array
     for i,v in enumerate(arr):
         if (len(v)!=len(arr[0])):
-            # print('Output of col {}: {}'.format(i,v))
-            raise Exception('Unexpected Error! Elemetnt dimension does no match. Bad element at column {}, expect length of {} but get {}'.format(i, len(arr[0]), len(v)))
+            raise Exception('Unexpected Error! Elemetnt dimension does no match. Bad element at column {}, expect length of {} but get {}.'.format(i, len(arr[0]), len(v)))
             
     # why the shape change to (24,) not (309,24) after transpose? becuase gpsx and gpsy is of length 311.
     # The len(arr) = 24, len(arr[i]) = 309

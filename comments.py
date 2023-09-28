@@ -19,13 +19,13 @@ def get_comments(f25_path):
                 #     print("FOUND IT yay")
                 if(rpistr.split()[0][0:4] == '"RP-' and rpistr.split()[0][-3:] == '+00' and rpistr.split()[1] == "DMI"):
                     # print(rpistr.split()[2][:-1])
-                    dmi_val = round(convert_chainage(int(rpistr.split()[2][:-1])))
+                    dmi_val = round(convert_chainage(float(rpistr.split()[2][:-1])))
                     rp_val = rpistr.split()[0][1:]
                     # print(rp_val)
                 comments.append(comment)
             elif(tmp[0][0:2] == "76" and x.split(',', 1)[1] != '""\n'):
                 try:
-                    dmi = round(convert_chainage(int(tmp[1])))
+                    dmi = round(convert_chainage(float(tmp[1])))
                 except:
                     raise Exception("Error when Extracting DMI...")
                 comment = str(dmi) + ": " + x.split(',', 1)[1]

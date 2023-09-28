@@ -389,7 +389,8 @@ def chart(rp_str, stats_data, calc_data, mde, document):
     super_title_font_size = 20
     axis_label_fontsize = 16
     x_tick_font_size = 4
-    x_tick_dilate_rate = 5
+    target_num_ticks = 20
+    x_tick_dilate_rate = len(chainages)//target_num_ticks + 1 # +1 to prevent dilate rate of 0
     x_label_distance = 20 # distance in points between x_ticks and label of x axis
 
     # Start plotting the chart
@@ -402,9 +403,10 @@ def chart(rp_str, stats_data, calc_data, mde, document):
     ax.set_xlabel("FWD Station, DMI (feet)", fontsize=axis_label_fontsize, labelpad=x_label_distance)
     ax.set_ylabel("Deflection (mils)", fontsize=axis_label_fontsize)
     ax.set_ylim((0.0, enlarge_factor*max_value))
-    ax.set_xticks(np.arange(min(chainages), 
-                            max(chainages)+1, 
-                            (max(chainages)-min(chainages))/(len(chainages)//x_tick_dilate_rate)))
+    if x_tick_dilate_rate > 1:
+        ax.set_xticks(np.arange(min(chainages), 
+                                max(chainages)+1, 
+                                (max(chainages)-min(chainages))/(len(chainages)//x_tick_dilate_rate)))
     ax.set_xticklabels(ax.get_xticks(), rotation = 90)
     ax.xaxis.set_major_formatter(FormatStrFormatter('%d'))
     ax.xaxis.set_minor_locator(AutoMinorLocator(5))

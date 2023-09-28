@@ -16,7 +16,7 @@ import pandas as pd
 import re
 
 parser = argparse.ArgumentParser(description='Upload LL entires batch mode')
-parser.add_argument('--dev_env', action='store_true')
+parser.add_argument('--dev_env', type=str, default="shin",choices=['dev_wen', 'shin', 'ecn_wen','ecn_shin'])
 args = parser.parse_args()
 
 COMMIT = 1
@@ -83,7 +83,7 @@ def upload_single_ll(con, ll_info_df, ll_no_colname, ll_no, combine_flag, xls_fi
 
 def upload_ll_batch(con):
     
-    if not args.dev_env:
+    if args.dev_env != 'dev_wen':
         exl_path = filedialog.askopenfilename(initialdir='./',title='Select A Long List File', 
                                           filetypes=(("xlsx files","*.xlsx"),("all files","*.*"))
                                          )

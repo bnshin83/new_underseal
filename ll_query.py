@@ -52,7 +52,7 @@ def compose_ll_entry_string(ll_no, f25_path, year, start_gps, end_gps, pavtype, 
         else:
             lane_type = 'UNKNOWN'
 
-    if start_gps[0] is not None:
+    if start_gps is not None:
         sqlstr = """INSERT INTO stda_LONGLIST
         VALUES (NULL,""" + ll_no + """, 
         '""" + str(year) + """', 
