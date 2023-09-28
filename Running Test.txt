@@ -29,7 +29,8 @@ drwsspadts1031$
 bshin
 [10/24/22 2:24 PM] Ganapaneni, Nagachand
 ShinRadAccess_2022$
-
+\default
+"STDA"."ISEQ$$_77796".nextval
 
 
 python correct_f25_format.py --path "V:\FWD\Underseal\Data\2022\READY\1\D2204070014\SR-59 LL-50\SR-59 SB RP-34+29.4 to RP-41+23.5.F25"
