@@ -2,6 +2,7 @@ import db
 from ll_query import ll_query
 from mde_entry import read_mde,getGPS, read_pavtype
 from calculate import calc
+from ll_query import get_ll_obj
 # from writefiles import writeELMOD_FWD, writeLCC, writeLCC0, writeLCC1
 # from match_calc import match
 import pickle as pkl
@@ -42,12 +43,16 @@ def upload_single_result(args, f25_path, req_no, ll_no, year, con, commit=0):
 
     print('(Input) Request NO. {}, LL NO: {} , Year: {}'.format(req_no, ll_no, year))
 
-    pkl_filename = os.path.join('./unused_var_dict/', "LL-{}-{}".format(ll_no, year) + '.pkl')
-    # if not os.path.exists(pkl_filename):
-    #     raise Exception('LL no and year combination is invalid. Can not find corresponding pickle file.')
+    # pkl_filename = os.path.join('./unused_var_dict/', "LL-{}-{}".format(ll_no, year) + '.pkl')
+    # # if not os.path.exists(pkl_filename):
+    # #     raise Exception('LL no and year combination is invalid. Can not find corresponding pickle file.')
 
-    with open(pkl_filename, "rb") as f:
-        unused_var_dict = pkl.load(f)
+    # with open(pkl_filename, "rb") as f:
+    #     unused_var_dict = pkl.load(f)
+    # ll_obj = unused_var_dict['ll_obj']
+
+    # retrive ll_obj from database
+    ll_obj = get_ll_obj(con,ll_no,year)
 
     mde_path = f25_path[:-3] + 'mde'
 
@@ -58,7 +63,7 @@ def upload_single_result(args, f25_path, req_no, ll_no, year, con, commit=0):
     else:
         start_gps, end_gps = None, None
 
-    ll_obj = unused_var_dict['ll_obj']
+    
 
     # Decide Pavement type
     e1,e2= read_pavtype(mde_path, f25_path)
@@ -263,12 +268,12 @@ if __name__ == "__main__":
     #   1. F25_path
 
     #### (Begin) Tkinter code to take user input
-    if args.dev_env != 'dev_wen':
+    if args.dev_env not in ['dev_wen','ecn_wen']:
         txt_path = filedialog.askopenfilename(initialdir='./',title='Select An External .txt File', 
                                             filetypes=(("TXT files","*.txt"),("all files","*.*"))
                                             )
     else:
-        txt_path = filedialog.askopenfilename(initialdir='D:/indot_proj/Underseal/result_folder/', title='Select An External .txt File', 
+        txt_path = filedialog.askopenfilename(initialdir='D:/indot_proj/Underseal/result_folder/historical_data/', title='Select An External .txt File', 
                                             filetypes=(("TXT files","*.txt"),("all files","*.*"))
                                             )
     print('txt path: ',txt_path)

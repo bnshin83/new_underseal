@@ -36,6 +36,9 @@ def getGPS(f25_path):
             line_split_5280 = lines[i].split(',')
             tmpgpsx = float(line_split_5280[3])
             tmpgpsy = float(line_split_5280[4])
+            if tmpgpsx<37 or tmpgpsx>43 or tmpgpsy<-89 or tmpgpsy>-84:
+                tmpgpsx = None
+                tmpgpsy = None
             i += 1 
             # Confirm chainage exists
             line_split = lines[i].split(',')
