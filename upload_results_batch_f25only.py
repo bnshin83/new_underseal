@@ -1,13 +1,13 @@
 import db
 from ll_query import ll_query
-from mde_entry import read_mde,getGPS, read_pavtype
+from mde_entry import read_mde, getGPS, read_pavtype
 from calculate import calc
+import report
+
 # from writefiles import writeELMOD_FWD, writeLCC, writeLCC0, writeLCC1
 # from match_calc import match
 import pickle as pkl
-import report
 import os, sys
-
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -257,20 +257,25 @@ if __name__ == "__main__":
     parser.add_argument('--server_root', type=str, default="\\\\dotwebp016vw/data/FWD/")
     parser.add_argument('--dev_env', type=str, default="shin",choices=['dev_wen', 'shin', 'ecn_wen','ecn_shin'])
     parser.add_argument('--skip_img_matching', action='store_true')
+    parser.add_argument('--txt_path', type=str)
+    parser.add_argument('--gui', action='store_true')
     args = parser.parse_args()
 
     # Read from external .txt where every line consists of the following:
     #   1. F25_path
 
-    #### (Begin) Tkinter code to take user input
-    if args.dev_env != 'dev_wen':
-        txt_path = filedialog.askopenfilename(initialdir='./',title='Select An External .txt File', 
-                                            filetypes=(("TXT files","*.txt"),("all files","*.*"))
-                                            )
+    ### (Begin) Tkinter code to take user input
+    if args.gui:
+        if args.dev_env != 'dev_wen':
+            txt_path = filedialog.askopenfilename(initialdir='./',title='Select An External .txt File', 
+                                                filetypes=(("TXT files","*.txt"),("all files","*.*"))
+                                                )
+        else:
+            txt_path = filedialog.askopenfilename(initialdir='D:/indot_proj/Underseal/result_folder/', title='Select An External .txt File', 
+                                                filetypes=(("TXT files","*.txt"),("all files","*.*"))
+                                                )
     else:
-        txt_path = filedialog.askopenfilename(initialdir='D:/indot_proj/Underseal/result_folder/', title='Select An External .txt File', 
-                                            filetypes=(("TXT files","*.txt"),("all files","*.*"))
-                                            )
+        txt_path = args.txt_path
     print('txt path: ',txt_path)
     #### (End) Tkinter code to take user input
 
@@ -292,6 +297,7 @@ if __name__ == "__main__":
     if os.path.exists(filename_error_log_path):
         os.remove(filename_error_log_path)
 
+
     con = db.connect(args.dev_env)
 
     with open(txt_path,'r') as file:
@@ -309,7 +315,7 @@ if __name__ == "__main__":
             raise Exception('Something went wrong when extracting the year number from request ID')
         year_2digits_str = year_temp[0]
         f25_path, year = line, int('20'+year_2digits_str)
-        # Extract the ll_no using regex
+        # Extract the ll_no using regex (not using any more)
         ll_no_temp = re.findall(r'LL\s?-?\s?(\d+)', split_temp[-2])
         # extract Request NO., and remove the white space
         req_no = split_temp[-3].replace(" ", "")

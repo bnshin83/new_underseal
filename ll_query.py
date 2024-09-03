@@ -29,15 +29,15 @@ def compose_ll_entry_string(ll_no, f25_path, year, start_gps, end_gps, pavtype, 
     # Categorize lane_info into 10 classes
     if lane_info == '' or 'DL' in lane_info or 'OLD' in lane_info:
         lane_type = 'DL'
-    elif 'LN1' in lane_info:
+    elif 'LN1' in lane_info or 'LN 1' in lane_info:
         lane_type = 'LN1'
-    elif 'LN2' in lane_info:
+    elif 'LN2' in lane_info or 'LN 2' in lane_info:
         lane_type = 'LN2'
-    elif 'LN3' in lane_info:
+    elif 'LN3' in lane_info or 'LN 3' in lane_info:
         lane_type = 'LN3'
-    elif 'LN4' in lane_info:
+    elif 'LN4' in lane_info or 'LN 4' in lane_info:
         lane_type = 'LN4'
-    elif 'LN5' in lane_info:
+    elif 'LN5' in lane_info or 'LN 5' in lane_info:
         lane_type = 'LN5'
     elif 'PL' in lane_info:
         lane_type = 'PL'

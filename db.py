@@ -46,7 +46,7 @@ def connect(dev_env):
         con = cx_Oracle.connect(user='SPR4450', password = 'emerald-olive-944', dsn=dsn)
     elif dev_env=='shin':
         cx_Oracle.init_oracle_client(lib_dir=r"C:\Users\bshin\Documents\instantclient-basic-windows.x64-21.3.0.0.0\instantclient_21_3")
-        con = cx_Oracle.connect(user='stda', password = 'drwsspadts1031$', dsn="dotorad007vl.state.in.us:1621/INDOT3DEV")
+        con = cx_Oracle.connect(user='stda', password = 'drwsspadts1031$', dsn="dotorad002vl.state.in.us:1621/INDOT3DEV")
     else:
         raise Exception ("Invalid dev_env option")
     return con
