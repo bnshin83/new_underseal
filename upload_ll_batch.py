@@ -83,12 +83,12 @@ def upload_single_ll(con, ll_info_df, ll_no_colname, ll_no, combine_flag, xls_fi
 
 def upload_ll_batch(con):
     
-    if args.dev_env != 'dev_wen':
+    if args.dev_env not in ['dev_wen','ecn_wen']:
         exl_path = filedialog.askopenfilename(initialdir='./',title='Select A Long List File', 
                                           filetypes=(("xlsx files","*.xlsx"),("all files","*.*"))
                                          )
     else:
-        exl_path = filedialog.askopenfilename(initialdir='D:/indot_proj/Underseal/result_folder/',title='Select A Long List File', 
+        exl_path = filedialog.askopenfilename(initialdir='D:/indot_proj/Underseal/result_folder/historical_data/',title='Select A Long List File', 
                                           filetypes=(("xlsx files","*.xlsx"),("all files","*.*"))
                                          )
     

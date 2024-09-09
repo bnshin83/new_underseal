@@ -122,6 +122,15 @@ def aashto_esals(insitu, ashtoo):
     tmp = np.array(insitu)
     tmp2 = np.array(ashtoo)
     # esals = np.power(10, (9.36*np.log(tmp+1) - 0.2 + ((np.log(0.63))/(0.4+(1094/(np.power(tmp+1, 5.19))))) + 2.32*(np.log(ashtoo*1000/3) -8.07)))
+    # =IF(AB2="","",(10^(9.36*(LOG(AB2+1))
+    #                    -0.2
+    #                    +((LOG(0.63))/(0.4+(1094/((AB2+1)^5.19))))
+    #                +2.32*(LOG(Q2*1000/3))-8.07)))
+
+    # (10^(9.36*(LOG(AB2+1))
+    #      -0.2
+    #      +((LOG(0.63))/(0.4+(1094/((AB2+1)^5.19))))+2.32*(LOG(Q2*1000/3))-8.07))
+
     esals =  np.power(10, (9.36*np.log10(tmp+1) - 0.2 + ((np.log10(0.63))/(0.4+(1094/(np.power(tmp+1, 5.19))))) + 2.32*(np.log10(tmp2*1000/3.0)) - 8.07))
     # print(esals)
     return esals

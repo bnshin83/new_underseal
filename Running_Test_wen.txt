@@ -21,7 +21,7 @@ python upload_ll_batch.py
 python upload_ll_batch.py --dev_env dev
 
 <Historical Data Upload in Dev Environment>
-python upload_results_batch_f25only.py --server_root D:/indot_proj/virtual_img_server/ --dev_env dev --skip_img_matching
+python upload_results_batch_f25only.py --server_root D:/indot_proj/virtual_img_server/ --dev_env dev_wen --skip_img_matching
 
 <sync>
 python sync_ll_2022_6_28.py 

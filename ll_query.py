@@ -52,59 +52,52 @@ def compose_ll_entry_string(ll_no, f25_path, year, start_gps, end_gps, pavtype, 
         else:
             lane_type = 'UNKNOWN'
 
-    if start_gps is not None:
-        sqlstr = """INSERT INTO stda_LONGLIST
-        VALUES (NULL,""" + ll_no + """, 
-        '""" + str(year) + """', 
-        '""" + dir + """',
-        '""" + lane_type + """',
-        '""" + pavtype + """',
-        '""" + base_f25_path[:-4] + """', 
-        '""" + base_f25_path[:-4]+'.docx' + """', 
-        '""" + str(start_gps[0]) + """', 
-        '""" + str(end_gps[0]) + """', 
-        '""" + str(start_gps[1]) + """', 
-        '""" + str(end_gps[1]) + """', 
-        -1, NULL, -1, NULL)"""
-        # print(sqlstr)
-
-        idstr = """
-        SELECT LONGLIST_ID FROM stda_LONGLIST
-        WHERE LONGLIST_NO=""" + ll_no + """ AND 
-        YEAR='""" + str(year) + """' AND 
-        DIRECTION='""" + dir + """' AND
-        PAVTYPE='""" + pavtype + """' AND 
-        F25_INFO='""" + base_f25_path[:-4] + """' AND 
-        BEGIN_LATITUDE='""" + str(start_gps[0]) + """' AND 
-        END_LATITUDE='""" + str(end_gps[0]) + """' AND  
-        BEGIN_LONGITUDE='""" + str(start_gps[1]) + """' AND 
-        END_LONGITUDE='""" + str(end_gps[1]) + """'
-        """
-    # In case we don't have GPS data
+    if start_gps and end_gps:
+        if start_gps[0] and start_gps[1]:
+            start_gps_x = str(start_gps[0])
+            start_gps_y = str(start_gps[1])
+        else:
+            start_gps_x, start_gps_y = "NULL", "NULL"
+        if end_gps[0] and end_gps[1]:
+            end_gps_x = str(end_gps[0])
+            end_gps_y = str(end_gps[1])
+        else:
+            end_gps_x, end_gps_y = "NULL", "NULL"
     else:
-        sqlstr = """INSERT INTO stda_LONGLIST
-        VALUES (NULL,""" + ll_no + """, 
-        '""" + str(year) + """', 
-        '""" + dir + """', 
-        '""" + lane_type + """', 
-        '""" + pavtype + """', 
-        '""" + base_f25_path[:-4] + """', 
-        '""" + base_f25_path[:-4]+'.docx' + """', 
-        NULL, 
-        NULL, 
-        NULL, 
-        NULL, 
-        -1, NULL, -1, NULL)"""
-        # print(sqlstr)
+        start_gps_x, start_gps_y, end_gps_x, end_gps_y = "NULL", "NULL","NULL", "NULL"
 
-        idstr = """
-        SELECT LONGLIST_ID FROM stda_LONGLIST
-        WHERE LONGLIST_NO=""" + ll_no + """ AND 
-        YEAR='""" + str(year) + """' AND 
-        DIRECTION='""" + dir + """' AND
-        PAVTYPE='""" + pavtype + """' AND
-        F25_INFO='""" + base_f25_path[:-4] + """'
-        """
+    sqlstr = """INSERT INTO stda_LONGLIST
+    VALUES (NULL,""" + ll_no + """, 
+    '""" + str(year) + """', 
+    '""" + dir + """',
+    '""" + lane_type + """',
+    '""" + pavtype + """',
+    '""" + base_f25_path[:-4] + """', 
+    '""" + base_f25_path[:-4]+'.docx' + """', 
+    """ + start_gps_x + """, 
+    """ + end_gps_x + """, 
+    """ + start_gps_y + """, 
+    """ + end_gps_y + """, 
+    -1, NULL, -1, NULL)"""
+    # print(sqlstr)
+
+    idstr = """
+    SELECT LONGLIST_ID FROM stda_LONGLIST
+    WHERE LONGLIST_NO=""" + ll_no + """ AND 
+    YEAR='""" + str(year) + """' AND 
+    DIRECTION='""" + dir + """' AND
+    PAVTYPE='""" + pavtype + """' AND 
+    F25_INFO='""" + base_f25_path[:-4] + """'
+    """
+
+    idstr = """
+    SELECT LONGLIST_ID FROM stda_LONGLIST
+    WHERE LONGLIST_NO=""" + ll_no + """ AND 
+    YEAR='""" + str(year) + """' AND 
+    DIRECTION='""" + dir + """' AND
+    PAVTYPE='""" + pavtype + """' AND
+    F25_INFO='""" + base_f25_path[:-4] + """'
+    """
 
     # print(idstr)
     return sqlstr, idstr, dir, lane_type
@@ -112,8 +105,12 @@ def compose_ll_entry_string(ll_no, f25_path, year, start_gps, end_gps, pavtype, 
 def ll_query(con, ll_no, f25_path, year, start_gps, end_gps, pavtype, args, commit=0):
 
     cursor = con.cursor()
-    sqlstr, idstr, dir, lane_type = compose_ll_entry_string(ll_no, f25_path, year, start_gps, end_gps, pavtype, args)
-    cursor.execute(sqlstr)
+    sqlstr, idstr, dir, lane_type = compose_ll_entry_string(ll_no, f25_path, year, 
+                                                            start_gps, end_gps, pavtype, args)
+    try:
+        cursor.execute(sqlstr)
+    except:
+        raise Exception(sqlstr)
     cursor.execute(idstr)
     
     for result in cursor:
@@ -126,3 +123,37 @@ def ll_query(con, ll_no, f25_path, year, start_gps, end_gps, pavtype, args, comm
     return id, dir, lane_type
 
 
+def get_ll_obj(con,ll_no,year):
+    """
+    retrive ll_obj from database, no longer relies on pkl files.
+    ll_no: in the format of int
+    year: in the format of string
+    """
+    retrived_ll_obj = {}
+    retrived_ll_obj['llno'] = ll_no
+    cursor = con.cursor()
+    cursor.execute("""
+                   SELECT test_status, request_no, route, rp_from, rp_to,
+                          contract_no, district, traffic, name, date_req,
+                          date_need, comments, operator_comment, traffic_ctrl, operator
+                   FROM stda_longlist_info
+                   WHERE year= :year AND longlist_no = :longlist_no
+                   """, [str(year), ll_no])
+    key_names = ["test status", "req no", "route", "rp from", "rp to",
+                 "des no", "district", "traffic", "contact person", "date req",
+                 "date needed", "comments", "operator_comment", "traffic_ctrl", "operator"]
+    for results in cursor:
+        for res,key in zip(results,key_names):
+            retrived_ll_obj[key] = res
+    
+    return retrived_ll_obj
+
+# Unit test of the functions
+if __name__ == "__main__":
+    import argparse
+    parser = argparse.ArgumentParser(description='Upload result in batch mode')
+    parser.add_argument('--dev_env', type=str, default="shin",choices=['dev_wen', 'shin', 'ecn_wen','ecn_shin'])
+    args = parser.parse_args()
+    con = db.connect(args.dev_env)
+    ll_obj = get_ll_obj(con,429,"2016")
+    print(ll_obj)
