@@ -14,43 +14,80 @@ def check_f25_filename(f25_str):
     pattern = r'^RP-\d+\+-?\d+\.?\d? to RP-\d+\+-?\d+\.?\d?'
     if not re.match(pattern,f25_str):
         raise Exception('F25 filename does not meet requirement')
+    
+def find_ll_no_given_req_no(con, filename, req_no):
+    ll_no = None
+    sqlstr = """
+                    SELECT longlist_no FROM stda_longlist_info
+                    WHERE request_no='""" + str(req_no) + """'
+                    """
+    cursor = con.cursor()
+    cursor.execute(sqlstr)
+    for result in cursor:
+        ll_no = str(result[0])
+    cursor.close()
+    if ll_no is None:
+        raise Exception('For {} Cannot find corresponding LongList Number given the Request Number {}'.format(filename,req_no))
+    return ll_no
 
-def compose_ll_entry_string(ll_no, f25_path, year, start_gps, end_gps, pavtype, args):
+def find_req_no_given_ll_no(con, filename, ll_no, year):
+    req_no = None
+    cursor = con.cursor()
+    cursor.execute("""
+                   SELECT request_no
+                   FROM stda_longlist_info
+                   WHERE year= :year AND longlist_no = :longlist_no
+                   """, [str(year), ll_no])
+
+    for result in cursor:
+        req_no = result[0]
+    cursor.close()
+    if ll_no is None:
+        raise Exception('Cannot find corresponding Request Number for {} given the LL Number {} and Year {}'.format(filename,
+                                                                                                                    ll_no,
+                                                                                                                    year))
+
+
+def compose_ll_entry_string(ll_no, f25_path, year, start_gps, end_gps, pavtype, args, user_input_dict):
     base_f25_path = os.path.basename(f25_path)
     # new logic to check direction and lane info
     # Check if the f25 name matches the pattern
-    check_f25_filename(" ".join(base_f25_path.split(" ")[2:]))
-    dir = base_f25_path.split(" ")[1]
-    if dir not in ['NB','SB','WB','EB']:
-        raise Exception('Check if direction is included in F25 name after the first space!')
-    lane_info = " ".join(base_f25_path.split(" ")[5:])
-    lane_info = lane_info[:-4] # Use [:-4] get rid of the extention name like '.F25'
+    if not args.user_input:
+        check_f25_filename(" ".join(base_f25_path.split(" ")[2:]))
+        dir = base_f25_path.split(" ")[1]
+        if dir not in ['NB','SB','WB','EB']:
+            raise Exception('Check if direction is included in F25 name after the first space!')
+        lane_info = " ".join(base_f25_path.split(" ")[5:])
+        lane_info = lane_info[:-4] # Use [:-4] get rid of the extention name like '.F25'
 
-    # Categorize lane_info into 10 classes
-    if lane_info == '' or 'DL' in lane_info or 'OLD' in lane_info:
-        lane_type = 'DL'
-    elif 'LN1' in lane_info or 'LN 1' in lane_info:
-        lane_type = 'LN1'
-    elif 'LN2' in lane_info or 'LN 2' in lane_info:
-        lane_type = 'LN2'
-    elif 'LN3' in lane_info or 'LN 3' in lane_info:
-        lane_type = 'LN3'
-    elif 'LN4' in lane_info or 'LN 4' in lane_info:
-        lane_type = 'LN4'
-    elif 'LN5' in lane_info or 'LN 5' in lane_info:
-        lane_type = 'LN5'
-    elif 'PL' in lane_info:
-        lane_type = 'PL'
-    elif 'sh' in lane_info.lower():
-        lane_type = 'SHOULDER'
-    elif 'ramp' in lane_info.lower():
-        lane_type = 'RAMP'
-    else:
-        # If it is special case, use whatever after 5th white space as lane_type
-        if args.special_case:
-            lane_type = lane_info
+        # Categorize lane_info into 10 classes
+        if lane_info == '' or 'DL' in lane_info or 'OLD' in lane_info:
+            lane_type = 'DL'
+        elif 'LN1' in lane_info or 'LN 1' in lane_info:
+            lane_type = 'LN1'
+        elif 'LN2' in lane_info or 'LN 2' in lane_info:
+            lane_type = 'LN2'
+        elif 'LN3' in lane_info or 'LN 3' in lane_info:
+            lane_type = 'LN3'
+        elif 'LN4' in lane_info or 'LN 4' in lane_info:
+            lane_type = 'LN4'
+        elif 'LN5' in lane_info or 'LN 5' in lane_info:
+            lane_type = 'LN5'
+        elif 'PL' in lane_info:
+            lane_type = 'PL'
+        elif 'sh' in lane_info.lower():
+            lane_type = 'SHOULDER'
+        elif 'ramp' in lane_info.lower():
+            lane_type = 'RAMP'
         else:
-            lane_type = 'UNKNOWN'
+            # If it is special case, use whatever after 5th white space as lane_type
+            if args.special_case:
+                lane_type = lane_info
+            else:
+                lane_type = 'UNKNOWN'
+    else:
+        lane_type = user_input_dict['lane_type']
+        dir = user_input_dict['dir']
 
     if start_gps and end_gps:
         if start_gps[0] and start_gps[1]:
@@ -86,15 +123,6 @@ def compose_ll_entry_string(ll_no, f25_path, year, start_gps, end_gps, pavtype, 
     WHERE LONGLIST_NO=""" + ll_no + """ AND 
     YEAR='""" + str(year) + """' AND 
     DIRECTION='""" + dir + """' AND
-    PAVTYPE='""" + pavtype + """' AND 
-    F25_INFO='""" + base_f25_path[:-4] + """'
-    """
-
-    idstr = """
-    SELECT LONGLIST_ID FROM stda_LONGLIST
-    WHERE LONGLIST_NO=""" + ll_no + """ AND 
-    YEAR='""" + str(year) + """' AND 
-    DIRECTION='""" + dir + """' AND
     PAVTYPE='""" + pavtype + """' AND
     F25_INFO='""" + base_f25_path[:-4] + """'
     """
@@ -102,11 +130,11 @@ def compose_ll_entry_string(ll_no, f25_path, year, start_gps, end_gps, pavtype, 
     # print(idstr)
     return sqlstr, idstr, dir, lane_type
 
-def ll_query(con, ll_no, f25_path, year, start_gps, end_gps, pavtype, args, commit=0):
+def ll_query(con, ll_no, f25_path, year, start_gps, end_gps, pavtype, args, user_input_dict, commit=0):
 
     cursor = con.cursor()
     sqlstr, idstr, dir, lane_type = compose_ll_entry_string(ll_no, f25_path, year, 
-                                                            start_gps, end_gps, pavtype, args)
+                                                            start_gps, end_gps, pavtype, args, user_input_dict)
     try:
         cursor.execute(sqlstr)
     except:
