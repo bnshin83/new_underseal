@@ -38,7 +38,7 @@ def upload_single_result(args, f25_path, ll_no, year, con, user_input_dict, comm
 
     mde_path = f25_path[:-3] + 'mde'
     
-    if not args.special_case and not args.user_input:
+    if not args.pavtype_special_case:
         # Decide Pavement type
         e1,e2= read_pavtype(mde_path, f25_path)
         # 2000 is the threshold for concrete
@@ -48,7 +48,7 @@ def upload_single_result(args, f25_path, ll_no, year, con, user_input_dict, comm
             pavtype = 'composite'
         else:
             pavtype = 'asphalt'
-    elif args.special_case:
+    elif args.pavtype_special_case:
         # If it is the special case, manual enter the pavement type
         #### (Begin) Tkinter code to take user input
         root = tk.Tk()
@@ -85,8 +85,6 @@ def upload_single_result(args, f25_path, ll_no, year, con, user_input_dict, comm
     else:
         start_gps, end_gps = None, None
 
-    if args.user_input:
-        pavtype = user_input_dict['pavtype']
     if not (pavtype in ["asphalt", "concrete", "composite"]):
         raise Exception("Please input valid pavement type")
     # Assign the new pavement type
@@ -106,10 +104,10 @@ def upload_single_result(args, f25_path, ll_no, year, con, user_input_dict, comm
     pcc_mod = None
     rxn_subg = None
 
-    mde, roadtype, roadname, ll_obj = read_mde(con, mde_path, f25_path, id, ll_obj, gpsx, gpsy, gpsx_dict, gpsy_dict, args.server_root, args.skip_img_matching)
+    mde, roadtype, roadname, ll_obj = read_mde(con, mde_path, f25_path, id, ll_obj, gpsx, gpsy, gpsx_dict, gpsy_dict, args)
     ll_obj["roadname"] = roadname
 
-    calc_data, stats_data, mde, pcc_mod, rxn_subg = calc(con, id, pavtype, roadtype, ll_obj, mde, args.special_case)
+    calc_data, stats_data, mde, pcc_mod, rxn_subg = calc(con, id, pavtype, roadtype, ll_obj, mde, args)
 
     if commit:
         db.putmde(con, mde, stats_data, id, commit=1)
@@ -125,7 +123,7 @@ def upload_single_result(args, f25_path, ll_no, year, con, user_input_dict, comm
     print('Report generation: ', args.gen_report)
 
     if args.gen_report:
-        report.gen_report(ll_obj, mde, calc_data, stats_data, mde_path, f25_path, ll_no, year, con, args.special_case)
+        report.gen_report(ll_obj, mde, calc_data, stats_data, mde_path, f25_path, ll_no, year, con, args)
 
 
     if args.user_input:
@@ -141,7 +139,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Upload result in batch mode')
     parser.add_argument('--gen_report', action='store_true')
     parser.add_argument('--debug', action='store_true')
-    parser.add_argument('--special_case', action='store_true')
+    parser.add_argument('--pavtype_special_case', action='store_true')
     parser.add_argument('--server_root', type=str, default="\\\\dotwebp016vw/data/FWD/")
     parser.add_argument('--dev_env', type=str, default="shin",choices=['dev_wen', 'shin', 'ecn_wen','ecn_shin'])
     parser.add_argument('--skip_img_matching', action='store_true')
@@ -189,6 +187,7 @@ if __name__ == "__main__":
     with open(txt_path,'r') as file:
         Lines = file.readlines()
         
+    error_flag = False
     for line in Lines:
         # This is for user input in case of special case like airport test 
         user_input_dict = {}
@@ -211,12 +210,6 @@ if __name__ == "__main__":
             f25_path = f25_path.replace('"', '').strip()         
 
             def validate_input():
-                if not pavement_type_combobox.get().strip():
-                    show_error("Please select a pavement type.")
-                    return False
-                if pavement_type_combobox.get().strip() not in ["asphalt", "concrete", "composite"]:
-                    show_error("Pavement type must be chosen from 'asphalt', 'concrete', or 'composite'")
-                    return False
                 if not long_list_number_entry.get():
                     show_error("Please enter the Request Number.")
                     return False
@@ -237,7 +230,6 @@ if __name__ == "__main__":
             def validate_input_and_close():
                 if validate_input():
                     # Collect input and close window
-                    user_input_dict['pavtype'] = pavement_type_combobox.get().strip()
                     user_input_dict['ll_no'] = long_list_number_entry.get().strip()
                     user_input_dict['dir'] = test_direction_entry.get().strip()
                     user_input_dict['year'] = year_entry.get().strip()
@@ -254,7 +246,6 @@ if __name__ == "__main__":
             root.grid_rowconfigure(4, minsize=40)
             root.grid_rowconfigure(5, minsize=40)
             root.grid_rowconfigure(6, minsize=40)
-            root.grid_rowconfigure(7, minsize=40)
 
             root.columnconfigure(0, weight=1)  # Make column 0 flexible
             root.columnconfigure(1, weight=2)  # Make column 1 flexible
@@ -284,17 +275,12 @@ if __name__ == "__main__":
             
             test_direction_label = tk.Label(root, text="Test Direction:")
             test_direction_label.grid(row=5, column=0)
-            test_direction_entry = ttk.Combobox(root, values=["NB", "SB", "EB", "WB"])
+            test_direction_entry = tk.Entry(root)
             test_direction_entry.grid(row=5, column=1)
-
-            pavement_type_label = tk.Label(root, text="Choose the pavement type")
-            pavement_type_label.grid(row=6, column=0)
-            pavement_type_combobox = ttk.Combobox(root, values=["asphalt", "concrete", "composite"])
-            pavement_type_combobox.grid(row=6, column=1)
 
             # Create a button to submit the form
             submit_button = tk.Button(root, text="Submit", command=validate_input_and_close)
-            submit_button.grid(row=7, column=0, columnspan=2)
+            submit_button.grid(row=6, column=0, columnspan=2)
             root.bind("<Return>", lambda x: validate_input_and_close())
 
             # Start the main loop
@@ -303,7 +289,6 @@ if __name__ == "__main__":
 
             ll_no = user_input_dict['ll_no']
             year = user_input_dict['year']
-            pavtype = user_input_dict['pavtype']
             req_no = find_req_no_given_ll_no(con, os.path.basename(f25_path), ll_no, year)
 
         try:
@@ -312,6 +297,7 @@ if __name__ == "__main__":
             else:
                 upload_single_result(args, f25_path, ll_no, year, con, user_input_dict, commit=1) # change to commit=1 when in production
         except:
+            error_flag = True
             traceback_str = traceback.format_exc()
             if 'unique constraint' in traceback_str:
                 print('Repeat entry of {}-{}, this input is ignored...'.format(ll_no,year))
@@ -338,3 +324,6 @@ if __name__ == "__main__":
                     print('(End of error log)#############LL-{} from year {} (Request NO. {})#######################\n\n'.format(ll_no,year,req_no),file=f)
 
     print("\n Uploading finished!!!")
+    if error_flag:
+        print("WARNING!!! Errors encountered during batch process but it is skipped.")
+        print("Check the error log that locates in the same folder as the input txt file.")

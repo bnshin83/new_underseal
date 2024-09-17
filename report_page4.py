@@ -41,8 +41,10 @@ def dir_str(dir):
         return "South Bound"
     elif dir == "WB":
         return "West Bound"
+    else:
+        return dir
 
-def get_from_rp_to_rp_str(mde_path):
+def get_from_rp_to_rp_str(mde_path, args):
 
     """
     This function will return 2 list. 
@@ -59,16 +61,21 @@ def get_from_rp_to_rp_str(mde_path):
     """
 
     temp = os.path.splitext(os.path.basename(mde_path))[0]
-
     from_rp_match = re.findall(r'RP-(\d+)\+(-?\d+\.?\d?) to',temp)
-    if not len(from_rp_match) == 1:
+    if len(from_rp_match) != 1 and not args.user_input:
         raise Exception('Something wrong when extracting the from RP!')
-    from_rp_list = [from_rp_match[0][0],from_rp_match[0][1]]
+    try:
+        from_rp_list = [from_rp_match[0][0],from_rp_match[0][1]]
+    except:
+        from_rp_list = ['Nan', 'Nan']
 
     to_rp_match = re.findall(r'to RP-(\d+)\+(-?\d+\.?\d?)',temp)
-    if not len(to_rp_match) == 1:
+    if len(to_rp_match) != 1 and not args.user_input:
         raise Exception('Something wrong when extracting the to RP!')
-    to_rp_list = [to_rp_match[0][0],to_rp_match[0][1]]
+    try:
+        to_rp_list = [to_rp_match[0][0],to_rp_match[0][1]]
+    except:
+        to_rp_list = ['Nan', 'Nan']
 
     return from_rp_list, to_rp_list
 
@@ -245,11 +252,11 @@ def dm_page(document,calc_data,mde):
 
     return document
 
-def overlay_design_table(document, ll, calc_data, mde_path, dir_text, post_design=False):
+def overlay_design_table(document, ll, calc_data, mde_path, dir_text, args, post_design=False):
     """
     Overlay design table and title
     """
-    from_rp_list, to_rp_list = get_from_rp_to_rp_str(mde_path)
+    from_rp_list, to_rp_list = get_from_rp_to_rp_str(mde_path, args)
     paragraph = document.add_paragraph()
     paragraph.alignment = WD_ALIGN_PARAGRAPH.LEFT
     sentence = paragraph.add_run('{} Lane from RP {}+{} to RP {}+{}'.format(dir_text, from_rp_list[0], from_rp_list[1], to_rp_list[0], to_rp_list[1]))
@@ -371,7 +378,7 @@ def overlay_design_table(document, ll, calc_data, mde_path, dir_text, post_desig
 
     return document
 
-def overlay_design_page(document, ll, calc_data, dir_text, mde_path, post_design=False):
+def overlay_design_page(document, ll, calc_data, dir_text, mde_path, args, post_design=False):
 
     paragraph = document.add_paragraph()
     if post_design:
@@ -385,7 +392,7 @@ def overlay_design_page(document, ll, calc_data, dir_text, mde_path, post_design
     sentence.italic = True
     sentence.font.color.rgb = docx.shared.RGBColor(26, 36, 238)
 
-    document = overlay_design_table(document, ll, calc_data, mde_path, dir_text, post_design)
+    document = overlay_design_table(document, ll, calc_data, mde_path, dir_text, args, post_design)
 
     return document
 #################################################################################

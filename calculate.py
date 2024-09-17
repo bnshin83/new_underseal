@@ -479,7 +479,8 @@ def writeAndExecute(mde, pavtype, roadtype, ll_obj, sensordata):
     return temp_corr, adj_elm, pcc_mod, rxn_subg
         
 
-def calc(con, id, pavtype, roadtype, ll_obj, mde, special_case):
+def calc(con, id, pavtype, roadtype, ll_obj, mde, args):
+    special_case = args.pavtype_special_case
     deflections, sensordata, pressure, load, cal_obj, point, drop_no, adj_elm, pcc_mod, rxn_subg = get_data(mde, pavtype, roadtype, ll_obj)
     # deflections, sensordata, pressure, load, cal_obj, point, drop_no = get_data(con, id)
     # print("Points again")

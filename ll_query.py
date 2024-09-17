@@ -81,7 +81,7 @@ def compose_ll_entry_string(ll_no, f25_path, year, start_gps, end_gps, pavtype, 
             lane_type = 'RAMP'
         else:
             # If it is special case, use whatever after 5th white space as lane_type
-            if args.special_case:
+            if args.pavtype_special_case:
                 lane_type = lane_info
             else:
                 lane_type = 'UNKNOWN'

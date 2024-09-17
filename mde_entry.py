@@ -142,10 +142,12 @@ def read_pavtype(path, f25_path):
     mde_conn.close()
     return pav_e1, pav_e2
 
-def read_mde(con, path, f25_path, id, ll_obj, gpsx, gpsy, gpsx_dict, gpsy_dict, server_root, skip_img_matching=False):
+def read_mde(con, path, f25_path, id, ll_obj, gpsx, gpsy, gpsx_dict, gpsy_dict, args):
     """
     reuse the gpsx and gpsy that has been extracted at the begining of the result uploading
     """
+    server_root = args.server_root
+    skip_img_matching = args.skip_img_matching
     mde = {}
     pre, ext = os.path.splitext(path)
     base = os.path.basename(f25_path)

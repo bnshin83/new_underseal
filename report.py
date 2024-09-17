@@ -33,6 +33,8 @@ def elab_dir(dir):
         return "South Bound"
     elif(dir == "WB"):
         return "West Bound"
+    else:
+        return dir
 
 def create_doc():
     document = Document()
@@ -62,8 +64,6 @@ def set_header_footer(mde_path, ll, treatment):
 
     footer = section.footer
     paragraph = footer.paragraphs[0]
-    # paragraph.text = "Left text\tCenter Text\tRight Text"
-    # paragraph.text = ll["roadname"]+" from "+(ll["rp from"].split('.')[0])+"+"+(ll["rp from"].split('.')[1])+" to "+(ll["rp to"].split('.')[0])+"+"+(ll["rp to"].split('.')[1])+"\t\t"+treatment
     if(ll["pavtype"] == "asphalt"):
         treatment = "Overlay Design"
     elif(ll["pavtype"] == "concrete"):
@@ -144,9 +144,6 @@ def cover_page(ll_no, year, mde_path, ll, mde, document,con):
     route_table.style = 'Table Grid'
     cells = route_table.rows[0].cells
 
-    # cells = align_middle_cells(cells)
-    # cells[0].text = "Route: "
-    # cells[1].text = ll["roadname"]+" from "+(ll["rp from"].split('.')[0])+"+"+(ll["rp from"].split('.')[1])+" to "+(ll["rp to"].split('.')[0])+"+"+(ll["rp to"].split('.')[1])
     cell_width = 2
     cell_width2 = 4
     run = cells[0].paragraphs[0].add_run("Route: ")
@@ -154,10 +151,8 @@ def cover_page(ll_no, year, mde_path, ll, mde, document,con):
     run.bold = True
     cells[1].text = get_pathstring(mde_path)
     cells[1].width = Inches(cell_width2)
-    #ll["roadname"]+" from "+ll["rp from"]+" to "+ll["rp to"]
 
     cells = route_table.rows[1].cells
-    # cells = align_middle_cells(cells)
     run = cells[0].paragraphs[0].add_run("District: ")
     cells[0].width = Inches(cell_width)
     run.bold = True
@@ -165,8 +160,6 @@ def cover_page(ll_no, year, mde_path, ll, mde, document,con):
     cells[1].width = Inches(cell_width2)
 
     cells = route_table.rows[2].cells
-    # cells = align_middle_cells(cells)
-    # cells[0].text = "Contract Number: "
     run = cells[0].paragraphs[0].add_run("Contract Number: ")
     cells[0].width = Inches(cell_width)
     run.bold = True
@@ -174,8 +167,6 @@ def cover_page(ll_no, year, mde_path, ll, mde, document,con):
     cells[1].width = Inches(cell_width2)
 
     cells = route_table.rows[3].cells
-    # cells = align_middle_cells(cells)
-    # cells[0].text = "R&D Testing Request ID Number: "
     run = cells[0].paragraphs[0].add_run("R&D Testing Request\nID Number: ")
     cells[0].width = Inches(cell_width)
     run.bold = True
@@ -227,17 +218,17 @@ def cover_page(ll_no, year, mde_path, ll, mde, document,con):
     # [:2] is to extract the first 2 letter from the dir string ('WBDL' for west bound driving lane)
     # in 2022 longlist the direction includes the lane name
     # So 'WB' will be changed to one of ['WBDL','WBPL','WBSH']
-    run = cells[1].paragraphs[0].add_run(elab_dir(ll["dir"][:2])) 
+    run = cells[1].paragraphs[0].add_run(elab_dir(ll["dir"])) 
     cells[1].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
     run = cells[2].paragraphs[0].add_run(get_thickness(mde, ll["pavtype"]))
     cells[2].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
     
     return document
 
-def underseal_page(rp_str, mde_path, ll, calc_data, document):
+def underseal_page(rp_str, mde_path, ll, calc_data, document, args):
     # p = document.add_paragraph()
-    from_rp, to_rp = report_page4.get_from_rp_to_rp_str(mde_path)
-    head = elab_dir(ll["dir"][:2]) + " Lane from RP-" + from_rp[0]+ "+" + from_rp[1] + " to RP-" + to_rp[0] + "+" +to_rp[1] + "\n"
+    from_rp, to_rp = report_page4.get_from_rp_to_rp_str(mde_path, args)
+    head = elab_dir(ll["dir"]) + " Lane from RP-" + from_rp[0]+ "+" + from_rp[1] + " to RP-" + to_rp[0] + "+" +to_rp[1] + "\n"
     # p.add_run(heading).bold = True
     heading = document.add_heading()
     sentence = heading.add_run(head)
@@ -871,7 +862,7 @@ def get_rp_str(rp_val, dmi_val):
     return rp_str
 
 def comments_page(ll, mde_path, comments, document):
-    heading = "Comments for " + elab_dir(ll["dir"][:2]) + " from " + get_pathstring(mde_path)
+    heading = "Comments for " + elab_dir(ll["dir"]) + " from " + get_pathstring(mde_path)
     # document.add_heading(heading, 1)
     p = document.add_paragraph()
     sentence = p.add_run(heading)
@@ -884,7 +875,8 @@ def comments_page(ll, mde_path, comments, document):
     document.add_paragraph(''.join(comments))
     return document
 
-def gen_report(ll, mde, calc_data, stats_data, mde_path, f25_path, ll_no, year, con, special_case):
+def gen_report(ll, mde, calc_data, stats_data, mde_path, f25_path, ll_no, year, con, args):
+    special_case = args.pavtype_special_case
     comments_arr, dmi_val, rp_val = comments.get_comments(f25_path)
     report_page4.assign_values(rp_val, dmi_val)
     rp_str = get_rp_str(rp_val, dmi_val)
@@ -893,7 +885,7 @@ def gen_report(ll, mde, calc_data, stats_data, mde_path, f25_path, ll_no, year, 
     document = cover_page(ll_no, year, mde_path, ll, mde, document, con) #page 1
     document.add_page_break()
     if(ll["pavtype"]!="asphalt"):
-        document = underseal_page(rp_str, mde_path, ll, calc_data, document) #page 2
+        document = underseal_page(rp_str, mde_path, ll, calc_data, document, args) #page 2
     document = chart(rp_str, stats_data, calc_data, mde, document)#page 3
     document = report_page4.soil_profile_page(document, mde, calc_data,rp_val,dmi_val)
     document.add_page_break()
@@ -901,14 +893,14 @@ def gen_report(ll, mde, calc_data, stats_data, mde_path, f25_path, ll_no, year, 
         document = report_page4.dm_page(document, calc_data, mde)
     document.add_page_break()
     document = esals_page(rp_str, calc_data, document)
-    document = report_page4.overlay_design_page(document, ll, calc_data, report_page4.dir_str(ll["dir"][:2]), mde_path, post_design=False)
+    document = report_page4.overlay_design_page(document, ll, calc_data, report_page4.dir_str(ll["dir"]), mde_path, args, post_design=False)
 
     document.add_page_break()
 
     #(to be modify)# change the "calc_data" in this line to "post underseal" data
     # Asphalt donesn't have post design page
     if(ll["pavtype"]!="asphalt" and (not special_case)):
-        document = report_page4.overlay_design_page(document, ll, calc_data, report_page4.dir_str(ll["dir"][:2]), mde_path, post_design=True)
+        document = report_page4.overlay_design_page(document, ll, calc_data, report_page4.dir_str(ll["dir"]), mde_path, args, post_design=True)
         document.add_page_break()
 
     document = comments_page(ll, mde_path, comments_arr, document)
