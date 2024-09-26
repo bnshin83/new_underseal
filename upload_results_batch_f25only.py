@@ -90,10 +90,14 @@ def upload_single_result(args, f25_path, ll_no, year, con, user_input_dict, comm
     # Assign the new pavement type
     ll_obj['pavtype'] = pavtype
 
+    print('before ll_query')
+
     if args.debug:
         id,dir, lane_type = ll_query(con, ll_no, f25_path, year, start_gps, end_gps, pavtype, args, user_input_dict, commit=0)
     else:
         id,dir,lane_type = ll_query(con, ll_no, f25_path, year, start_gps, end_gps, pavtype, args, user_input_dict, commit=1) # change to commit=1 when in production
+    
+    
     
     ll_obj['dir'] = dir
 
@@ -303,6 +307,8 @@ if __name__ == "__main__":
                 print('Repeat entry of {}-{}, this input is ignored...'.format(ll_no,year))
             elif "F25 filename does not meet requirement" in traceback_str:
                 with open(filename_error_log_path, "a+") as filename_log_f:
+                    print("Following F25 file does not meet the filename requirement, please consider using '--user_input'.",
+                          file=filename_log_f)
                     print("{}\n".format(f25_path),file=filename_log_f)
             else:
                 with open(log_error_file_path, "a+") as f:

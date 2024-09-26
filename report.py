@@ -45,7 +45,7 @@ def create_doc():
     paragraph.style = document.styles["Header"]
     document.save("TestDoc.docx")
 
-def set_header_footer(mde_path, ll, treatment):
+def set_header_footer(mde_path, ll, treatment, args):
     document = Document()
     style = document.styles['Normal']
     font = style.font
@@ -70,7 +70,7 @@ def set_header_footer(mde_path, ll, treatment):
         treatment = "Underseal"
     elif(ll["pavtype"] == "composite"):
         treatment = "Underseal and Overlay Design"
-    paragraph.text = get_pathstring(mde_path) + "\t\t" + treatment
+    paragraph.text = get_pathstring(mde_path, args) + "\t" + treatment
     paragraph.style = document.styles["footer"]
     return document
 
@@ -109,7 +109,7 @@ def align_middle_cells(cells):
         cell.paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
     return cells
 
-def cover_page(ll_no, year, mde_path, ll, mde, document,con):
+def cover_page(ll_no, year, mde_path, ll, mde, document, con, args):
     heading = ll["roadname"] + " Pavement Falling Weight Deflectometer (FWD) Testing Results"
     # document.add_heading(heading, 1)
     p = document.add_paragraph()
@@ -149,7 +149,7 @@ def cover_page(ll_no, year, mde_path, ll, mde, document,con):
     run = cells[0].paragraphs[0].add_run("Route: ")
     cells[0].width = Inches(cell_width)
     run.bold = True
-    cells[1].text = get_pathstring(mde_path)
+    cells[1].text = get_pathstring(mde_path, args)
     cells[1].width = Inches(cell_width2)
 
     cells = route_table.rows[1].cells
@@ -225,7 +225,7 @@ def cover_page(ll_no, year, mde_path, ll, mde, document,con):
     
     return document
 
-def underseal_page(rp_str, mde_path, ll, calc_data, document, args):
+def underseal_page(rp_str, mde_path, mde, ll, calc_data, document, args):
     # p = document.add_paragraph()
     from_rp, to_rp = report_page4.get_from_rp_to_rp_str(mde_path, args)
     head = elab_dir(ll["dir"]) + " Lane from RP-" + from_rp[0]+ "+" + from_rp[1] + " to RP-" + to_rp[0] + "+" +to_rp[1] + "\n"
@@ -271,7 +271,7 @@ def underseal_page(rp_str, mde_path, ll, calc_data, document, args):
     run = cells[0].paragraphs[0].add_run("Total length of pavement tested: ")
     run.bold = True
     # length = round((abs(float(ll["rp from"]) - float(ll["rp to"])))*5280)
-    length = calc_dist(mde_path)
+    length = calc_dist(mde_path, mde, args)
     run = cells[1].paragraphs[0].add_run(str(length))
     cells[1].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
     cells[2].text = "feet"
@@ -566,74 +566,85 @@ def esals_page(rp_str, calc_data, document):
     document.add_page_break()
     return document
 
-def get_pathstring(mde_path):
-    tmp = os.path.splitext(os.path.basename(mde_path))[0]
-    arr = tmp.split()
-    arr[1] = "from"
-    tmp = ' '.join(arr)
-    return tmp
+def get_pathstring(mde_path, args):
+    if args.user_input:
+        return os.path.splitext(os.path.basename(mde_path))[0]
+    else:
+        tmp = os.path.splitext(os.path.basename(mde_path))[0]
+        arr = tmp.split()
+        arr[1] = "from"
+        tmp = ' '.join(arr)
+        return tmp
 
-def calc_dist(mde_path):
+def calc_dist(mde_path, mde, args):
     """
     (TODO)
     Maybe we can use regex to extract this. Modify it later.
     """
-    path = get_pathstring(mde_path)
-    tmp = path.split()
-    d1 = tmp[2]
-    d2 = tmp[4]
-    rp1 = 0
-    dmi1 = 0
-    neg1 = None
-    till = 0
-    for i in range(len(d1[3:])):
-        if(d1[3+i] == '+'):
-            till = 3+i
-            break
-        rp1 = rp1*10+(int(d1[3+i]))
-    if(d1[till+1] == '-'):
-        neg1 = 1
-        till = till + 1
-    # print("till: ", till)
-    dmi1 = float(d1[till+1:len(d1)])
-    # # print('dmi1_wen',dmi1)
-    # for i in range(till+1, len(d1)):
-    #     dmi1 = dmi1*10+(int(d1[i]))
-    # print('dmi1',dmi1)
-#########################################
-    rp2 = 0
-    dmi2 = 0
-    neg2 = None
-    till = 0
-    for i in range(len(d2[3:])):
-        if(d2[3+i] == '+'):
-            till = 3+i
-            break
-        rp2 = rp2*10+(int(d2[3+i]))
-    if(d2[till+1] == '-'):
-        neg2 = 1
-        till = till + 1
-    # print("till: ", till)
-    dmi2 = float(d2[till+1:len(d2)])
-    # # print('dmi1_wen',dmi1)
-    # for i in range(till+1, len(d1)):
-    #     dmi1 = dmi1*10+(int(d1[i]))
-    # print('dmi2',dmi2)
-
-    dist1 = 0
-    dist2 = 0
-    if(neg1 == 1):
-        dist1 = int(rp1) - (int(dmi1)/100.0)
+    if args.user_input:
+        # use the chainage of the last test point from deflection table of mde file as total distance tested
+        # mde['deflections'] is a list of array, 'chainage' is the second column
+        # Chainage is in meters, needs to convert to feet
+        chainage_meters = mde['deflections'][-1][1]
+        chainage_feet = int(chainage_meters * 3.281)
+        return chainage_feet
     else:
-        dist1 = int(rp1) + (int(dmi1)/100.0)
-    
-    if(neg2 == 1):
-        dist2 = int(rp2) - (int(dmi2)/100.0)
-    else:
-        dist2 = int(rp2) + (int(dmi2)/100.0)
+        path = get_pathstring(mde_path, args)
+        tmp = path.split()
+        d1 = tmp[2]
+        d2 = tmp[4]
+        rp1 = 0
+        dmi1 = 0
+        neg1 = None
+        till = 0
+        for i in range(len(d1[3:])):
+            if(d1[3+i] == '+'):
+                till = 3+i
+                break
+            rp1 = rp1*10+(int(d1[3+i]))
+        if(d1[till+1] == '-'):
+            neg1 = 1
+            till = till + 1
+        # print("till: ", till)
+        dmi1 = float(d1[till+1:len(d1)])
+        # # print('dmi1_wen',dmi1)
+        # for i in range(till+1, len(d1)):
+        #     dmi1 = dmi1*10+(int(d1[i]))
+        # print('dmi1',dmi1)
+    #########################################
+        rp2 = 0
+        dmi2 = 0
+        neg2 = None
+        till = 0
+        for i in range(len(d2[3:])):
+            if(d2[3+i] == '+'):
+                till = 3+i
+                break
+            rp2 = rp2*10+(int(d2[3+i]))
+        if(d2[till+1] == '-'):
+            neg2 = 1
+            till = till + 1
+        # print("till: ", till)
+        dmi2 = float(d2[till+1:len(d2)])
+        # # print('dmi1_wen',dmi1)
+        # for i in range(till+1, len(d1)):
+        #     dmi1 = dmi1*10+(int(d1[i]))
+        # print('dmi2',dmi2)
 
-    # print("dist1: ", dist1, "\ndist2: ", dist2)
-    return round(abs((dist2*5280)-(dist1*5280)))
+        dist1 = 0
+        dist2 = 0
+        if(neg1 == 1):
+            dist1 = int(rp1) - (int(dmi1)/100.0)
+        else:
+            dist1 = int(rp1) + (int(dmi1)/100.0)
+        
+        if(neg2 == 1):
+            dist2 = int(rp2) - (int(dmi2)/100.0)
+        else:
+            dist2 = int(rp2) + (int(dmi2)/100.0)
+
+        # print("dist1: ", dist1, "\ndist2: ", dist2)
+        return round(abs((dist2*5280)-(dist1*5280)))
     
 
 def esals_default_table(document):
@@ -861,8 +872,8 @@ def get_rp_str(rp_val, dmi_val):
     rp_str = str(rp_val) + " is FWD Station (DMI) " + str(dmi_val) +" Feet\n"
     return rp_str
 
-def comments_page(ll, mde_path, comments, document):
-    heading = "Comments for " + elab_dir(ll["dir"]) + " from " + get_pathstring(mde_path)
+def comments_page(ll, mde_path, comments, document, args):
+    heading = "Comments for " + elab_dir(ll["dir"]) + " from " + get_pathstring(mde_path, args)
     # document.add_heading(heading, 1)
     p = document.add_paragraph()
     sentence = p.add_run(heading)
@@ -881,11 +892,11 @@ def gen_report(ll, mde, calc_data, stats_data, mde_path, f25_path, ll_no, year, 
     report_page4.assign_values(rp_val, dmi_val)
     rp_str = get_rp_str(rp_val, dmi_val)
     document = report_page4.create_doc()
-    document = report_page4.header_footer(document, mde_path, ll, "Underseal")
-    document = cover_page(ll_no, year, mde_path, ll, mde, document, con) #page 1
+    document = report_page4.header_footer(document, mde_path, ll, args)
+    document = cover_page(ll_no, year, mde_path, ll, mde, document, con, args) #page 1
     document.add_page_break()
     if(ll["pavtype"]!="asphalt"):
-        document = underseal_page(rp_str, mde_path, ll, calc_data, document, args) #page 2
+        document = underseal_page(rp_str, mde_path, mde, ll, calc_data, document, args) #page 2
     document = chart(rp_str, stats_data, calc_data, mde, document)#page 3
     document = report_page4.soil_profile_page(document, mde, calc_data,rp_val,dmi_val)
     document.add_page_break()
@@ -903,7 +914,7 @@ def gen_report(ll, mde, calc_data, stats_data, mde_path, f25_path, ll_no, year, 
         document = report_page4.overlay_design_page(document, ll, calc_data, report_page4.dir_str(ll["dir"]), mde_path, args, post_design=True)
         document.add_page_break()
 
-    document = comments_page(ll, mde_path, comments_arr, document)
+    document = comments_page(ll, mde_path, comments_arr, document, args)
     
     # Save the report in the same folder where MDE file is located
     report_save_folder = os.path.dirname(mde_path)

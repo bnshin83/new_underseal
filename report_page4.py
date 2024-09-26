@@ -108,15 +108,18 @@ def add_page_number(p):
 
     p.alignment = WD_ALIGN_PARAGRAPH.RIGHT
 
-def get_pathstring(mde_path):
-    tmp = os.path.splitext(os.path.basename(mde_path))[0]
-    arr = tmp.split()
-    arr[1] = "from"
-    tmp = ' '.join(arr)
-    return tmp
+def get_pathstring(mde_path, args):
+    if args.user_input:
+        return os.path.splitext(os.path.basename(mde_path))[0]
+    else:
+        tmp = os.path.splitext(os.path.basename(mde_path))[0]
+        arr = tmp.split()
+        arr[1] = "from"
+        tmp = ' '.join(arr)
+        return tmp
 
 
-def header_footer(doc, mde_path, ll, treatment):
+def header_footer(doc, mde_path, ll, args):
     today = date.today()
     d1 = today.strftime("%m/%d/%Y")
 
@@ -137,19 +140,26 @@ def header_footer(doc, mde_path, ll, treatment):
     row_2_cell[1].paragraphs[0].paragraph_format.line_spacing = 1
     row_1_cell[1].paragraphs[0].paragraph_format.space_after = Pt(0)
 
-    section = doc.sections[-1]
-    footer = section.footer
-    paragraph = footer.paragraphs[0]
-    # paragraph.text = "Left text\tCenter Text\tRight Text"
-    # paragraph.text = ll["roadname"]+" from "+(ll["rp from"].split('.')[0])+"+"+(ll["rp from"].split('.')[1])+" to "+(ll["rp to"].split('.')[0])+"+"+(ll["rp to"].split('.')[1])+"\t\t"+treatment
+    # Edit the footer section
     if(ll["pavtype"] == "asphalt"):
         treatment = "Overlay Design"
     elif(ll["pavtype"] == "concrete"):
         treatment = "Underseal"
     elif(ll["pavtype"] == "composite"):
         treatment = "Underseal and Overlay Design"
-    paragraph.text = get_pathstring(mde_path) + "\t\t" + treatment
+    section = doc.sections[-1]
+    footer = section.footer
+    paragraph = footer.add_paragraph()
+    paragraph.text = get_pathstring(mde_path, args) + "\t\t" + treatment
     paragraph.style = doc.styles["footer"]
+    # Edit the format of footer to avoid overflow of text due to filename is too long.
+    sec = doc.sections[0]
+    # finding end_point for the content 
+    margin_end = docx.shared.Inches(
+        sec.page_width.inches - (sec.left_margin.inches + sec.right_margin.inches))
+    tab_stops = paragraph.paragraph_format.tab_stops
+    # adding new tab stop, to the end point, and making sure that it's `RIGHT` aligned.
+    tab_stops.add_tab_stop(margin_end, docx.enum.text.WD_TAB_ALIGNMENT.RIGHT)
     return doc
 #################################################
 
