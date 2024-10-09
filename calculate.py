@@ -162,13 +162,12 @@ def get_log(sgd):
 
 def getSurfaceDefCrit(mde):
     road = mde["misc"][0][-1]
-    # print(road)
-    defcrit = None
     if (road == 'i'):
         defcrit = 8
     elif (road == 'u'):
         defcrit = 10
-    elif (road == 's'):
+    # If the route name is not specified or it is SR, follow the highest DefCrit
+    else:
         defcrit = 12
     return defcrit
 
