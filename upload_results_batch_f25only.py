@@ -33,13 +33,17 @@ def delete_rows(con, tablename, id, verbose=1):
     if verbose == 1:
         print("Removed illegal entries from ", tablename, "with id ", str(id))
 
-################################## Main ##################################
+################################## Major function definition ##################################
 def upload_single_result(args, f25_path, ll_no, year, con, user_input_dict, commit=0):
+    """
+    Major function responsible for processing the raw FWD and uploading the calculated resutls to Oracle database.
+    This function itself calls many other cutomized functions. Please go through the cutomized functions to gain deeper understanding of how it works.
+    """
 
     mde_path = f25_path[:-3] + 'mde'
     
     if not args.pavtype_special_case:
-        # Decide Pavement type
+        # Decide Pavement type automatically using the elastic modulus.
         e1,e2= read_pavtype(mde_path, f25_path)
         # 2000 is the threshold for concrete
         if e1 >= 2000:
@@ -68,10 +72,9 @@ def upload_single_result(args, f25_path, ll_no, year, con, user_input_dict, comm
         root.bind("<Return>", lambda x: root.quit())
         root.mainloop()
         pavtype = str(clicked.get())
+        #### (End) Tkinter code to take user input
 
-    ### Code for input pavement type (END)
-    #### (End) Tkinter code to take user input
-    # Preset id to none to prevent exit of batch uploading due to "id cannot find" error
+    # Preset id to none to prevent termination of batch uploading due to "id cannot find" error
     global id
     id = None
 
@@ -87,17 +90,13 @@ def upload_single_result(args, f25_path, ll_no, year, con, user_input_dict, comm
 
     if not (pavtype in ["asphalt", "concrete", "composite"]):
         raise Exception("Please input valid pavement type")
+    
     # Assign the new pavement type
     ll_obj['pavtype'] = pavtype
 
-    print('before ll_query')
+    # print('before ll_query')
 
-    if args.debug:
-        id,dir, lane_type = ll_query(con, ll_no, f25_path, year, start_gps, end_gps, pavtype, args, user_input_dict, commit=0)
-    else:
-        id,dir,lane_type = ll_query(con, ll_no, f25_path, year, start_gps, end_gps, pavtype, args, user_input_dict, commit=1) # change to commit=1 when in production
-    
-    
+    id,dir,lane_type = ll_query(con, ll_no, f25_path, year, start_gps, end_gps, pavtype, args, user_input_dict, commit=1)
     
     ll_obj['dir'] = dir
 
@@ -129,43 +128,34 @@ def upload_single_result(args, f25_path, ll_no, year, con, user_input_dict, comm
     if args.gen_report:
         report.gen_report(ll_obj, mde, calc_data, stats_data, mde_path, f25_path, ll_no, year, con, args)
 
-
-    if args.user_input:
-        return user_input_dict
-    else:
-        return None
-
 if __name__ == "__main__":
     
     from pathlib import Path
     import argparse
 
+    ############## (Args input, start) ###################
     parser = argparse.ArgumentParser(description='Upload result in batch mode')
-    parser.add_argument('--gen_report', action='store_true')
-    parser.add_argument('--debug', action='store_true')
-    parser.add_argument('--pavtype_special_case', action='store_true')
-    parser.add_argument('--server_root', type=str, default="\\\\dotwebp016vw/data/FWD/")
-    parser.add_argument('--dev_env', type=str, default="shin",choices=['dev_wen', 'shin', 'ecn_wen','ecn_shin'])
-    parser.add_argument('--skip_img_matching', action='store_true')
-    parser.add_argument('--txt_path', type=str)
-    parser.add_argument('--gui', action='store_true')
-    parser.add_argument('--user_input', action='store_true')
+    parser.add_argument('--gen_report', action='store_true', help="Use this flag to generate Word report.")
+    parser.add_argument('--pavtype_special_case', action='store_true', help="Use this flag if the pavement type cannot be determined correctly through 'read_pavtype' function")
+    parser.add_argument('--server_root', type=str, default="\\\\dotwebp016vw/data/FWD/", help="Default image storage location for INDOT image server. Need to change it for local developement.")
+    parser.add_argument('--dev_env', type=str, default="shin",choices=['dev_wen', 'shin', 'ecn_wen','ecn_shin'], 
+                        help="Use different configs to connect to database. See db.connect for more details.")
+    parser.add_argument('--skip_img_matching', action='store_true', help = "If the user does not want to upload images, it has the option to skip it. The code can also skip image matching when there is no image folders")
+    parser.add_argument('--txt_path', type=str, help = "path of txt where each line contains a single F25 path. If use this flag, dont use the --gui flag")
+    parser.add_argument('--gui', action='store_true', help = "This is for use that want to use a GUI to pick the path of txt that contains multiple F25 paths. If use this flag, dont use the --txt_path flag")
+    parser.add_argument('--user_input', action='store_true', help= "Override the automatic LL NO, Year, Test Direction, and Lane Type detection when the F25 path does not follow pre-specific folder structure.")
     args = parser.parse_args()
+    ############## (Args input, end) ###################
 
-    ### (Begin) Tkinter code to take user input
+    ############### (Begin) Tkinter code to take user input for F25 path ###############
     if args.gui:
-        if args.dev_env != 'dev_wen':
-            txt_path = filedialog.askopenfilename(initialdir='./',title='Select An External .txt File', 
-                                                filetypes=(("TXT files","*.txt"),("all files","*.*"))
-                                                )
-        else:
-            txt_path = filedialog.askopenfilename(initialdir='D:/indot_proj/Underseal/result_folder/', title='Select An External .txt File', 
-                                                filetypes=(("TXT files","*.txt"),("all files","*.*"))
-                                                )
+        txt_path = filedialog.askopenfilename(initialdir='./',title='Select An External .txt File', 
+                                            filetypes=(("TXT files","*.txt"),("all files","*.*"))
+                                            )
     else:
         txt_path = args.txt_path
     print('txt path: ',txt_path)
-    #### (End) Tkinter code to take user input
+    ############### (End) Tkinter code to take user input for F25 path ###############
 
     #### Prepare the error log file
     err_log_dir = os.path.dirname(txt_path)
@@ -185,16 +175,19 @@ if __name__ == "__main__":
     if os.path.exists(filename_error_log_path):
         os.remove(filename_error_log_path)
 
-
+    # Connect to database. "con" is a object instance, which methods and classes including "cursor" class.
+    # "cursor" class can be invoked to upload calculated results to  Oracle database.
+    # "con" is called in other functions to upload data to Oracle database. 
     con = db.connect(args.dev_env)
 
+    # Reads the txt file where each line is a F25 path.
     with open(txt_path,'r') as file:
         Lines = file.readlines()
         
     error_flag = False
     for line in Lines:
-        # This is for user input in case of special case like airport test 
-        user_input_dict = {}
+        # Automatically detect year, and request number from the file path
+        # File path needs to follow the folder structure!!!!!!!!!!
         if not args.user_input:
             split_temp = line.strip().split('\\')
             # match 2 digits after "D" in request number to extract the year 
@@ -204,12 +197,15 @@ if __name__ == "__main__":
             year_2digits_str = year_temp[0]
             f25_path, year = line, int('20'+year_2digits_str)
             f25_path = f25_path.replace('"', '').strip()
-            # Extract the ll_no using regex (not using any more)
-            # ll_no_temp = re.findall(r'LL\s?-?\s?(\d+)', split_temp[-2])
             # extract Request NO., and remove the white space
             req_no = split_temp[-3].replace(" ", "")
             ll_no = find_ll_no_given_req_no(con, os.path.basename(f25_path), req_no)
+
+        # This is for user input in case of special case like airport test
         else:
+            ########### User input interface implemented with Tkinter (Start) ###########
+            # Customized input includes LongList Number, Test Direction, Year and Lane Type
+            user_input_dict = {}
             f25_path = line
             f25_path = f25_path.replace('"', '').strip()         
 
@@ -290,16 +286,24 @@ if __name__ == "__main__":
             # Start the main loop
             root.mainloop()
             root.destroy()
+            ########### User input interface implemented with Tkinter (End) ###########
 
+            # Extract the LongList Number, Request Number and Year from user input
             ll_no = user_input_dict['ll_no']
             year = user_input_dict['year']
             req_no = find_req_no_given_ll_no(con, os.path.basename(f25_path), ll_no, year)
 
+        # This is the major function that is responsible for calculating and uploading the results.
+        # This major function itself will use many other customized functions.
+        # Use try and except structure to handle error during excuting "upload_single_result".
+        # Try and except used because we want to skip the problematic F25 and MDE files.
+        # The bug related to problematic F25 and MDE files will be recorded in the error log file.
         try:
-            if args.debug:
-                upload_single_result(args, f25_path, ll_no, year, con, user_input_dict, commit=0)
-            else:
-                upload_single_result(args, f25_path, ll_no, year, con, user_input_dict, commit=1) # change to commit=1 when in production
+            upload_single_result(args, f25_path, ll_no, year, con, user_input_dict, commit=1)
+        # Roll Back Mechanism: If error occurs in the "upload_single_result" function, 
+        #                      record the error message in error log file and delete the corresponding row that has been uploaded.
+        # Do not delete the corresponding row in the STDA_LONGLIST_INFO,
+        # because we don't want to delete the LL request that has been uploaded by "upload_ll_batch.py".
         except:
             error_flag = True
             traceback_str = traceback.format_exc()
@@ -329,6 +333,7 @@ if __name__ == "__main__":
                     print('Due to unexpected error, LL-{} from year {} is deleted...'.format(ll_no,year),file=f)
                     print('(End of error log)#############LL-{} from year {} (Request NO. {})#######################\n\n'.format(ll_no,year,req_no),file=f)
 
+    # Main code finish. Output warning message if there are any problematic F25 and MDE files that produces error during excuting "upload_single_result".
     print("\n Uploading finished!!!")
     if error_flag:
         print("WARNING!!! Errors encountered during batch process but it is skipped.")
