@@ -5,6 +5,7 @@ This project is designed for management of INDOT FWD data. It mainly consists of
 
 ## Installation
 Please refer to the Manual of SPR-4450
+https://purdue0-my.sharepoint.com/:w:/g/personal/shin283_purdue_edu/ER8m-D9yPQVGg2cWB771e0QB8i82BTEgqmYh0D8RQ8JDXw?e=MeKTGC
 
 ## Overall Workflow of FWD data collection and processing
 At each quarter of FWD data collection seasons, different INDOT districts would request FWD on different road sections. These requests would handled by a Excel file called LongList file. 
