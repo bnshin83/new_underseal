@@ -167,6 +167,7 @@ if __name__ == "__main__":
     warn_log_file_path = os.path.join(err_log_dir,warn_log_file)
     filename_error_log_path = os.path.join(err_log_dir,filename_error_log_file)
     print('Error log is saved in: {}'.format(log_error_file_path))
+    print("DEBUG 1: starting processing...")
     if os.path.exists(log_error_file_path):
         print('Overwrite previous error log!!!')
         os.remove(log_error_file_path)
@@ -178,11 +179,14 @@ if __name__ == "__main__":
     # Connect to database. "con" is a object instance, which methods and classes including "cursor" class.
     # "cursor" class can be invoked to upload calculated results to  Oracle database.
     # "con" is called in other functions to upload data to Oracle database. 
+    print("DEBUG 2: about to connect to database...")
     con = db.connect(args.dev_env)
+    print("DEBUG 3: database connected OK")
 
     # Reads the txt file where each line is a F25 path.
     with open(txt_path,'r') as file:
         Lines = file.readlines()
+    print("DEBUG 4: file read, {} lines".format(len(Lines)))
         
     error_flag = False
     for line in Lines:
@@ -204,6 +208,7 @@ if __name__ == "__main__":
             # extract Request NO., and remove the white space
             req_no = split_temp[-3].replace(" ", "")
             ll_no = find_ll_no_given_req_no(con, os.path.basename(f25_path), req_no)
+            print("DEBUG 5: ll_no={}, year={}, req_no={}".format(ll_no, year, req_no))
 
         # This is for user input in case of special case like airport test
         else:
@@ -301,15 +306,18 @@ if __name__ == "__main__":
         # Use try and except structure to handle error during excuting "upload_single_result".
         # Try and except used because we want to skip the problematic F25 and MDE files.
         # The bug related to problematic F25 and MDE files will be recorded in the error log file.
+        print("DEBUG 6: about to call upload_single_result for", os.path.basename(f25_path))
         try:
             upload_single_result(args, f25_path, ll_no, year, con, user_input_dict, commit=1)
         # Roll Back Mechanism: If error occurs in the "upload_single_result" function, 
         #                      record the error message in error log file and delete the corresponding row that has been uploaded.
         # Do not delete the corresponding row in the STDA_LONGLIST_INFO,
         # because we don't want to delete the LL request that has been uploaded by "upload_ll_batch.py".
-        except:
+        except Exception as e:
             error_flag = True
             traceback_str = traceback.format_exc()
+            print("DEBUG ERROR: exception caught! {}".format(str(e)))
+            print(traceback_str)
             if 'unique constraint' in traceback_str:
                 print('Repeat entry of {}-{}, this input is ignored...'.format(ll_no,year))
             elif "F25 filename does not meet requirement" in traceback_str:
