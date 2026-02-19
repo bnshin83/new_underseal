@@ -135,7 +135,14 @@ def read_pavtype(path, f25_path):
 
     # Run Access query in subprocess to avoid DLL conflict between
     # cx_Oracle and Microsoft Access ODBC driver in the main process.
+    # Must clean PATH so Oracle DLLs don't get inherited by subprocess.
     import subprocess, sys, json
+    env = os.environ.copy()
+    oracle_dir = r"C:\Users\bshin\Documents\instantclient-basic-windows.x64-21.3.0.0.0\instantclient_21_3"
+    if oracle_dir in env.get('PATH', ''):
+        paths = env['PATH'].split(';')
+        paths = [p for p in paths if oracle_dir not in p]
+        env['PATH'] = ';'.join(paths)
     script = (
         "import pyodbc, json\n"
         "conn = pyodbc.connect(r'Driver={{Microsoft Access Driver (*.mdb, *.accdb)}};DBQ={dbq}')\n"
@@ -145,7 +152,7 @@ def read_pavtype(path, f25_path):
         "print(json.dumps({{'e1': row[0], 'e2': row[1]}}))\n"
         "conn.close()\n"
     ).format(dbq=newpath.replace("'", "\\'"))
-    result = subprocess.run([sys.executable, "-c", script], capture_output=True, text=True, timeout=60)
+    result = subprocess.run([sys.executable, "-c", script], capture_output=True, text=True, timeout=60, env=env)
     if result.returncode != 0:
         raise Exception("read_pavtype subprocess failed: " + result.stderr)
     data = json.loads(result.stdout.strip())
@@ -154,6 +161,14 @@ def read_pavtype(path, f25_path):
 def _access_connect(path):
     """Connect to Access database via subprocess to avoid DLL conflict with cx_Oracle."""
     import subprocess, sys, pickle, tempfile
+
+    # Clean PATH so Oracle DLLs don't get inherited by subprocess
+    env = os.environ.copy()
+    oracle_dir = r"C:\Users\bshin\Documents\instantclient-basic-windows.x64-21.3.0.0.0\instantclient_21_3"
+    if oracle_dir in env.get('PATH', ''):
+        paths = env['PATH'].split(';')
+        paths = [p for p in paths if oracle_dir not in p]
+        env['PATH'] = ';'.join(paths)
 
     # Write a helper script that opens Access, reads all needed tables, and pickles the results
     tmpfile = tempfile.NamedTemporaryFile(suffix='.pkl', delete=False)
@@ -174,7 +189,7 @@ def _access_connect(path):
         "    pickle.dump(tables, f)\n"
     ).format(dbq=path.replace("'", "\\'"), pkl=tmpfile.name.replace("'", "\\'"))
 
-    result = subprocess.run([sys.executable, "-c", script], capture_output=True, text=True, timeout=120)
+    result = subprocess.run([sys.executable, "-c", script], capture_output=True, text=True, timeout=120, env=env)
     if result.returncode != 0:
         os.remove(tmpfile.name)
         raise Exception("Access subprocess failed: " + result.stderr)
