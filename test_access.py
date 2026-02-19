@@ -1,64 +1,41 @@
 import sys
-import os
-import time
+print("Python:", sys.version)
 
-accdb_path = r'V:\FWD\Underseal\Data\2023\todo\ready\02022026_update\D2304249032\US-31 LL-40\US-31 NB RP-128+36 to RP-129+29 LN 3.accdb'
-mde_path = r'V:\FWD\Underseal\Data\2023\todo\ready\02022026_update\D2304249032\US-31 LL-40\US-31 NB RP-128+36 to RP-129+29 LN 3.mde'
-
+print("TEST A: bare pyodbc connect (no pandas)...")
 import pyodbc
+conn = pyodbc.connect('Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=V:\\FWD\\Underseal\\Data\\2023\\todo\\ready\\02022026_update\\D2304249032\\US-31 LL-40\\US-31 NB RP-128+36 to RP-129+29 LN 3.accdb')
+print("TEST A: connected OK")
+cursor = conn.cursor()
+cursor.execute('select e1, e2 from Thickness')
+row = cursor.fetchone()
+print("TEST A: e1=", row[0], "e2=", row[1])
+conn.close()
+print("TEST A: done")
+
+print("\nTEST B: now import pandas...")
 import pandas as pd
+print("TEST B: pandas imported, version:", pd.__version__)
 
-print("=== TEST 1: connect to existing accdb (no copy) ===")
-try:
-    conn = pyodbc.connect('Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=' + accdb_path)
-    print("TEST 1: connected OK")
-    df = pd.read_sql('select * from Thickness ORDER BY SectionID ASC', conn)
-    print("TEST 1: e1=", df['e1'][0], "e2=", df['e2'][0])
-    conn.close()
-    print("TEST 1: closed OK")
-except Exception as e:
-    print("TEST 1 FAILED:", e)
+print("TEST C: connect again after pandas import...")
+conn = pyodbc.connect('Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=V:\\FWD\\Underseal\\Data\\2023\\todo\\ready\\02022026_update\\D2304249032\\US-31 LL-40\\US-31 NB RP-128+36 to RP-129+29 LN 3.accdb')
+print("TEST C: connected OK")
+conn.close()
+print("TEST C: done")
 
-print("\n=== TEST 2: connect to mde directly (no copy) ===")
-try:
-    conn = pyodbc.connect('Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=' + mde_path)
-    print("TEST 2: connected OK")
-    df = pd.read_sql('select * from Thickness ORDER BY SectionID ASC', conn)
-    print("TEST 2: e1=", df['e1'][0], "e2=", df['e2'][0])
-    conn.close()
-    print("TEST 2: closed OK")
-except Exception as e:
-    print("TEST 2 FAILED:", e)
+print("\nTEST D: import numpy then connect...")
+import numpy as np
+print("TEST D: numpy imported, version:", np.__version__)
+conn = pyodbc.connect('Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=V:\\FWD\\Underseal\\Data\\2023\\todo\\ready\\02022026_update\\D2304249032\\US-31 LL-40\\US-31 NB RP-128+36 to RP-129+29 LN 3.accdb')
+print("TEST D: connected OK")
+conn.close()
+print("TEST D: done")
 
-print("\n=== TEST 3: copy mde->accdb then connect ===")
-import shutil
-try:
-    shutil.copy(mde_path, accdb_path)
-    print("TEST 3: copy done, waiting 2 seconds...")
-    time.sleep(2)
-    conn = pyodbc.connect('Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=' + accdb_path)
-    print("TEST 3: connected OK")
-    df = pd.read_sql('select * from Thickness ORDER BY SectionID ASC', conn)
-    print("TEST 3: e1=", df['e1'][0], "e2=", df['e2'][0])
-    conn.close()
-    print("TEST 3: closed OK")
-except Exception as e:
-    print("TEST 3 FAILED:", e)
+print("\nTEST E: import tkinter then connect...")
+import tkinter as tk
+print("TEST E: tkinter imported")
+conn = pyodbc.connect('Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=V:\\FWD\\Underseal\\Data\\2023\\todo\\ready\\02022026_update\\D2304249032\\US-31 LL-40\\US-31 NB RP-128+36 to RP-129+29 LN 3.accdb')
+print("TEST E: connected OK")
+conn.close()
+print("TEST E: done")
 
-print("\n=== TEST 4: copy mde->accdb to TEMP folder then connect ===")
-try:
-    temp_accdb = os.path.join(os.environ['TEMP'], 'test_underseal.accdb')
-    shutil.copy(mde_path, temp_accdb)
-    print("TEST 4: copied to", temp_accdb)
-    time.sleep(1)
-    conn = pyodbc.connect('Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=' + temp_accdb)
-    print("TEST 4: connected OK")
-    df = pd.read_sql('select * from Thickness ORDER BY SectionID ASC', conn)
-    print("TEST 4: e1=", df['e1'][0], "e2=", df['e2'][0])
-    conn.close()
-    print("TEST 4: closed OK")
-    os.remove(temp_accdb)
-except Exception as e:
-    print("TEST 4 FAILED:", e)
-
-print("\n=== ALL TESTS DONE ===")
+print("\n=== ALL TESTS PASSED ===")
