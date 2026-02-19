@@ -191,8 +191,12 @@ def _access_connect(path):
 
     result = subprocess.run([sys.executable, "-c", script], capture_output=True, text=True, timeout=120, env=env)
     if result.returncode != 0:
-        os.remove(tmpfile.name)
-        raise Exception("Access subprocess failed.\nstdout: {}\nstderr: {}".format(result.stdout, result.stderr))
+        try:
+            os.remove(tmpfile.name)
+        except:
+            pass
+        raise Exception("Access subprocess failed (returncode={}).\nstdout: {}\nstderr: {}\nDBQ: {}".format(
+            result.returncode, result.stdout, result.stderr, path))
 
     with open(tmpfile.name, 'rb') as f:
         tables = pickle.load(f)
