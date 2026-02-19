@@ -1,6 +1,5 @@
 import os, bisect, shutil
 from collections import defaultdict
-from PIL import Image
 
 def match_image_chainage(f25_path,ll_obj,df, server_root):
     """
@@ -49,7 +48,8 @@ def match_image_chainage(f25_path,ll_obj,df, server_root):
                         for img_filename in os.listdir(source_path):
                             if img_filename.endswith('jpg'):
                                 shutil.copy(os.path.join(source_path,img_filename), os.path.join(dist_path,img_filename))
-                            elif img_filename.endswith('tif'): 
+                            elif img_filename.endswith('tif'):
+                                from PIL import Image
                                 im = Image.open(os.path.join(source_path, img_filename))
                                 im.save(os.path.join(dist_path, img_filename[:-3]+'jpg'))
                                 im.close()
