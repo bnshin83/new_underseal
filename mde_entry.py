@@ -154,7 +154,7 @@ def read_pavtype(path, f25_path):
     ).format(dbq=newpath.replace("'", "\\'"))
     result = subprocess.run([sys.executable, "-c", script], capture_output=True, text=True, timeout=60, env=env)
     if result.returncode != 0:
-        raise Exception("read_pavtype subprocess failed: " + result.stderr)
+        raise Exception("read_pavtype subprocess failed.\nstdout: {}\nstderr: {}".format(result.stdout, result.stderr))
     data = json.loads(result.stdout.strip())
     return data['e1'], data['e2']
 
@@ -192,7 +192,7 @@ def _access_connect(path):
     result = subprocess.run([sys.executable, "-c", script], capture_output=True, text=True, timeout=120, env=env)
     if result.returncode != 0:
         os.remove(tmpfile.name)
-        raise Exception("Access subprocess failed: " + result.stderr)
+        raise Exception("Access subprocess failed.\nstdout: {}\nstderr: {}".format(result.stdout, result.stderr))
 
     with open(tmpfile.name, 'rb') as f:
         tables = pickle.load(f)
