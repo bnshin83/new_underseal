@@ -1,41 +1,78 @@
 import pyodbc
 import cx_Oracle
+import shutil
+import os
+import re
+import pandas as pd
 
-DBQ = 'V:\\FWD\\Underseal\\Data\\2023\\todo\\ready\\02022026_update\\D2304249032\\US-31 LL-40\\US-31 NB RP-128+36 to RP-129+29 LN 3.accdb'
-ACCESS_DSN = 'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=' + DBQ
+# Simulate exactly what the script does step by step
 
-print("=== Testing Oracle + Access interaction ===\n")
+print("=== Simulating exact script flow ===\n")
 
-# Test 1: Access before Oracle
-print("TEST 1: Access connect BEFORE Oracle init...")
-conn = pyodbc.connect(ACCESS_DSN)
-print("TEST 1: Access connected OK")
-conn.close()
-print("TEST 1: closed OK")
-
-# Test 2: Init Oracle client
-print("\nTEST 2: cx_Oracle.init_oracle_client...")
+# Step 1: Oracle connect (same as script line 181)
+print("STEP 1: Oracle init + connect...")
 cx_Oracle.init_oracle_client(lib_dir=r"C:\Users\bshin\Documents\instantclient-basic-windows.x64-21.3.0.0.0\instantclient_21_3")
-print("TEST 2: Oracle client initialized OK")
-
-# Test 3: Access after Oracle init (but before Oracle connect)
-print("\nTEST 3: Access connect AFTER Oracle init...")
-conn = pyodbc.connect(ACCESS_DSN)
-print("TEST 3: Access connected OK")
-conn.close()
-print("TEST 3: closed OK")
-
-# Test 4: Oracle connect
-print("\nTEST 4: Oracle connect...")
 ora_con = cx_Oracle.connect(user='stda', password='drwsspadts1031$', dsn="dotorad002vl.state.in.us:1621/INDOT3DEV")
-print("TEST 4: Oracle connected OK")
+print("STEP 1: Oracle connected OK")
 
-# Test 5: Access after Oracle connect (this is what the script does)
-print("\nTEST 5: Access connect AFTER Oracle connect (the real scenario)...")
-conn = pyodbc.connect(ACCESS_DSN)
-print("TEST 5: Access connected OK")
-conn.close()
-print("TEST 5: closed OK")
+# Step 2: Read file (same as script line 184-185)
+txt_path = r'V:\FWD\Underseal\Data\2023\todo\ready\02022026_update\D2304249032\US-31 LL-40\ML_ 10.75_ Concrete; SH_ 5.25_ HMA.txt'
+print("\nSTEP 2: Reading txt file...")
+with open(txt_path, 'r') as file:
+    Lines = file.readlines()
+print("STEP 2: Read", len(Lines), "lines")
+print("STEP 2: First line:", Lines[0].strip())
+
+# Step 3: Parse path (same as script lines 196-206)
+line = Lines[0]
+print("\nSTEP 3: Parsing path...")
+split_temp = line.strip().split('\\')
+print("STEP 3: split_temp[-3]:", split_temp[-3])
+year_temp = re.findall(r'D(\d{2})', split_temp[-3])
+year_2digits_str = year_temp[0]
+f25_path = line.replace('"', '').strip()
+year = int('20' + year_2digits_str)
+req_no = split_temp[-3].replace(" ", "")
+print("STEP 3: f25_path:", f25_path)
+print("STEP 3: year:", year, "req_no:", req_no)
+
+# Step 4: Oracle query (find_ll_no_given_req_no)
+print("\nSTEP 4: Oracle query for ll_no...")
+cursor = ora_con.cursor()
+cursor.execute("SELECT LL_NO FROM STDA_LONGLIST_INFO WHERE REQUEST_NO = :1", [req_no])
+row = cursor.fetchone()
+if row:
+    print("STEP 4: ll_no from query:", row[0])
+cursor.close()
+print("STEP 4: Oracle cursor closed")
+
+# Step 5: This is read_pavtype - the exact function that hangs
+mde_path = f25_path[:-3] + 'mde'
+accdb_path = f25_path[:-3] + 'accdb'
+print("\nSTEP 5a: shutil.copy mde->accdb...")
+print("  from:", mde_path)
+print("  to:", accdb_path)
+
+# Check for lock file before copy
+lock_path = accdb_path.replace('.accdb', '.laccdb')
+print("  lock file exists before copy:", os.path.exists(lock_path))
+
+shutil.copy(mde_path, accdb_path)
+print("STEP 5a: copy done, size:", os.path.getsize(accdb_path))
+
+# Check for lock file after copy
+print("  lock file exists after copy:", os.path.exists(lock_path))
+
+print("\nSTEP 5b: pyodbc.connect to accdb...")
+driver_str = 'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=' + str(accdb_path)
+print("  driver_str:", driver_str)
+access_conn = pyodbc.connect(driver_str)
+print("STEP 5b: Access connected OK")
+
+df = pd.read_sql('select * from Thickness ORDER BY SectionID ASC', access_conn)
+print("STEP 5c: e1=", df['e1'][0], "e2=", df['e2'][0])
+access_conn.close()
+print("STEP 5c: Access closed OK")
 
 ora_con.close()
-print("\n=== ALL PASSED ===")
+print("\n=== ALL STEPS PASSED ===")
