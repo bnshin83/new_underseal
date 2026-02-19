@@ -36,15 +36,11 @@ req_no = split_temp[-3].replace(" ", "")
 print("STEP 3: f25_path:", f25_path)
 print("STEP 3: year:", year, "req_no:", req_no)
 
-# Step 4: Oracle query (find_ll_no_given_req_no)
+# Step 4: Oracle query (find_ll_no_given_req_no) - use actual function
 print("\nSTEP 4: Oracle query for ll_no...")
-cursor = ora_con.cursor()
-cursor.execute("SELECT LL_NO FROM STDA_LONGLIST_INFO WHERE REQUEST_NO = :1", [req_no])
-row = cursor.fetchone()
-if row:
-    print("STEP 4: ll_no from query:", row[0])
-cursor.close()
-print("STEP 4: Oracle cursor closed")
+from ll_query import find_ll_no_given_req_no
+ll_no = find_ll_no_given_req_no(ora_con, os.path.basename(f25_path), req_no)
+print("STEP 4: ll_no:", ll_no)
 
 # Step 5: This is read_pavtype - the exact function that hangs
 mde_path = f25_path[:-3] + 'mde'
