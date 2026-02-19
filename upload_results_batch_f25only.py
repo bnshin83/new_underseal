@@ -41,10 +41,13 @@ def upload_single_result(args, f25_path, ll_no, year, con, user_input_dict, comm
     """
 
     mde_path = f25_path[:-3] + 'mde'
-    
+    print("  DEBUG A: mde_path =", mde_path)
+
     if not args.pavtype_special_case:
         # Decide Pavement type automatically using the elastic modulus.
+        print("  DEBUG B: about to read_pavtype...")
         e1,e2= read_pavtype(mde_path, f25_path)
+        print("  DEBUG C: read_pavtype done, e1={}, e2={}".format(e1, e2))
         # 2000 is the threshold for concrete
         if e1 >= 2000:
             pavtype = 'concrete'
@@ -79,10 +82,14 @@ def upload_single_result(args, f25_path, ll_no, year, con, user_input_dict, comm
     id = None
 
     # retrive ll_obj from database
+    print("  DEBUG D: about to get_ll_obj...")
     ll_obj = get_ll_obj(con, ll_no, year)
+    print("  DEBUG E: got ll_obj")
 
     # Extract Start and End GPS
+    print("  DEBUG F: about to getGPS...")
     gpsx, gpsy, gpsx_dict, gpsy_dict = getGPS(f25_path)
+    print("  DEBUG G: getGPS done, {} points".format(len(gpsx)))
     if len(gpsx)>0 and len(gpsy)>0:
         start_gps, end_gps = (gpsx[0], gpsy[0]), (gpsx[-1], gpsy[-1])
     else:
@@ -96,8 +103,10 @@ def upload_single_result(args, f25_path, ll_no, year, con, user_input_dict, comm
 
     # print('before ll_query')
 
+    print("  DEBUG H: about to ll_query...")
     id,dir,lane_type = ll_query(con, ll_no, f25_path, year, start_gps, end_gps, pavtype, args, user_input_dict, commit=1)
-    
+    print("  DEBUG I: ll_query done, id={}, dir={}, lane_type={}".format(id, dir, lane_type))
+
     ll_obj['dir'] = dir
 
     mde = None
@@ -107,10 +116,14 @@ def upload_single_result(args, f25_path, ll_no, year, con, user_input_dict, comm
     pcc_mod = None
     rxn_subg = None
 
+    print("  DEBUG J: about to read_mde...")
     mde, roadtype, roadname, ll_obj = read_mde(con, mde_path, f25_path, id, ll_obj, gpsx, gpsy, gpsx_dict, gpsy_dict, args)
     ll_obj["roadname"] = roadname
+    print("  DEBUG K: read_mde done, roadtype={}, roadname={}".format(roadtype, roadname))
 
+    print("  DEBUG L: about to calc...")
     calc_data, stats_data, mde, pcc_mod, rxn_subg = calc(con, id, pavtype, roadtype, ll_obj, mde, args)
+    print("  DEBUG M: calc done")
 
     if commit:
         db.putmde(con, mde, stats_data, id, commit=1)
@@ -126,7 +139,9 @@ def upload_single_result(args, f25_path, ll_no, year, con, user_input_dict, comm
     print('Report generation: ', args.gen_report)
 
     if args.gen_report:
+        print("  DEBUG N: about to gen_report...")
         report.gen_report(ll_obj, mde, calc_data, stats_data, mde_path, f25_path, ll_no, year, con, args)
+        print("  DEBUG O: gen_report done")
 
 if __name__ == "__main__":
     
