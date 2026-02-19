@@ -133,14 +133,57 @@ def read_pavtype(path, f25_path):
     newpath = pre + '.accdb'
     shutil.copy(path, newpath)
 
-    driver_str = 'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=' + str(newpath)
-    mde_conn = pyodbc.connect(driver_str)
-    df = pd.read_sql('select * from Thickness ORDER BY SectionID ASC', mde_conn)
-    pav_e1 = df['e1'][0]
-    # print("df['e1']:",mde['pav_e1'])
-    pav_e2 = df['e2'][0]
-    mde_conn.close()
-    return pav_e1, pav_e2
+    # Run Access query in subprocess to avoid DLL conflict between
+    # cx_Oracle and Microsoft Access ODBC driver in the main process.
+    import subprocess, sys, json
+    script = (
+        "import pyodbc, json\n"
+        "conn = pyodbc.connect(r'Driver={{Microsoft Access Driver (*.mdb, *.accdb)}};DBQ={dbq}')\n"
+        "cursor = conn.cursor()\n"
+        "cursor.execute('select e1, e2 from Thickness ORDER BY SectionID ASC')\n"
+        "row = cursor.fetchone()\n"
+        "print(json.dumps({{'e1': row[0], 'e2': row[1]}}))\n"
+        "conn.close()\n"
+    ).format(dbq=newpath.replace("'", "\\'"))
+    result = subprocess.run([sys.executable, "-c", script], capture_output=True, text=True, timeout=60)
+    if result.returncode != 0:
+        raise Exception("read_pavtype subprocess failed: " + result.stderr)
+    data = json.loads(result.stdout.strip())
+    return data['e1'], data['e2']
+
+def _access_connect(path):
+    """Connect to Access database via subprocess to avoid DLL conflict with cx_Oracle."""
+    import subprocess, sys, pickle, tempfile
+
+    # Write a helper script that opens Access, reads all needed tables, and pickles the results
+    tmpfile = tempfile.NamedTemporaryFile(suffix='.pkl', delete=False)
+    tmpfile.close()
+
+    script = (
+        "import pyodbc, pandas as pd, pickle\n"
+        "conn = pyodbc.connect(r'Driver={{Microsoft Access Driver (*.mdb, *.accdb)}};DBQ={dbq}')\n"
+        "tables = {{}}\n"
+        "tables['Deflections'] = pd.read_sql('select * from Deflections ORDER BY PointNo ASC, `Drop No` ASC', conn)\n"
+        "tables['DEFLECTIONS_MEASURED_CALCULATED'] = pd.read_sql('select * from DEFLECTIONS_MEASURED_CALCULATED ORDER BY Point ASC, Drop ASC', conn)\n"
+        "tables['MODULI_ESTIMATED'] = pd.read_sql('select * from MODULI_ESTIMATED ORDER BY PointNo ASC, Drop ASC', conn)\n"
+        "tables['Geophone_Positions'] = pd.read_sql('select * from Geophone_Positions', conn)\n"
+        "tables['PLATE_GEOPHONE'] = pd.read_sql('select * from PLATE_GEOPHONE', conn)\n"
+        "tables['Thickness'] = pd.read_sql('select * from Thickness ORDER BY SectionID ASC', conn)\n"
+        "conn.close()\n"
+        "with open(r'{pkl}', 'wb') as f:\n"
+        "    pickle.dump(tables, f)\n"
+    ).format(dbq=path.replace("'", "\\'"), pkl=tmpfile.name.replace("'", "\\'"))
+
+    result = subprocess.run([sys.executable, "-c", script], capture_output=True, text=True, timeout=120)
+    if result.returncode != 0:
+        os.remove(tmpfile.name)
+        raise Exception("Access subprocess failed: " + result.stderr)
+
+    with open(tmpfile.name, 'rb') as f:
+        tables = pickle.load(f)
+    os.remove(tmpfile.name)
+    return tables
+
 
 def read_mde(con, path, f25_path, id, ll_obj, gpsx, gpsy, gpsx_dict, gpsy_dict, args):
     """
@@ -153,19 +196,14 @@ def read_mde(con, path, f25_path, id, ll_obj, gpsx, gpsy, gpsx_dict, gpsy_dict, 
     base = os.path.basename(f25_path)
     newpath = pre + '.accdb'
     shutil.copy(path, newpath)
-    # if(ext == '.mde'):
-    #     os.rename(path, pre + '.accdb')
-    #     newpath = pre + '.accdb'
-    # else:
-    #     newpath = path
     cursor = con.cursor()
-    # print("newpath: ", newpath)
-    driver_str = 'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=' + str(newpath)
-    mde_conn = pyodbc.connect(driver_str)
+
+    # Read all Access tables via subprocess to avoid DLL conflict
+    tables = _access_connect(newpath)
 
     ########################################################################
     #Read and write to deflections
-    df = pd.read_sql('select * from Deflections ORDER BY PointNo ASC, `Drop No` ASC', mde_conn)
+    df = tables['Deflections']
     # Remove the duplicate (chainage, drop no.)
     # There will be no missing drops becuase MDE will automatically fill missing drop with 0.
     df.drop_duplicates(subset=['Chainage', 'Drop No'], keep='last', inplace=True)
@@ -237,7 +275,7 @@ def read_mde(con, path, f25_path, id, ll_obj, gpsx, gpsy, gpsx_dict, gpsy_dict, 
 
     ########################################################################
     #Read and write to deflections_calc
-    df = pd.read_sql('select * from DEFLECTIONS_MEASURED_CALCULATED ORDER BY Point ASC, Drop ASC', mde_conn)
+    df = tables['DEFLECTIONS_MEASURED_CALCULATED']
     # If there are duplicate chainage, keep the later
     df.drop_duplicates(subset=['Chainage','Drop'], keep='last', inplace=True)
     # After getrid of the duplicate chainage, keep only drop 2
@@ -254,7 +292,7 @@ def read_mde(con, path, f25_path, id, ll_obj, gpsx, gpsy, gpsx_dict, gpsy_dict, 
 
     ########################################################################
     #Read and write to moduli_estimated
-    df = pd.read_sql('select * from MODULI_ESTIMATED ORDER BY PointNo ASC, Drop ASC', mde_conn)
+    df = tables['MODULI_ESTIMATED']
     # If there are duplicate chainage, keep the later
     df.drop_duplicates(subset=['Chainage','Drop'], keep='last', inplace=True)
     # After getrid of the duplicate chainage, keep only drop 2
@@ -269,10 +307,10 @@ def read_mde(con, path, f25_path, id, ll_obj, gpsx, gpsy, gpsx_dict, gpsy_dict, 
 
     ########################################################################
     #Read and write to misc
-    df = pd.read_sql('select * from Geophone_Positions', mde_conn)
+    df = tables['Geophone_Positions']
     null_arr = df.shape[0]*[None]
     minus1_arr = df.shape[0]*[-1]
-    df2 = pd.read_sql('select * from PLATE_GEOPHONE', mde_conn)
+    df2 = tables['PLATE_GEOPHONE']
     radius = [df2['RadiusOfPlate'][0]]
     units = getUnits(f25_path)
     arr = [df.shape[0]*[id], df['Geo1-X'].tolist(), df['Geo1-Y'].tolist(), df['Geo2-X'].tolist(), df['Geo2-Y'].tolist(), df['Geo3-X'].tolist(), df['Geo3-Y'].tolist(), df['Geo4-X'].tolist(), df['Geo4-Y'].tolist(), df['Geo5-X'].tolist(), df['Geo5-Y'].tolist(), df['Geo6-X'].tolist(), df['Geo6-Y'].tolist(), df['Geo7-X'].tolist(), df['Geo7-Y'].tolist(), df['Geo8-X'].tolist(), df['Geo8-Y'].tolist(), df['Geo9-X'].tolist(), df['Geo9-Y'].tolist(), radius, [units[0]], [units[1]], [units[2]], [units[3]], [base[0].lower()]]
@@ -283,7 +321,7 @@ def read_mde(con, path, f25_path, id, ll_obj, gpsx, gpsy, gpsx_dict, gpsy_dict, 
 
     ########################################################################
     #Read and write thickness sheet and get e1, e2 to estimate the pavement type
-    df = pd.read_sql('select * from Thickness ORDER BY SectionID ASC', mde_conn)
+    df = tables['Thickness']
     mde['pav_e1'] = df['e1'][0]
     # print("df['e1']:",mde['pav_e1'])
     mde['pav_e2'] = df['e2'][0]
@@ -291,6 +329,5 @@ def read_mde(con, path, f25_path, id, ll_obj, gpsx, gpsy, gpsx_dict, gpsy_dict, 
 
     # con.commit()
     cursor.close()
-    mde_conn.close()
     return mde, base[0].lower(), base.split()[0], ll_obj
     
