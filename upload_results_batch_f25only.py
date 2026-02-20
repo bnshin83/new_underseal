@@ -197,6 +197,7 @@ if __name__ == "__main__":
     logger.info("Read %d lines from txt file", len(Lines))
 
     error_flag = False
+    user_input_dict = {}
     for line_idx, line in enumerate(Lines):
         # Automatically detect year, and request number from the file path
         # File path needs to follow the folder structure!!!!!!!!!!
