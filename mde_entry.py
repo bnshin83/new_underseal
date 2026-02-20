@@ -152,10 +152,14 @@ def _access_connect(path):
     tmpfile = tempfile.NamedTemporaryFile(suffix='.pkl', delete=False)
     tmpfile.close()
 
+    # CRITICAL: pyodbc must connect BEFORE importing pandas/numpy.
+    # Importing pandas first loads numpy DLLs that conflict with
+    # the Access ODBC driver and cause a silent crash (0xC0000005).
     script = (
-        "import pyodbc, pandas as pd, pickle, sys\n"
+        "import pyodbc, pickle, sys\n"
         "try:\n"
         "    conn = pyodbc.connect(r'Driver={{Microsoft Access Driver (*.mdb, *.accdb)}};DBQ={dbq}')\n"
+        "    import pandas as pd\n"
         "    tables = {{}}\n"
         "    tables['Deflections'] = pd.read_sql('select * from Deflections ORDER BY PointNo ASC, `Drop No` ASC', conn)\n"
         "    tables['DEFLECTIONS_MEASURED_CALCULATED'] = pd.read_sql('select * from DEFLECTIONS_MEASURED_CALCULATED ORDER BY Point ASC, Drop ASC', conn)\n"
