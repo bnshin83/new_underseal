@@ -5,6 +5,9 @@ import os, traceback
 import pandas as pd
 import db
 
+from log_config import get_logger
+logger = get_logger('fill_gps')
+
 def put_gps(con, csv_path):
     """
     Read GPS data from csv file and fill the GPS columns
@@ -30,14 +33,15 @@ def put_gps(con, csv_path):
         id = result[0]
     
     if id==None:
+        logger.warning("Cannot find a matching longlist ID for: %s", csv_path)
         with open(gps_upload_error_log,"a+") as f:
             print("Cannot find a matching longlist ID for the following input CSV file:",file=f)
             print(csv_path,file=f)
-            print("Check if the csv name matches the F25 name")
+            print("Check if the csv name matches the F25 name",file=f)
     # Update begin latitude, begin longitude, end latitude, end longitude
     begin_gpsx,begin_gpsy = gps_df.sort_values(by=['DMI'],ascending=True).head(1)[["Latitude","Longitude"]].values[0]
     end_gpsx,end_gpsy = gps_df.sort_values(by=['DMI'],ascending=False).head(1)[["Latitude","Longitude"]].values[0]
-    print("begin_gpsx,begin_gpsy",begin_gpsx,begin_gpsy)
+    logger.info("begin_gpsx,begin_gpsy %s %s", begin_gpsx, begin_gpsy)
     cursor.executemany("""
                     UPDATE stda_longlist
                     SET begin_latitude = :begin_lat,
@@ -95,17 +99,24 @@ if __name__ == "__main__":
     with open(batch_csv_txt,'r') as file:
         Lines = file.readlines()
 
+    from datetime import datetime
+    logger.info("=" * 60)
+    logger.info("RUN STARTED (fill_gps): %s", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+
     for line in Lines:
         csv_path = line.strip('\"')
-        print("csv_path",csv_path)
+        logger.info("csv_path: %s", csv_path)
         try:
             put_gps(con, csv_path)
-            print("Successfully upload {}".format(os.path.basename(csv_path)))
+            logger.info("Successfully upload %s", os.path.basename(csv_path))
         except:
             traceback_str = traceback.format_exc()
-            print(traceback_str)
+            logger.error(traceback_str)
             with open(gps_upload_error_log,"a+") as f:
                 print("######### Start of error log #########",file=f)
                 print('Input CSV path: {}\n'.format(csv_path),file=f)
                 print(traceback_str,file=f)
                 print("######### End of error log #########\n\n",file=f)
+
+    logger.info("RUN ENDED (fill_gps): %s", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    logger.info("=" * 60)

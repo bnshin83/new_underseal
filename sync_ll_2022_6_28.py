@@ -12,6 +12,9 @@ from query_db import read_db, update_db, get_unique_ll_no_list
 import warnings
 warnings.filterwarnings("ignore")
 
+from log_config import get_logger
+logger = get_logger('sync_ll')
+
 def check_single_ll(con, ll_no, year, excel_path):
     excel_row_dict = {}
     db_dict= {}
@@ -37,7 +40,7 @@ def check_single_ll(con, ll_no, year, excel_path):
     cursor = con.cursor()
     for key_name in excel_row_dict.keys():
         if excel_row_dict[key_name] != db_dict[key_name]:
-            print(ll_no)
+            logger.info("Updating LL %s: %s differs", ll_no, key_name)
             update_db(con,
                       table_name="stda_longlist_info",
                       update_col=key_name,
@@ -69,7 +72,7 @@ if __name__=='__main__':
     # if the LL file naming convention is known
     for year_tryout in range(2010,2999):
         if str(year_tryout) in exl_path:
-            print('Year {} long list is used...'.format(year_tryout))
+            logger.info('Year %s long list is used...', year_tryout)
             year = str(year_tryout)
             break
 
@@ -91,7 +94,7 @@ if __name__=='__main__':
 
     ## The data type for year is now string instead of int!!!!!!!
     root.focus_force()
-    print('Sync year:',year)
+    logger.info('Sync year: %s', year)
     CON = db.connect(args.dev_env)
     ll_no_list = get_unique_ll_no_list(CON,year)
     for ll_no in ll_no_list:

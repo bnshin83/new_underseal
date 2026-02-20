@@ -20,23 +20,12 @@ from tkinter import ttk
 from tkinter import messagebox
 
 import traceback, re
-import logging
 from datetime import datetime
 
 import numpy as np
 
-# Set up logging to file in repo directory
-_script_dir = os.path.dirname(os.path.abspath(__file__))
-_log_path = os.path.join(_script_dir, 'run_log.txt')
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s [%(levelname)s] %(message)s',
-    handlers=[
-        logging.FileHandler(_log_path, mode='a', encoding='utf-8'),
-        logging.StreamHandler(sys.stdout)
-    ]
-)
-logger = logging.getLogger(__name__)
+from log_config import get_logger
+logger = get_logger('upload_results_batch')
 
 ################################## Utils ##################################
 def delete_rows(con, tablename, id, verbose=1):
@@ -46,7 +35,7 @@ def delete_rows(con, tablename, id, verbose=1):
     con.commit()
     cursor.close()
     if verbose == 1:
-        print("Removed illegal entries from ", tablename, "with id ", str(id))
+        logger.info("Removed illegal entries from %s with id %s", tablename, str(id))
 
 ################################## Major function definition ##################################
 def upload_single_result(args, f25_path, ll_no, year, con, user_input_dict, commit=0):
@@ -138,7 +127,7 @@ def upload_single_result(args, f25_path, ll_no, year, con, user_input_dict, comm
         db.putcalc(con, calc_data, id, pcc_mod, rxn_subg)
         db.putstats(con, stats_data, id)
 
-    print('Report generation: ', args.gen_report)
+    logger.info('Report generation: %s', args.gen_report)
 
     if args.gen_report:
         report.gen_report(ll_obj, mde, calc_data, stats_data, mde_path, f25_path, ll_no, year, con, args)
@@ -169,7 +158,7 @@ if __name__ == "__main__":
                                             )
     else:
         txt_path = args.txt_path
-    print('txt path: ',txt_path)
+    logger.info('txt path: %s', txt_path)
     ############### (End) Tkinter code to take user input for F25 path ###############
 
     #### Prepare the error log file
@@ -181,9 +170,9 @@ if __name__ == "__main__":
     log_error_file_path = os.path.join(err_log_dir,error_log_file)
     warn_log_file_path = os.path.join(err_log_dir,warn_log_file)
     filename_error_log_path = os.path.join(err_log_dir,filename_error_log_file)
-    print('Error log is saved in: {}'.format(log_error_file_path))
+    logger.info('Error log is saved in: %s', log_error_file_path)
     if os.path.exists(log_error_file_path):
-        print('Overwrite previous error log!!!')
+        logger.info('Overwrite previous error log!!!')
         os.remove(log_error_file_path)
     if os.path.exists(warn_log_file_path):
         os.remove(warn_log_file_path)
@@ -337,7 +326,7 @@ if __name__ == "__main__":
             logger.error("  EXCEPTION: %s", str(e))
             logger.error("  %s", traceback_str)
             if 'unique constraint' in traceback_str:
-                print('Repeat entry of {}-{}, this input is ignored...'.format(ll_no,year))
+                logger.warning('Repeat entry of %s-%s, this input is ignored...', ll_no, year)
             elif "F25 filename does not meet requirement" in traceback_str:
                 with open(filename_error_log_path, "a+") as filename_log_f:
                     print("Following F25 file does not meet the filename requirement, please consider using '--user_input'.",
@@ -359,6 +348,7 @@ if __name__ == "__main__":
                         delete_rows(con, "stda_STATS", id, verbose = 0)
                         delete_rows(con, "stda_LONGLIST", id, verbose = 0)
                         delete_rows(con, "stda_IMG", id, verbose = 0)
+                        logger.warning('Due to unexpected error, LL-%s from year %s is deleted, rolling back...', ll_no, year)
                     print('Due to unexpected error, LL-{} from year {} is deleted...'.format(ll_no,year),file=f)
                     print('(End of error log)#############LL-{} from year {} (Request NO. {})#######################\n\n'.format(ll_no,year,req_no),file=f)
 

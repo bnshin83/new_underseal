@@ -2,6 +2,9 @@ import os
 import pickle as pkl
 import re
 
+from log_config import get_logger
+logger = get_logger('find_f25_files')
+
 # from request number get the LL no and year
 # then get the pickle file
 
@@ -27,13 +30,13 @@ def extract_f25_filename(con, historical_dir,error_log):
             ll_no = result[0]
         cursor.close()
         if not ll_no:
-            print('cannot find coresponding req_no {} in DB.'.format(req_no))
+            logger.warning('cannot find coresponding req_no %s in DB.', req_no)
         # open pkl file
         pkl_folder = './unused_var_dict/'
         year_2digits_str = re.findall(r'D(\d{2})', req_no)[0]
         year = '20'+year_2digits_str
         pkl_filename = 'LL-{}-{}.pkl'.format(ll_no,year)
-        print(pkl_filename)
+        logger.info("pkl_filename: %s", pkl_filename)
         pkl_path = os.path.join(pkl_folder, pkl_filename)
         with open(pkl_path,"rb") as f:
             ll_obj = pkl.load(f)['ll_obj']

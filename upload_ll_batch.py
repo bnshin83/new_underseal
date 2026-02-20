@@ -14,6 +14,10 @@ import traceback
 import argparse
 import pandas as pd
 import re
+from datetime import datetime
+
+from log_config import get_logger
+logger = get_logger('upload_ll_batch')
 
 parser = argparse.ArgumentParser(description='Upload LL entires batch mode')
 parser.add_argument('--dev_env', type=str, default="shin",choices=['dev_wen', 'shin', 'ecn_wen','ecn_shin'])
@@ -28,7 +32,7 @@ def delete_rows(con, tablename, id):
     cursor.execute(delstr)
     con.commit()
     cursor.close()
-    print("Removed illegal entries from ", tablename, "with longlist_info id:", str(id))
+    logger.info("Removed illegal entries from %s with longlist_info id: %s", tablename, str(id))
 
 def upload_single_ll(con, ll_info_df, ll_no_colname, ll_no, combine_flag, xls_filename_year, duplicate_check_set):
 
@@ -162,7 +166,7 @@ def upload_ll_batch(con):
     error_log_filanme = os.path.basename(exl_path)[:-5] + "_error_log.txt"
     log_error_file_path = os.path.join(error_log_dir,error_log_filanme)
     if os.path.exists(log_error_file_path):
-        print('Overwrite previous LL upload error log!!!')
+        logger.info('Overwrite previous LL upload error log!!!')
         os.remove(log_error_file_path)
 
     for single_ll_no in ll_no_list:
@@ -171,11 +175,16 @@ def upload_ll_batch(con):
         except:
             traceback_str = traceback.format_exc()
             if 'unique constraint' in traceback_str:
-                print('Repeat entry of {}, this input is ignored...'.format(single_ll_no))
+                logger.warning('Repeat entry of %s, this input is ignored...', single_ll_no)
             else:
                 with open(log_error_file_path, "a+") as f:
                     print('Unexpected error when uploading LL NO. {}...'.format(single_ll_no),file=f)
                     print(traceback_str,file=f)
                     print("########################################################################\n",file=f)
 
+logger.info("=" * 60)
+logger.info("RUN STARTED (upload_ll_batch): %s", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+logger.info("args: %s", vars(args))
 upload_ll_batch(con=CON)
+logger.info("RUN ENDED (upload_ll_batch): %s", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+logger.info("=" * 60)

@@ -1,6 +1,9 @@
 import os, bisect, shutil
 from collections import defaultdict
 
+from log_config import get_logger
+logger = get_logger('match_images')
+
 def match_image_chainage(f25_path,ll_obj,df, server_root):
     """
     Need to know:
@@ -36,7 +39,7 @@ def match_image_chainage(f25_path,ll_obj,df, server_root):
                     dmi_img_dict, img_dmi_dict = get_chainage_imgname_dict(df,image_filenames,relative_path)
                     ### Copy images to INDOT server ###
                     # Use aboslute path
-                    print('Copying images ...')
+                    logger.info('Copying images ...')
                     source_path = os.path.join(ll_no_folder,f25_basename_no_extension_name,'Cam1')
                     # print('[Debug info]: source_path:{}'.format(source_path))
                     # server_root = "\\\\dotwebp016vw/data/FWD/"
@@ -117,7 +120,7 @@ def get_chainage_imgname_dict(df, image_filenames, relative_path):
             try:
                 img_chainage = float(image_filename.split(' ')[-2])
             except:
-                print('Cannot convert to float image_filename: {}'.format(image_filename))
+                logger.warning('Cannot convert to float image_filename: %s', image_filename)
             matched_chainage = ImageChainToChain(img_chainage, unique_chainage)
             # print('img_dmi: {}, matched_dmi: {}'.format(img_chainage,matched_chainage))
             image_filepath = os.path.join(relative_path,image_filename)

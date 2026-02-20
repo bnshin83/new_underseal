@@ -9,6 +9,9 @@ import tkinter as tk
 from tkinter import *
 from tkinter import filedialog
 
+from log_config import get_logger
+logger = get_logger('split_mde')
+
 def build_mde():
     # root = tk.Tk()
     # root.update_idletasks()
@@ -27,7 +30,7 @@ def build_mde():
     
     sqlstr = 'SELECT DISTINCT FileName from Deflections'
     filenames = pd.read_sql(sqlstr, mde_conn)
-    print(filenames)
+    logger.info("Filenames in MDE:\n%s", filenames)
     files_dict = {}
     for i in range(len(filenames)):
         prefix = str(os.path.split(newpath)[0])

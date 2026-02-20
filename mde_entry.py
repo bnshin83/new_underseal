@@ -8,6 +8,9 @@ import shutil
 import pickle
 from match_images import match_image_chainage
 
+from log_config import get_logger
+logger = get_logger('mde_entry')
+
 def getGPS(f25_path):
     """
     Use dictionary to replace duplicated test point data (with identical chainage) with information from the most recent test point.
@@ -264,7 +267,7 @@ def read_mde(con, path, f25_path, id, ll_obj, gpsx, gpsy, gpsx_dict, gpsy_dict, 
             ll_obj['img_dmi_dict'] = img_dmi_dict
 
         else:
-            print(nomatch_message)
+            logger.warning(nomatch_message)
             ll_obj['nomatch_msg'] = nomatch_message
             ll_obj['dmi_img_dict'] = None
             ll_obj['img_dmi_dict'] = None

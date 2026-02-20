@@ -1,5 +1,8 @@
 import os
 
+from log_config import get_logger
+logger = get_logger('correct_f25_format')
+
 def correct_f25_format(f25_path):
     f25file = open(f25_path, "r")
     lines = f25file.readlines()
@@ -9,7 +12,7 @@ def correct_f25_format(f25_path):
         first_number = temp_line[0]
         if int(first_number) in {1,2,3} and len(first_number)!=4:
             if format_error_flag == 0:
-                print('Format error of F25 found...')
+                logger.warning('Format error of F25 found in: %s', f25_path)
                 format_error_flag = 1
             temp_line[0] = '   {}'.format(int(first_number)) # add 3 spaces in front
             lines[line_idx] = ",".join(temp_line)
@@ -19,7 +22,7 @@ def correct_f25_format(f25_path):
         with open(f25_path, "w") as f:
             f.writelines(lines)
 
-        print('Modified F25 saved in: {}'.format(f25_path))
+        logger.info('Modified F25 saved in: %s', f25_path)
     
     
 

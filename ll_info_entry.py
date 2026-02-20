@@ -6,6 +6,9 @@ import os
 import datetime
 import re
 
+from log_config import get_logger
+logger = get_logger('ll_info_entry')
+
 def compose_ll_info_entry_string(row, xls_filename_year, combine_flag):
     """
     year is decided by reading the first two digits of the request number
@@ -108,7 +111,7 @@ def ll_info_entry(con, ll_info_df, ll_no_colname, ll_no, xls_filename_year, comb
     cursor.execute(idstr)
     
     for result in cursor:
-        print('Content of result: {}'.format(result))
+        logger.debug('Content of result: %s', result)
         ll_info_id = result[0]
     
     con.commit()
