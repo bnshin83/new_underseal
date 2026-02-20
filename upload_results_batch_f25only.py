@@ -20,8 +20,23 @@ from tkinter import ttk
 from tkinter import messagebox
 
 import traceback, re
+import logging
+from datetime import datetime
 
 import numpy as np
+
+# Set up logging to file in repo directory
+_script_dir = os.path.dirname(os.path.abspath(__file__))
+_log_path = os.path.join(_script_dir, 'run_log.txt')
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s [%(levelname)s] %(message)s',
+    handlers=[
+        logging.FileHandler(_log_path, mode='a', encoding='utf-8'),
+        logging.StreamHandler(sys.stdout)
+    ]
+)
+logger = logging.getLogger(__name__)
 
 ################################## Utils ##################################
 def delete_rows(con, tablename, id, verbose=1):
@@ -175,17 +190,25 @@ if __name__ == "__main__":
     if os.path.exists(filename_error_log_path):
         os.remove(filename_error_log_path)
 
+    logger.info("=" * 60)
+    logger.info("RUN STARTED: %s", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    logger.info("txt_path: %s", txt_path)
+    logger.info("args: %s", vars(args))
+
     # Connect to database. "con" is a object instance, which methods and classes including "cursor" class.
     # "cursor" class can be invoked to upload calculated results to  Oracle database.
-    # "con" is called in other functions to upload data to Oracle database. 
+    # "con" is called in other functions to upload data to Oracle database.
+    logger.info("Connecting to Oracle database (dev_env=%s)...", args.dev_env)
     con = db.connect(args.dev_env)
+    logger.info("Oracle connected OK")
 
     # Reads the txt file where each line is a F25 path.
     with open(txt_path,'r') as file:
         Lines = file.readlines()
-        
+    logger.info("Read %d lines from txt file", len(Lines))
+
     error_flag = False
-    for line in Lines:
+    for line_idx, line in enumerate(Lines):
         # Automatically detect year, and request number from the file path
         # File path needs to follow the folder structure!!!!!!!!!!
         if not args.user_input:
@@ -200,6 +223,8 @@ if __name__ == "__main__":
             # extract Request NO., and remove the white space
             req_no = split_temp[-3].replace(" ", "")
             ll_no = find_ll_no_given_req_no(con, os.path.basename(f25_path), req_no)
+            logger.info("[%d/%d] Processing: %s (LL-%s, year=%s, req=%s)",
+                        line_idx+1, len(Lines), os.path.basename(f25_path), ll_no, year, req_no)
 
         # This is for user input in case of special case like airport test
         else:
@@ -299,14 +324,18 @@ if __name__ == "__main__":
         # Try and except used because we want to skip the problematic F25 and MDE files.
         # The bug related to problematic F25 and MDE files will be recorded in the error log file.
         try:
+            logger.info("  upload_single_result starting...")
             upload_single_result(args, f25_path, ll_no, year, con, user_input_dict, commit=1)
-        # Roll Back Mechanism: If error occurs in the "upload_single_result" function, 
+            logger.info("  upload_single_result completed OK")
+        # Roll Back Mechanism: If error occurs in the "upload_single_result" function,
         #                      record the error message in error log file and delete the corresponding row that has been uploaded.
         # Do not delete the corresponding row in the STDA_LONGLIST_INFO,
         # because we don't want to delete the LL request that has been uploaded by "upload_ll_batch.py".
-        except:
+        except Exception as e:
             error_flag = True
             traceback_str = traceback.format_exc()
+            logger.error("  EXCEPTION: %s", str(e))
+            logger.error("  %s", traceback_str)
             if 'unique constraint' in traceback_str:
                 print('Repeat entry of {}-{}, this input is ignored...'.format(ll_no,year))
             elif "F25 filename does not meet requirement" in traceback_str:
@@ -334,7 +363,9 @@ if __name__ == "__main__":
                     print('(End of error log)#############LL-{} from year {} (Request NO. {})#######################\n\n'.format(ll_no,year,req_no),file=f)
 
     # Main code finish. Output warning message if there are any problematic F25 and MDE files that produces error during excuting "upload_single_result".
-    print("\n Uploading finished!!!")
+    logger.info("Uploading finished!!!")
     if error_flag:
-        print("WARNING!!! Errors encountered during batch process but it is skipped.")
-        print("Check the error log that locates in the same folder as the input txt file.")
+        logger.warning("Errors encountered during batch process but skipped.")
+        logger.warning("Check the error log at: %s", log_error_file_path)
+    logger.info("RUN ENDED: %s", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    logger.info("=" * 60)
