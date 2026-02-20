@@ -66,7 +66,7 @@ def get_from_rp_to_rp_str(mde_path, args):
         raise Exception('Something wrong when extracting the from RP!')
     try:
         from_rp_list = [from_rp_match[0][0],from_rp_match[0][1]]
-    except:
+    except (IndexError, TypeError):
         from_rp_list = ['Nan', 'Nan']
 
     to_rp_match = re.findall(r'to RP-(\d+)\+(-?\d+\.?\d?)',temp)
@@ -74,7 +74,7 @@ def get_from_rp_to_rp_str(mde_path, args):
         raise Exception('Something wrong when extracting the to RP!')
     try:
         to_rp_list = [to_rp_match[0][0],to_rp_match[0][1]]
-    except:
+    except (IndexError, TypeError):
         to_rp_list = ['Nan', 'Nan']
 
     return from_rp_list, to_rp_list

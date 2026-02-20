@@ -22,12 +22,8 @@ def put_gps(con, csv_path):
 
     cursor = con.cursor()
 
-    # Get the longlist id first 
-    idstr = """
-        SELECT LONGLIST_ID FROM stda_longlist
-        WHERE F25_INFO='""" + csv_basename + """'
-        """
-    cursor.execute(idstr)
+    # Get the longlist id first
+    cursor.execute("SELECT LONGLIST_ID FROM stda_longlist WHERE F25_INFO = :1", [csv_basename])
     id = None
     for result in cursor:
         id = result[0]
@@ -109,7 +105,7 @@ if __name__ == "__main__":
         try:
             put_gps(con, csv_path)
             logger.info("Successfully upload %s", os.path.basename(csv_path))
-        except:
+        except Exception:
             traceback_str = traceback.format_exc()
             logger.error(traceback_str)
             with open(gps_upload_error_log,"a+") as f:

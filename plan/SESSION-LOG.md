@@ -123,13 +123,20 @@ Set this as a Windows environment variable (permanent via System Properties > En
 
 ---
 
-## Session 5 — (next session)
+## Session 5 — 2026-02-20
 
-### Start-of-Session Checklist
-- [ ] Read `plan/SESSION-LOG.md` for context
-- [ ] Check plan status in `plan/*.md` files
+### Work Done
+1. **SQL injection fix (1.2)**: Converted ALL string-concatenated SQL across 7 files to Oracle `:param` bind variables:
+   - `ll_query.py`: Refactored `compose_ll_entry_string()` — eliminated the function, moved bind params directly into `ll_query()`. Fixed `find_ll_no_given_req_no()`.
+   - `ll_info_entry.py`: `compose_ll_info_entry_string()` now returns dict only. `ll_info_entry()` uses bind params for both INSERT and SELECT.
+   - `query_db.py`: All 5 functions (`get_ll_from_db`, `read_db`, `read_db_from_ll_no_year`, `get_unique_ll_no_list`, `update_db`, `update_pavtype`) converted.
+   - `find_f25_files.py`: Request number query converted.
+   - `fill_gps.py`: F25 info query converted.
+   - `upload_ll_batch.py`: `delete_rows` converted.
+2. **Remove unused imports (3.1)**: Removed 8 unused imports from `calculate.py`, `report.py`, `writefiles.py` (pdb, sys.stderr, webbrowser, pydoc, venv).
+3. **Fix bare except clauses (2.8)**: All 11 bare `except:` across 9 files converted to specific exception types (`ValueError`, `IndexError`, `TypeError`, `OSError`, `Exception`).
 
-### End-of-Session Checklist
-- [ ] Update `SESSION-LOG.md` with work done
-- [ ] Update plan files with task status changes
-- [ ] Commit and push changes
+### Next Steps (Session 6)
+- Remaining stability: destructive import in report_page4.py (2.5), file handle leaks (2.6, 2.7), temp .accdb cleanup (2.9)
+- Code quality: dedup functions (3.2), remove dead code (3.3)
+- Architecture: centralized config (3A), subprocess abstraction (3B)

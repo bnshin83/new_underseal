@@ -20,12 +20,8 @@ def check_f25_filename(f25_str):
     
 def find_ll_no_given_req_no(con, filename, req_no):
     ll_no = None
-    sqlstr = """
-                    SELECT longlist_no FROM stda_longlist_info
-                    WHERE request_no='""" + str(req_no) + """'
-                    """
     cursor = con.cursor()
-    cursor.execute(sqlstr)
+    cursor.execute("SELECT longlist_no FROM stda_longlist_info WHERE request_no = :1", [str(req_no)])
     for result in cursor:
         ll_no = str(result[0])
     cursor.close()
@@ -51,10 +47,8 @@ def find_req_no_given_ll_no(con, filename, ll_no, year):
                                                                                                                     year))
 
 
-def compose_ll_entry_string(ll_no, f25_path, year, start_gps, end_gps, pavtype, args, user_input_dict):
-    base_f25_path = os.path.basename(f25_path)
-    # new logic to check direction and lane info
-    # Check if the f25 name matches the pattern
+def _parse_direction_and_lane(base_f25_path, args, user_input_dict):
+    """Extract direction and lane_type from F25 filename or user input."""
     if not args.user_input:
         check_f25_filename(" ".join(base_f25_path.split(" ")[2:]))
         dir = base_f25_path.split(" ")[1]
@@ -83,7 +77,6 @@ def compose_ll_entry_string(ll_no, f25_path, year, start_gps, end_gps, pavtype, 
         elif 'ramp' in lane_info.lower():
             lane_type = 'RAMP'
         else:
-            # If it is special case, use whatever after 5th white space as lane_type
             if args.pavtype_special_case:
                 lane_type = lane_info
             else:
@@ -91,67 +84,48 @@ def compose_ll_entry_string(ll_no, f25_path, year, start_gps, end_gps, pavtype, 
     else:
         lane_type = user_input_dict['lane_type']
         dir = user_input_dict['dir']
-
-    if start_gps and end_gps:
-        if start_gps[0] and start_gps[1]:
-            start_gps_x = str(start_gps[0])
-            start_gps_y = str(start_gps[1])
-        else:
-            start_gps_x, start_gps_y = "NULL", "NULL"
-        if end_gps[0] and end_gps[1]:
-            end_gps_x = str(end_gps[0])
-            end_gps_y = str(end_gps[1])
-        else:
-            end_gps_x, end_gps_y = "NULL", "NULL"
-    else:
-        start_gps_x, start_gps_y, end_gps_x, end_gps_y = "NULL", "NULL","NULL", "NULL"
-
-    sqlstr = """INSERT INTO stda_LONGLIST
-    VALUES (NULL,""" + ll_no + """, 
-    '""" + str(year) + """', 
-    '""" + dir + """',
-    '""" + lane_type + """',
-    '""" + pavtype + """',
-    '""" + base_f25_path[:-4] + """', 
-    '""" + base_f25_path[:-4]+'.docx' + """', 
-    """ + start_gps_x + """, 
-    """ + end_gps_x + """, 
-    """ + start_gps_y + """, 
-    """ + end_gps_y + """, 
-    -1, NULL, -1, NULL)"""
-    # print(sqlstr)
-
-    idstr = """
-    SELECT LONGLIST_ID FROM stda_LONGLIST
-    WHERE LONGLIST_NO=""" + ll_no + """ AND 
-    YEAR='""" + str(year) + """' AND 
-    DIRECTION='""" + dir + """' AND
-    PAVTYPE='""" + pavtype + """' AND
-    F25_INFO='""" + base_f25_path[:-4] + """'
-    """
-
-    # print(idstr)
-    return sqlstr, idstr, dir, lane_type
+    return dir, lane_type
 
 def ll_query(con, ll_no, f25_path, year, start_gps, end_gps, pavtype, args, user_input_dict, commit=0):
 
+    base_f25_path = os.path.basename(f25_path)
+    dir, lane_type = _parse_direction_and_lane(base_f25_path, args, user_input_dict)
+
+    # Resolve GPS values (None for missing)
+    start_gps_x = start_gps[0] if (start_gps and start_gps[0]) else None
+    start_gps_y = start_gps[1] if (start_gps and start_gps[1]) else None
+    end_gps_x = end_gps[0] if (end_gps and end_gps[0]) else None
+    end_gps_y = end_gps[1] if (end_gps and end_gps[1]) else None
+
+    f25_info = base_f25_path[:-4]
+
     cursor = con.cursor()
-    sqlstr, idstr, dir, lane_type = compose_ll_entry_string(ll_no, f25_path, year, 
-                                                            start_gps, end_gps, pavtype, args, user_input_dict)
-    try:
-        cursor.execute(sqlstr)
-    except:
-        raise Exception(sqlstr)
-    cursor.execute(idstr)
-    
+    cursor.execute("""INSERT INTO stda_LONGLIST
+        VALUES (NULL, :ll_no, :year, :dir, :lane_type, :pavtype,
+                :f25_info, :report_name,
+                :start_lat, :end_lat, :start_lon, :end_lon,
+                -1, NULL, -1, NULL)""",
+        {'ll_no': int(ll_no), 'year': str(year), 'dir': dir,
+         'lane_type': lane_type, 'pavtype': pavtype,
+         'f25_info': f25_info, 'report_name': f25_info + '.docx',
+         'start_lat': start_gps_x, 'end_lat': end_gps_x,
+         'start_lon': start_gps_y, 'end_lon': end_gps_y})
+
+    cursor.execute("""SELECT LONGLIST_ID FROM stda_LONGLIST
+        WHERE LONGLIST_NO = :ll_no AND YEAR = :year AND DIRECTION = :dir
+        AND PAVTYPE = :pavtype AND F25_INFO = :f25_info""",
+        {'ll_no': int(ll_no), 'year': str(year), 'dir': dir,
+         'pavtype': pavtype, 'f25_info': f25_info})
+
+    longlist_id = None
     for result in cursor:
         logger.debug('Content of result: %s', result)
-        id = result[0]
-    
+        longlist_id = result[0]
+
     if commit:
         con.commit()
     cursor.close()
-    return id, dir, lane_type
+    return longlist_id, dir, lane_type
 
 
 def get_ll_obj(con,ll_no,year):

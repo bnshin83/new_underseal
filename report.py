@@ -3,9 +3,6 @@
 #2. In composite, show ELMOD values for both concrete and asphalt. Currently showing only asphalt
 
 
-from pydoc import Doc
-from venv import create
-from webbrowser import get
 import docx
 from docx import Document
 from docx.shared import Inches

@@ -26,7 +26,7 @@ def get_comments(f25_path):
             elif(tmp[0][0:2] == "76" and x.split(',', 1)[1] != '""\n'):
                 try:
                     dmi = round(convert_chainage(float(tmp[1])))
-                except:
+                except Exception:
                     raise Exception("Error when Extracting DMI...")
                 comment = str(dmi) + ": " + x.split(',', 1)[1]
                 comments.append(comment)

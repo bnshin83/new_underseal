@@ -32,7 +32,7 @@ def getGPS(f25_path):
         # if there are trouble reading the header number, skip the line
         try:
             header_num = int((lines[i].split(',')[0]))
-        except:
+        except ValueError:
             header_num = None
             raise Exception("Error occurs when extracting header number at line {}".format(i+1))
         
@@ -50,7 +50,7 @@ def getGPS(f25_path):
                 # Assume chainages are int
                 try:
                     chainage = int(line_split[5])
-                except:
+                except (ValueError, IndexError):
                     raise Exception("Failed to convert chainage to int type at line {} in F25 file. "
                                     "Expected to extract chainage info from line starting with 5301, "
                                     "but the information is missing.".format(i+1))
@@ -179,7 +179,7 @@ def _access_connect(path):
     if result.returncode != 0:
         try:
             os.remove(tmpfile.name)
-        except:
+        except OSError:
             pass
         raise Exception("Access subprocess failed (returncode={}).\nstdout: {}\nstderr: {}\nDBQ: {}".format(
             result.returncode, result.stdout, result.stderr, path))

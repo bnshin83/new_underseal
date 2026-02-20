@@ -19,12 +19,8 @@ def extract_f25_filename(con, historical_dir,error_log):
         if not os.path.isdir(os.path.join(historical_dir,req_no)):
             continue
         found_flag = False
-        sqlstr = """
-                 SELECT longlist_no FROM stda_longlist_info
-                 WHERE request_no='""" + req_no + """'
-                 """
         cursor = con.cursor()
-        cursor.execute(sqlstr)
+        cursor.execute("SELECT longlist_no FROM stda_longlist_info WHERE request_no = :1", [req_no])
         ll_no = None
         for result in cursor:
             ll_no = result[0]

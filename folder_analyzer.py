@@ -104,7 +104,7 @@ def find_special_folders(root_path):
                                 if any(keyword in content for keyword in priority_keywords):
                                     is_priority = True
                                     break
-                        except:
+                        except Exception:
                             # Skip files that can't be read
                             pass
             

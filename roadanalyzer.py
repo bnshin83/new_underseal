@@ -29,7 +29,7 @@ def set_vars(testDesc, pavtype):
 def calc_esal(ll_obj):
     try:
         trucks = int(ll_obj["traffic"])
-    except:
+    except (ValueError, TypeError):
         trucks = 1
     # print("Trucks: ", trucks)
     tf = 0.38

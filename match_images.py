@@ -119,7 +119,7 @@ def get_chainage_imgname_dict(df, image_filenames, relative_path):
         if image_filename.endswith('jpg'):
             try:
                 img_chainage = float(image_filename.split(' ')[-2])
-            except:
+            except Exception:
                 logger.warning('Cannot convert to float image_filename: %s', image_filename)
             matched_chainage = ImageChainToChain(img_chainage, unique_chainage)
             # print('img_dmi: {}, matched_dmi: {}'.format(img_chainage,matched_chainage))

@@ -27,9 +27,8 @@ COMMIT = 1
 CON = db.connect(args.dev_env)
 
 def delete_rows(con, tablename, id):
-    delstr = "DELETE FROM "+str(tablename)+" WHERE LONGLIST_INFO_ID = "+str(id)
     cursor = con.cursor()
-    cursor.execute(delstr)
+    cursor.execute("DELETE FROM {} WHERE LONGLIST_INFO_ID = :1".format(tablename), [id])
     con.commit()
     cursor.close()
     logger.info("Removed illegal entries from %s with longlist_info id: %s", tablename, str(id))
@@ -172,7 +171,7 @@ def upload_ll_batch(con):
     for single_ll_no in ll_no_list:
         try:
             upload_single_ll(con, ll_info_df, ll_no_colname, single_ll_no, combine_flag, xls_filename_year, duplicate_check_set)
-        except:
+        except Exception:
             traceback_str = traceback.format_exc()
             if 'unique constraint' in traceback_str:
                 logger.warning('Repeat entry of %s, this input is ignored...', single_ll_no)

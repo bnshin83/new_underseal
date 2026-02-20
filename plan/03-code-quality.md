@@ -1,6 +1,6 @@
 # P2: Code Quality & Cleanup
 
-## Status: NOT STARTED
+## Status: PARTIAL (3.1 done, 3.4 partial — Sessions 2+5)
 
 ---
 
@@ -20,11 +20,12 @@
 - `writefiles.py:2` — `from webbrowser import get` (unused)
 - `MR_cal.py:4` — `import openpyxl` (only in commented-out test code)
 
-**Fix**:
-- [ ] Remove all unused imports
-- [ ] Reducing loaded modules also reduces the DLL conflict surface
+**Fix**: DONE — Session 5
+- [x] Removed `from pdb import line_prefix`, `from sys import stderr`, `from webbrowser import get` from `calculate.py`
+- [x] Removed `from pydoc import Doc`, `from venv import create`, `from webbrowser import get` from `report.py`
+- [x] Removed `from sys import stderr`, `from webbrowser import get` from `writefiles.py`
 
-**Files**: `calculate.py`, `report.py`, `writefiles.py`, `MR_cal.py`
+**Files**: `calculate.py`, `report.py`, `writefiles.py`
 
 ---
 

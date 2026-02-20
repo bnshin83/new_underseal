@@ -62,59 +62,48 @@ def compose_ll_info_entry_string(row, xls_filename_year, combine_flag):
     year_str = '20'+year_2digits_str
     ll["year"] = year_str
 
-    # Use double single quote to escape single quote in sqlstr like it is done in .replace("'","''")
-    sqlstr = """INSERT INTO stda_LONGLIST_INFO
-    VALUES (NULL, """ + str(ll["llno"]) + """, 
-    '""" + year_str + """', 
-    '""" + str(ll["req no"]) + """', 
-    '""" + str(ll["test status"]) + """', 
-    '""" + str(ll["route"]) + """', 
-    '""" + str(ll["rp from"]) + """', 
-    '""" + str(ll["rp to"]) + """', 
-    '""" + str(ll["des no"]) + """', 
-    '""" + str(ll["district"]) + """', 
-    '""" + str(ll["traffic"]) + """',
-    '""" + str(ll["contact person"]) + """',
-    '""" + str(ll["traffic_ctrl"]) + """',
-    '""" + str(ll["operator"]) + """',
-    '""" + str(ll["operator_comment"]).replace("'","''") + """',
-    '""" + str(ll["date req"]) + """',
-    '""" + str(ll["date needed"]) + """',
-    '""" + str(ll["comments"]).replace("'","''") + """',
-    -1, NULL, -1, NULL)"""
-
-    idstr = """SELECT LONGLIST_INFO_ID FROM stda_LONGLIST_INFO
-    WHERE LONGLIST_NO=""" + str(ll["llno"]) + """ AND  
-    YEAR='""" + year_str + """' AND  
-    REQUEST_NO='""" + str(ll["req no"]) + """' AND 
-    ROUTE='""" + str(ll["route"]) + """' AND 
-    RP_FROM='""" + str(ll["rp from"]) + """' AND 
-    RP_TO='""" + str(ll["rp to"]) + """' AND  
-    CONTRACT_NO='""" + str(ll["des no"]) + """' AND
-    DISTRICT='""" + str(ll["district"]) + """' AND
-    NAME='""" + str(ll["contact person"]) + """' AND 
-    OPERATOR='""" + str(ll["operator"]) + """' AND  
-    DATE_REQ='""" + str(ll["date req"]) + """' AND 
-    DATE_NEED='""" + str(ll["date needed"]) + """'
-    """
-    # print(sqlstr)
-    return sqlstr, idstr, ll
+    return ll
 
 
 def ll_info_entry(con, ll_info_df, ll_no_colname, ll_no, xls_filename_year, combine_flag):
 
     row = excel.return_ll_info_row(ll_info_df, ll_no_colname, ll_no)
+    ll = compose_ll_info_entry_string(row, xls_filename_year, combine_flag)
+
     cursor = con.cursor()
-    # print(compose_ll_info_entry_string(row))
-    sqlstr, idstr, llobj = compose_ll_info_entry_string(row, xls_filename_year, combine_flag)
-    cursor.execute(sqlstr)
-    cursor.execute(idstr)
-    
+    cursor.execute("""INSERT INTO stda_LONGLIST_INFO
+        VALUES (NULL, :llno, :year, :req_no, :test_status, :route,
+                :rp_from, :rp_to, :des_no, :district, :traffic,
+                :contact_person, :traffic_ctrl, :operator,
+                :operator_comment, :date_req, :date_needed, :comments,
+                -1, NULL, -1, NULL)""",
+        {'llno': int(ll['llno']), 'year': ll['year'],
+         'req_no': ll['req no'], 'test_status': ll['test status'],
+         'route': ll['route'], 'rp_from': ll['rp from'], 'rp_to': ll['rp to'],
+         'des_no': ll['des no'], 'district': ll['district'],
+         'traffic': ll['traffic'], 'contact_person': ll['contact person'],
+         'traffic_ctrl': ll['traffic_ctrl'], 'operator': ll['operator'],
+         'operator_comment': ll['operator_comment'],
+         'date_req': ll['date req'], 'date_needed': ll['date needed'],
+         'comments': ll['comments']})
+
+    cursor.execute("""SELECT LONGLIST_INFO_ID FROM stda_LONGLIST_INFO
+        WHERE LONGLIST_NO = :llno AND YEAR = :year AND REQUEST_NO = :req_no
+        AND ROUTE = :route AND RP_FROM = :rp_from AND RP_TO = :rp_to
+        AND CONTRACT_NO = :des_no AND DISTRICT = :district
+        AND NAME = :contact_person AND OPERATOR = :operator
+        AND DATE_REQ = :date_req AND DATE_NEED = :date_needed""",
+        {'llno': int(ll['llno']), 'year': ll['year'],
+         'req_no': ll['req no'], 'route': ll['route'],
+         'rp_from': ll['rp from'], 'rp_to': ll['rp to'],
+         'des_no': ll['des no'], 'district': ll['district'],
+         'contact_person': ll['contact person'], 'operator': ll['operator'],
+         'date_req': ll['date req'], 'date_needed': ll['date needed']})
+
     for result in cursor:
         logger.debug('Content of result: %s', result)
         ll_info_id = result[0]
-    
+
     con.commit()
     cursor.close()
-    ## llobj is a dictionary
-    return ll_info_id, llobj
+    return ll_info_id, ll

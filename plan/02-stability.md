@@ -89,22 +89,20 @@ This silently deletes `page_4.docx` from the current working directory every tim
 
 ---
 
-### 2.8 Bare `except:` Clauses
+### 2.8 Bare `except:` Clauses (DONE)
 
-**Problem**: Multiple files use bare `except:` which catches SystemExit, KeyboardInterrupt, and other exceptions that shouldn't be silently swallowed:
-- `mde_entry.py:30-33` (getGPS header_num)
-- `mde_entry.py:175` (_access_connect tmpfile cleanup)
-- `comments.py:28-30`
-- `ll_query.py:140`
-- `fill_gps.py:104`
-- `upload_ll_batch.py:171`
-- `match_images.py:119`
+**Problem**: Multiple files used bare `except:` which catches SystemExit, KeyboardInterrupt, etc.
 
-**Fix**:
-- [ ] Change all bare `except:` to `except Exception:` at minimum
-- [ ] Where appropriate, catch specific exceptions (e.g., `except ValueError:` for int conversions)
-
-**Files**: Multiple (listed above)
+**Fix**: All 11 bare `except:` converted to specific exception types (Session 5):
+- `mde_entry.py`: `ValueError`, `(ValueError, IndexError)`, `OSError`
+- `comments.py`: `Exception`
+- `fill_gps.py`: `Exception`
+- `upload_ll_batch.py`: `Exception`
+- `match_images.py`: `Exception`
+- `report_page4.py`: `(IndexError, TypeError)` (2 locations)
+- `roadanalyzer.py`: `(ValueError, TypeError)`
+- `folder_analyzer.py`: `Exception`
+**Status**: DONE — Session 5 (2026-02-20)
 
 ---
 

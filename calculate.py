@@ -1,7 +1,3 @@
-from pdb import line_prefix
-from sys import stderr
-# from this import d
-from webbrowser import get
 import numpy as np
 import db
 import MR_cal as mr

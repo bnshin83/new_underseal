@@ -1,5 +1,3 @@
-from sys import stderr
-from webbrowser import get
 import numpy as np
 import db
 import MR_cal as mr

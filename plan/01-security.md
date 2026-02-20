@@ -1,7 +1,7 @@
 # P0: Security Fixes
 
-## Status: PARTIAL (1.1 code changes done — Session 4)
-**Priority**: URGENT — credentials removed from code, but old passwords still in git history
+## Status: MOSTLY DONE (1.1 + 1.2 code changes done — Sessions 4-5)
+**Priority**: Old passwords still in git history (need BFG or make repo private)
 
 ---
 
@@ -38,17 +38,13 @@
 - `find_f25_files.py:20-22` — `req_no` concatenated into SQL
 
 **Fix**:
-- [ ] Convert all string-concatenated SQL to parameterized queries using `:param` bind variables (already used correctly in `ll_query.py:36-40` as a model)
-- [ ] Example conversion for `ll_query.py`:
-  ```python
-  # Before (vulnerable):
-  sqlstr = "INSERT INTO stda_LONGLIST VALUES (NULL," + ll_no + ", '" + str(year) + "'..."
-
-  # After (safe):
-  sqlstr = "INSERT INTO stda_LONGLIST VALUES (NULL, :ll_no, :year, :dir, :lane_type, ...)"
-  cursor.execute(sqlstr, {'ll_no': ll_no, 'year': str(year), 'dir': dir, ...})
-  ```
-- [ ] Apply same pattern to all affected files
+- [x] Convert all string-concatenated SQL to parameterized queries using `:param` bind variables (Session 5)
+- [x] `ll_query.py`: `compose_ll_entry_string()` replaced with inline bind params in `ll_query()`, `find_ll_no_given_req_no()` converted
+- [x] `ll_info_entry.py`: `compose_ll_info_entry_string()` now returns dict only; `ll_info_entry()` uses bind params
+- [x] `query_db.py`: All 5 functions converted to bind variables
+- [x] `find_f25_files.py`: Converted to bind variables
+- [x] `fill_gps.py`: `idstr` query converted to bind variables
+- [x] `upload_ll_batch.py`: `delete_rows` converted to bind variables
 - [ ] Test with filenames containing special characters (single quotes, semicolons)
 
 **Files**: `ll_query.py`, `ll_info_entry.py`, `query_db.py`, `find_f25_files.py`
