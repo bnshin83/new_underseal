@@ -64,11 +64,68 @@
 
 ---
 
+### 7.5 Speed Up Image Copying
+
+**Problem**: Image copying from the network drive (V:\) to the image server is the slowest part of the pipeline. A 10-file batch takes 5-15 minutes, and most of that time is spent on `shutil.copy()` in `match_images.py`.
+
+**Fix options** (investigate which gives best speedup):
+- [ ] **Parallel image copy**: Use `concurrent.futures.ThreadPoolExecutor` to copy multiple images simultaneously. Network I/O is the bottleneck, so threading helps.
+- [ ] **Skip already-copied images**: Check if the destination file already exists (and has the same size) before copying. Avoids redundant work on re-runs.
+- [ ] **Deferred image copy**: Upload calculations immediately, copy images in the background or as a separate step. User gets results faster.
+- [ ] **Batch copy with robocopy**: On Windows, `robocopy` is much faster than Python `shutil.copy()` for network drives. Could shell out to robocopy for the entire image folder.
+
+**Files**: `match_images.py`, `mde_entry.py`
+
+---
+
+### 7.6 Auto-Email Reports to Advisor
+
+**Problem**: After every batch, user manually emails the generated .docx reports to their advisor. This is repetitive — same recipient, same format every time.
+
+**Fix**:
+- [ ] Add `--email` flag to `upload_results_batch_f25only.py`
+- [ ] After all reports are generated, compose an Outlook email (via `win32com` or `smtplib`) with:
+  - To: configurable recipient (default: advisor's email)
+  - Subject: auto-generated from request IDs and routes
+  - Body: summary of what was processed (LL numbers, routes, directions)
+  - Attachments: all generated .docx report files
+- [ ] Use `win32com.client` to create a draft in Outlook (user can review before sending) rather than auto-sending
+- [ ] Alternative: just open the folder containing reports so user can drag-and-drop into email
+
+**Files**: new `email_report.py`, `upload_results_batch_f25only.py`
+
+---
+
+## Full Workflow (Current vs Improved)
+
+### Current Workflow
+1. Manually create .txt file with F25 paths
+2. Run Python script in terminal
+3. Wait 5-15 min (image copying is slow)
+4. If errors: manually check error log, create new .txt, re-run
+5. If unique constraint: manually delete rows in SQL Developer, re-run
+6. Check ArcGIS dashboard
+7. Manually email reports to advisor
+
+### Improved Workflow (after all 7.x items)
+1. Point script at a folder → it finds all F25 files automatically (7.3)
+2. Run Python script
+3. Faster processing — parallel image copy (7.5)
+4. Image failures don't lose calculations (7.1)
+5. Partial uploads auto-cleanup on re-run (7.2)
+6. Failed files → one-click retry (7.4)
+7. Check ArcGIS dashboard
+8. Reports auto-emailed as Outlook draft (7.6)
+
+---
+
 ### Implementation Order
 
 | Item | Priority | Reason |
 |------|----------|--------|
 | 7.1 Image failure isolation | CRITICAL | Prevents data loss — calculations are thrown away for no reason |
 | 7.2 Unique constraint handling | CRITICAL | Enables clean re-runs without manual SQL cleanup |
+| 7.5 Speed up image copying | HIGH | Biggest time bottleneck in the pipeline |
 | 7.4 Auto-retry failed files | HIGH | Natural follow-up to 7.2 — makes re-runs one-click |
 | 7.3 Auto-generate txt from folder | MEDIUM | Convenience — saves time but current workflow works |
+| 7.6 Auto-email reports | MEDIUM | Saves a few minutes per batch, nice quality-of-life |
