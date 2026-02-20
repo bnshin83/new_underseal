@@ -8,7 +8,8 @@ Created: 2026-02-19
 | Phase | Status | Notes |
 |-------|--------|-------|
 | Phase 0: ArcGIS Dashboard Fix | DONE | Root cause: Category Selector max categories limit in dashboard |
-| Phase 1: Security + Stability | NOT STARTED | Highest priority after dashboard fix |
+| Phase 1: Security + Stability | NOT STARTED | Credentials, SQL injection, global id bug |
+| Phase 1.5: Workflow | NOT STARTED | Image failure isolation, re-run support, auto-retry |
 | Phase 2: Code Quality | PARTIAL | Logging (3.4) done; rest not started |
 | Phase 3: Architecture | PARTIAL | Logging (4.3) done; rest not started |
 | Phase 4: Testing | PARTIAL | Subprocess validation (5.1) done; rest not started |
@@ -20,6 +21,7 @@ Created: 2026-02-19
 |----------|-------------|
 | [01-security.md](01-security.md) | Security fixes (credentials, SQL injection) — **URGENT** |
 | [02-stability.md](02-stability.md) | Bug fixes and stability improvements |
+| [07-workflow.md](07-workflow.md) | Workflow improvements — image isolation, re-run, auto-retry |
 | [03-code-quality.md](03-code-quality.md) | Code cleanup, deduplication, modernization |
 | [04-architecture.md](04-architecture.md) | Structural improvements and configuration |
 | [05-testing.md](05-testing.md) | Testing strategy and validation |
@@ -28,13 +30,14 @@ Created: 2026-02-19
 
 ## Priority Order
 
-1. **P0 — ArcGIS Dashboard**: Grey requests missing from map. Diagnostic script created.
+1. ~~**P0 — ArcGIS Dashboard**: DONE~~
 2. **P0 — Security** (01): Exposed credentials in public repo. Must fix immediately.
 3. **P1 — Stability** (02): Bugs that can cause crashes or data corruption.
-4. **P2 — Code Quality** (03): Cleanup that makes future work safer and faster.
-5. **P3 — Architecture** (04): Structural improvements for maintainability.
-6. **P4 — Testing** (05): Validation to prevent regressions.
-7. **P5 — DevOps** (06): Git, CI, deployment improvements.
+4. **P1.5 — Workflow** (07): Image failure isolation, re-run support, auto-retry. Daily pain points.
+5. **P2 — Code Quality** (03): Cleanup that makes future work safer and faster.
+6. **P3 — Architecture** (04): Structural improvements for maintainability.
+7. **P4 — Testing** (05): Validation to prevent regressions.
+8. **P5 — DevOps** (06): Git, CI, deployment improvements.
 
 ## Key Files Added
 
