@@ -3,7 +3,7 @@
 Comprehensive plan for improving the FWD Analysis and Visualization Tool codebase.
 Created: 2026-02-19
 
-## Current Status (as of Session 6, 2026-02-20)
+## Current Status (as of Session 7, 2026-02-20)
 
 | Phase | Status | Notes |
 |-------|--------|-------|
@@ -11,7 +11,8 @@ Created: 2026-02-19
 | Phase 1: Security + Stability | DONE | Credentials (1.1), SQL injection (1.2), global id (2.2), orphaned cursor (2.4), bare excepts (2.8), destructive import (2.5), file leaks (2.6/2.7), temp cleanup (2.9) all done |
 | Phase 1.5: Workflow | DONE | Image failure isolation (7.1), re-run support (7.2), .gitignore (5A) all done |
 | Phase 2: Code Quality | MOSTLY DONE | Unused imports (3.1), dedup (3.2), dead code (3.3), logging (3.4 partial) done |
-| Phase 3: Architecture | PARTIAL | Logging (4.3) done; centralized config (3A), subprocess abstraction (3B) not started |
+| Phase 2.5: Performance | DONE | Merged duplicate subprocess (1-3s/file saved), single DB commit, cached lookups, lowered chart DPI, YGJ.exe return code check, consolidated completeness query |
+| Phase 3: Architecture | PARTIAL | Logging (4.3) done; centralized config (3A), subprocess abstraction (3B) skipped (low value) |
 | Phase 4: Testing | PARTIAL | Subprocess validation (5.1) done; rest not started |
 | Phase 5: DevOps | PARTIAL | .gitignore (5A) done; rest not started |
 

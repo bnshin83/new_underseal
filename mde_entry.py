@@ -186,67 +186,72 @@ def _access_connect(path):
     return tables
 
 
-def read_pavtype(path, f25_path):
+def read_pavtype_from_mde(path, f25_path):
+    """Read all Access tables once and return (e1, e2, tables) for reuse.
 
+    Replaces the old read_pavtype() which spawned a separate subprocess
+    just to read e1/e2 from the Thickness table. Now we read everything
+    in one subprocess call and cache the tables for read_mde().
+    """
     pre, ext = os.path.splitext(path)
-    base = os.path.basename(f25_path)
     newpath = pre + '.accdb'
     shutil.copy(path, newpath)
 
     try:
-        # Run Access query in subprocess to avoid DLL conflict with cx_Oracle
-        import subprocess, sys, json
-        env = _get_clean_env()
-        script = (
-            "import pyodbc, json, sys\n"
-            "try:\n"
-            "    conn = pyodbc.connect(r'Driver={{Microsoft Access Driver (*.mdb, *.accdb)}};DBQ={dbq}')\n"
-            "    cursor = conn.cursor()\n"
-            "    cursor.execute('select e1, e2 from Thickness ORDER BY SectionID ASC')\n"
-            "    row = cursor.fetchone()\n"
-            "    print(json.dumps({{'e1': row[0], 'e2': row[1]}}))\n"
-            "    conn.close()\n"
-            "except Exception as e:\n"
-            "    print('SUBPROCESS_ERROR: ' + str(e), file=sys.stderr)\n"
-            "    sys.exit(1)\n"
-        ).format(dbq=newpath.replace("'", "\\'"))
-        result = subprocess.run([sys.executable, "-c", script], capture_output=True, text=True, timeout=60, env=env)
-        if result.returncode != 0:
-            raise Exception("read_pavtype subprocess failed (returncode={}).\nstdout: {}\nstderr: {}\nDBQ: {}".format(
-                result.returncode, result.stdout, result.stderr, newpath))
-        data = json.loads(result.stdout.strip())
-        return data['e1'], data['e2']
-    finally:
+        tables = _access_connect(newpath)
+        df_thickness = tables['Thickness']
+        e1 = df_thickness['e1'][0]
+        e2 = df_thickness['e2'][0]
+        return e1, e2, tables, newpath
+    except Exception:
         try:
             os.remove(newpath)
         except OSError:
             pass
+        raise
 
 
-def read_mde(con, path, f25_path, id, ll_obj, gpsx, gpsy, gpsx_dict, gpsy_dict, args):
+def read_mde(con, path, f25_path, id, ll_obj, gpsx, gpsy, gpsx_dict, gpsy_dict, args, preloaded_tables=None, accdb_path=None):
     """
-    reuse the gpsx and gpsy that has been extracted at the begining of the result uploading
+    reuse the gpsx and gpsy that has been extracted at the begining of the result uploading.
+
+    If preloaded_tables is provided, reuses them instead of launching a new subprocess.
+    accdb_path is the temp .accdb file path to clean up (from read_pavtype_from_mde).
     """
-    pre, ext = os.path.splitext(path)
     base = os.path.basename(f25_path)
-    newpath = pre + '.accdb'
-    shutil.copy(path, newpath)
-    try:
-        return _read_mde_inner(con, newpath, f25_path, id, ll_obj, gpsx, gpsy, gpsx_dict, gpsy_dict, args, base)
-    finally:
+
+    if preloaded_tables is not None:
+        # Tables already loaded by read_pavtype_from_mde — reuse them
+        newpath = accdb_path
         try:
-            os.remove(newpath)
-        except OSError:
-            pass
+            return _read_mde_inner(con, newpath, f25_path, id, ll_obj, gpsx, gpsy, gpsx_dict, gpsy_dict, args, base, preloaded_tables)
+        finally:
+            if newpath:
+                try:
+                    os.remove(newpath)
+                except OSError:
+                    pass
+    else:
+        # Fallback: load tables from scratch (e.g. pavtype_special_case)
+        pre, ext = os.path.splitext(path)
+        newpath = pre + '.accdb'
+        shutil.copy(path, newpath)
+        try:
+            return _read_mde_inner(con, newpath, f25_path, id, ll_obj, gpsx, gpsy, gpsx_dict, gpsy_dict, args, base)
+        finally:
+            try:
+                os.remove(newpath)
+            except OSError:
+                pass
 
 
-def _read_mde_inner(con, newpath, f25_path, id, ll_obj, gpsx, gpsy, gpsx_dict, gpsy_dict, args, base):
+def _read_mde_inner(con, newpath, f25_path, id, ll_obj, gpsx, gpsy, gpsx_dict, gpsy_dict, args, base, preloaded_tables=None):
     server_root = args.server_root
     skip_img_matching = args.skip_img_matching
     mde = {}
 
     # Read all Access tables via subprocess to avoid DLL conflict
-    tables = _access_connect(newpath)
+    tables = preloaded_tables if preloaded_tables is not None else _access_connect(newpath)
 
     ########################################################################
     #Read and write to deflections

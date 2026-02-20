@@ -159,3 +159,30 @@ Phase 1 (Security + Stability) is now **fully complete**. Phase 2 (Code Quality)
 - Architecture: centralized config (3A), subprocess abstraction (3B)
 - Testing: unit tests (4A), dry run mode (4B)
 - DevOps: branch cleanup (5B), README update (5C)
+
+---
+
+## Session 7 — 2026-02-20
+
+### Context
+Dr. Shin confirmed all Session 4-6 changes work correctly. Asked for performance improvements to speed up the batch pipeline.
+
+### Work Done
+1. **Merged read_pavtype into _access_connect (biggest win)**: Eliminated duplicate subprocess launch per F25 file. Previously `read_pavtype()` spawned one subprocess to read e1/e2 from Thickness table, then `_access_connect()` spawned another to read all 6 tables (including Thickness again). Now `read_pavtype_from_mde()` reads everything once and passes cached tables to `read_mde()`. Saves ~1-3 seconds per file.
+2. **Single DB commit per file**: Collapsed 4-5 separate `con.commit()` calls (ll_query, putmde, putimg, putcalc, putstats) into one final commit after all inserts complete. Reduces Oracle WAN round-trips.
+3. **Cached Oracle read-only lookups**: `find_ll_no_given_req_no()` and `get_ll_obj()` results now cached in dicts for the batch run. Saves 2 DB queries per file when same longlist/request referenced.
+4. **Lowered chart DPI from 600 to 150**: In `report.py`, `fig.savefig()` now uses 150 DPI instead of 600. ~4x faster report chart generation with no visible quality difference in Word.
+5. **Check YGJ.exe return code**: `calculate.py` now checks `subprocess.call()` return code and raises exception on failure instead of silently reading stale output files.
+6. **Consolidated check_entry_completeness query**: Replaced 7 separate `SELECT COUNT(*)` queries with single `UNION ALL` query for duplicate entry checking.
+
+### Files Modified
+- `mde_entry.py`: Replaced `read_pavtype()` with `read_pavtype_from_mde()`, updated `read_mde()` to accept preloaded tables
+- `upload_results_batch_f25only.py`: Updated to use new API, added caching, single commit
+- `db.py`: Added `commit` parameter to `putcalc()` and `putstats()`
+- `calculate.py`: Added YGJ.exe return code check
+- `report.py`: Lowered DPI from 600 to 150
+
+### Next Steps (Session 8)
+- Dr. Shin tests performance improvements on INDOT work PC
+- Branch cleanup: merge `claude-fix` into `main`
+- Consider dry run mode (`--dry_run` flag)

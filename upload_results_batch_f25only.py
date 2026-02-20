@@ -1,6 +1,6 @@
 import db
 from ll_query import ll_query
-from mde_entry import read_mde, getGPS, read_pavtype
+from mde_entry import read_mde, getGPS, read_pavtype_from_mde
 from calculate import calc
 
 import report
@@ -50,16 +50,22 @@ RESULT_TABLES = [
 def check_entry_completeness(con, longlist_id):
     """Check which tables have data for the given longlist_id.
     Returns (is_complete, table_counts) where is_complete means all
-    required tables (excluding IMG) have at least 1 row."""
+    required tables (excluding IMG) have at least 1 row.
+    Uses a single query with UNION ALL to minimize Oracle round-trips."""
     cursor = con.cursor()
+    # Single query: 7 counts in one round-trip
+    parts = ["SELECT '{}' AS tbl, COUNT(*) AS cnt FROM {} WHERE LONGLIST_ID = :id{}".format(t, t, i)
+             for i, t in enumerate(RESULT_TABLES)]
+    sql = " UNION ALL ".join(parts)
+    bind = {"id{}".format(i): longlist_id for i in range(len(RESULT_TABLES))}
+    cursor.execute(sql, bind)
     table_counts = {}
-    for table in RESULT_TABLES:
-        cursor.execute("SELECT COUNT(*) FROM {} WHERE LONGLIST_ID = :1".format(table), [longlist_id])
-        table_counts[table] = cursor.fetchone()[0]
+    for row in cursor:
+        table_counts[row[0]] = row[1]
     cursor.close()
     # Complete means all tables except IMG have data (IMG is optional)
     required = [t for t in RESULT_TABLES if t != "stda_IMG"]
-    is_complete = all(table_counts[t] > 0 for t in required)
+    is_complete = all(table_counts.get(t, 0) > 0 for t in required)
     return is_complete, table_counts
 
 def cleanup_existing_entry(con, longlist_id):
@@ -81,7 +87,7 @@ def find_existing_longlist_id(con, ll_no, year, f25_path):
     return row[0] if row else None
 
 ################################## Major function definition ##################################
-def upload_single_result(args, f25_path, ll_no, year, con, user_input_dict, commit=0):
+def upload_single_result(args, f25_path, ll_no, year, con, user_input_dict, commit=0, ll_obj_cache=None):
     """
     Major function responsible for processing the raw FWD and uploading the calculated resutls to Oracle database.
     This function itself calls many other cutomized functions. Please go through the cutomized functions to gain deeper understanding of how it works.
@@ -92,9 +98,13 @@ def upload_single_result(args, f25_path, ll_no, year, con, user_input_dict, comm
 
     mde_path = f25_path[:-3] + 'mde'
 
+    # Preload Access tables once (used for both pavtype detection and read_mde)
+    preloaded_tables = None
+    accdb_path = None
+
     if not args.pavtype_special_case:
-        # Decide Pavement type automatically using the elastic modulus.
-        e1,e2= read_pavtype(mde_path, f25_path)
+        # Read Access DB once — get e1/e2 for pavtype AND cache tables for read_mde
+        e1, e2, preloaded_tables, accdb_path = read_pavtype_from_mde(mde_path, f25_path)
         # 2000 is the threshold for concrete
         if e1 >= 2000:
             pavtype = 'concrete'
@@ -126,8 +136,17 @@ def upload_single_result(args, f25_path, ll_no, year, con, user_input_dict, comm
 
     longlist_id = None
 
-    # retrive ll_obj from database
-    ll_obj = get_ll_obj(con, ll_no, year)
+    # retrive ll_obj from database (with caching)
+    cache_key = (str(ll_no), str(year))
+    if ll_obj_cache is not None and cache_key in ll_obj_cache:
+        import copy
+        ll_obj = copy.deepcopy(ll_obj_cache[cache_key])
+    else:
+        ll_obj = get_ll_obj(con, ll_no, year)
+        if ll_obj_cache is not None:
+            ll_obj_cache[cache_key] = ll_obj
+        import copy
+        ll_obj = copy.deepcopy(ll_obj)
 
     # Extract Start and End GPS
     gpsx, gpsy, gpsx_dict, gpsy_dict = getGPS(f25_path)
@@ -142,7 +161,7 @@ def upload_single_result(args, f25_path, ll_no, year, con, user_input_dict, comm
     # Assign the new pavement type
     ll_obj['pavtype'] = pavtype
 
-    longlist_id,dir,lane_type = ll_query(con, ll_no, f25_path, year, start_gps, end_gps, pavtype, args, user_input_dict, commit=1)
+    longlist_id,dir,lane_type = ll_query(con, ll_no, f25_path, year, start_gps, end_gps, pavtype, args, user_input_dict, commit=0)
 
     ll_obj['dir'] = dir
 
@@ -153,21 +172,19 @@ def upload_single_result(args, f25_path, ll_no, year, con, user_input_dict, comm
     pcc_mod = None
     rxn_subg = None
 
-    mde, roadtype, roadname, ll_obj = read_mde(con, mde_path, f25_path, longlist_id, ll_obj, gpsx, gpsy, gpsx_dict, gpsy_dict, args)
+    mde, roadtype, roadname, ll_obj = read_mde(con, mde_path, f25_path, longlist_id, ll_obj, gpsx, gpsy, gpsx_dict, gpsy_dict, args,
+                                               preloaded_tables=preloaded_tables, accdb_path=accdb_path)
     ll_obj["roadname"] = roadname
 
     calc_data, stats_data, mde, pcc_mod, rxn_subg = calc(con, longlist_id, pavtype, roadtype, ll_obj, mde, args)
 
     if commit:
-        db.putmde(con, mde, stats_data, longlist_id, commit=1)
-
-    if commit:
+        db.putmde(con, mde, stats_data, longlist_id, commit=0)
         if not args.skip_img_matching:
-            db.putimg(con, ll_obj, longlist_id, year, lane_type, commit=1)
-
-    if(commit):
-        db.putcalc(con, calc_data, longlist_id, pcc_mod, rxn_subg)
-        db.putstats(con, stats_data, longlist_id)
+            db.putimg(con, ll_obj, longlist_id, year, lane_type, commit=0)
+        db.putcalc(con, calc_data, longlist_id, pcc_mod, rxn_subg, commit=0)
+        db.putstats(con, stats_data, longlist_id, commit=0)
+        con.commit()  # Single commit for all inserts
 
     logger.info('Report generation: %s', args.gen_report)
 
@@ -243,6 +260,9 @@ if __name__ == "__main__":
 
     error_flag = False
     user_input_dict = {}
+    # Cache Oracle lookups to avoid redundant queries for same request/longlist
+    _ll_no_cache = {}   # req_no -> ll_no
+    _ll_obj_cache = {}  # (ll_no, year) -> ll_obj
     for line_idx, line in enumerate(Lines):
         # Automatically detect year, and request number from the file path
         # File path needs to follow the folder structure!!!!!!!!!!
@@ -257,7 +277,11 @@ if __name__ == "__main__":
             f25_path = f25_path.replace('"', '').strip()
             # extract Request NO., and remove the white space
             req_no = split_temp[-3].replace(" ", "")
-            ll_no = find_ll_no_given_req_no(con, os.path.basename(f25_path), req_no)
+            if req_no in _ll_no_cache:
+                ll_no = _ll_no_cache[req_no]
+            else:
+                ll_no = find_ll_no_given_req_no(con, os.path.basename(f25_path), req_no)
+                _ll_no_cache[req_no] = ll_no
             logger.info("[%d/%d] Processing: %s (LL-%s, year=%s, req=%s)",
                         line_idx+1, len(Lines), os.path.basename(f25_path), ll_no, year, req_no)
 
@@ -367,7 +391,7 @@ if __name__ == "__main__":
                     logger.info("  --force: deleting existing entry (longlist_id=%s) for LL-%s-%s", existing_id, ll_no, year)
                     cleanup_existing_entry(con, existing_id)
             logger.info("  upload_single_result starting...")
-            longlist_id = upload_single_result(args, f25_path, ll_no, year, con, user_input_dict, commit=1)
+            longlist_id = upload_single_result(args, f25_path, ll_no, year, con, user_input_dict, commit=1, ll_obj_cache=_ll_obj_cache)
             logger.info("  upload_single_result completed OK")
         # Roll Back Mechanism: If error occurs in the "upload_single_result" function,
         #                      record the error message in error log file and delete the corresponding row that has been uploaded.
@@ -388,7 +412,7 @@ if __name__ == "__main__":
                         logger.warning('LL-%s-%s partially uploaded (counts: %s). Cleaning up and retrying...', ll_no, year, counts)
                         cleanup_existing_entry(con, existing_id)
                         try:
-                            longlist_id = upload_single_result(args, f25_path, ll_no, year, con, user_input_dict, commit=1)
+                            longlist_id = upload_single_result(args, f25_path, ll_no, year, con, user_input_dict, commit=1, ll_obj_cache=_ll_obj_cache)
                             logger.info('  Retry succeeded for LL-%s-%s', ll_no, year)
                         except Exception as retry_err:
                             logger.error('  Retry also failed for LL-%s-%s: %s', ll_no, year, retry_err)

@@ -273,7 +273,9 @@ def writeAndExecute(mde, pavtype, roadtype, ll_obj, sensordata):
     writeLCC0()
     writeLCC1(roadtype, pavtype, ll_obj)
     writeELMOD_FWD(mde, sensordata)
-    subprocess.call("C:/Aashto/YGJ.exe")
+    retcode = subprocess.call("C:/Aashto/YGJ.exe")
+    if retcode != 0:
+        raise Exception("YGJ.exe failed with return code {}. Check C:/Aashto/ input files.".format(retcode))
     temp_corr = None
     adj_elm = None
     with open("C:/Aashto/RESULT.dat") as f:

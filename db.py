@@ -51,7 +51,7 @@ def connect(dev_env):
         raise Exception ("Invalid dev_env option")
     return con
 
-def putcalc(con, data, id, pcc_mod, rxn_subg):
+def putcalc(con, data, id, pcc_mod, rxn_subg, commit=0):
     sensordata = data["sensordata"]
     if(len(pcc_mod) == 0):
         pcc_mod = np.array([sensordata.shape[0]*[-1]])
@@ -86,14 +86,15 @@ def putcalc(con, data, id, pcc_mod, rxn_subg):
     tmparr = np.concatenate((tmparr, np.transpose(minus1_arr)), axis = 1)
     tmparr = np.concatenate((tmparr, np.transpose(null_arr)), axis = 1)
     tmparr = np.concatenate((tmparr, np.transpose(data["e"][4:5,:])), axis = 1)
-    
+
     arr = list(map(tuple, tmparr))
     cursor = con.cursor()
     cursor.executemany("INSERT INTO stda_CALCULATIONS VALUES (NULL, :1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14, :15, :16, :17, :18, :19, :20, :21, :22, :23, :24, :25, :26, :27, :28, :29, :30, :31, :32, :33, :34, :35)", arr) #30
-    con.commit()
+    if commit:
+        con.commit()
     cursor.close()
 
-def putstats(con, data, id):
+def putstats(con, data, id, commit=0):
     arr = []
     sensorstats = np.transpose(data["sensorstats"])
     for i in range(0, 10):
@@ -111,7 +112,8 @@ def putstats(con, data, id):
     arr = list(map(tuple, arr))
     cursor = con.cursor()
     cursor.executemany("INSERT INTO stda_STATS VALUES (NULL, :1, :2, :3, :4, :5, :6, :7, :8, :9,:10, :11)", arr)#7
-    con.commit()
+    if commit:
+        con.commit()
     cursor.close()
 
 def putmde(con, mde, stats_data, id, commit=0):
