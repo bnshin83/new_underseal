@@ -87,13 +87,27 @@ The Oracle data and upload code were fine. The ArcGIS Dashboard had a **Category
 
 ---
 
+### Session 3 Status
+- [x] `diagnose_dashboard.py` created and pushed
+- [x] `sql/arcgis_dashboard.sql` created
+- [x] Plan docs updated (02, 03, 04, 05, README)
+- [x] Diagnostic run by Dr. Shin — Oracle data confirmed OK
+- [x] Root cause found: ArcGIS Dashboard Category Selector max categories limit
+- [x] Dashboard fixed by Dr. Shin — grey requests now visible
+
+---
+
 ## Session 4 — (next session)
 
 ### Start-of-Session Checklist
 - [ ] Read `plan/SESSION-LOG.md` for context
-- [ ] Check if `run_log.txt` has diagnostic output
-- [ ] Review diagnostic results and determine root cause
 - [ ] Check plan status in `plan/*.md` files
+
+### Planned Work
+- Phase 1A: Credential externalization (`db.py`)
+- Phase 1B: SQL injection fix (`ll_query.py`, `ll_info_entry.py`, `query_db.py`)
+- Phase 1C: Global `id` variable bug fix
+- Phase 5A: Add `.gitignore`
 
 ### End-of-Session Checklist
 - [ ] Update `SESSION-LOG.md` with work done
