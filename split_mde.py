@@ -18,8 +18,6 @@ def build_mde():
     mdepath = filedialog.askopenfilename(initialdir='./',title='Select A MDE File', 
                                           filetypes=(("MDE files","*.mde"),("all files","*.*"))
                                          )
-    # print(f25_path)
-    # mdepath = "D:\\shrey\\Documents\\split mde\\cho.mde"
     pre, ext = os.path.splitext(mdepath)
     newpath = pre + '.accdb'
     shutil.copy(mdepath, newpath)
@@ -34,9 +32,6 @@ def build_mde():
     files_dict = {}
     for i in range(len(filenames)):
         prefix = str(os.path.split(newpath)[0])
-        # if(filenames.loc[i, 'FileName'][-4:] == '_F25'):
-        #     print("OH YEAH")
-        
         filename = filenames.loc[i, 'FileName']
         if(filename[-4:] == '_F25'):
             filename = filename[0:-4]
@@ -50,7 +45,6 @@ def build_mde():
         shutil.copy(newpath, createpath)
     
     for table in tables:
-        # print(table.table_name)
         if table.table_type != 'TABLE':
             continue
         cursor = mde_conn.cursor()
@@ -91,16 +85,6 @@ def writeToDB(key, filepath, table_name, df):
     
     
 
-    # print(driver_str)
-    
-    # print(df.info())
-    # print("Writing to table_name: ", table_name)
-    # print(df)
-    # df.to_sql(table_name, mde_conn, if_exists="replace")
-    
-
-    
-            
 
 
 build_mde()

@@ -64,14 +64,11 @@ def upload_single_ll(con, ll_info_df, ll_no_colname, ll_no, combine_flag, xls_fi
     unused_var_dict['ll_obj'] = ll_obj
 
     pkl_filename = "LL-{}-{}".format(ll_no, xls_filename_year) + '.pkl'
-
-    # check for "unused_var_dict" folder existence
     unused_var_dict_folder = './unused_var_dict'
     if not os.path.exists(unused_var_dict_folder):
         os.makedirs(unused_var_dict_folder)
 
     filename = '{}/{}'.format(unused_var_dict_folder, pkl_filename)
-    # print(filename)
     if filename not in duplicate_check_set:
         duplicate_check_set.add(filename)
     else:

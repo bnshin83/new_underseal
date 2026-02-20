@@ -31,7 +31,6 @@ def calc_esal(ll_obj):
         trucks = int(ll_obj["traffic"])
     except (ValueError, TypeError):
         trucks = 1
-    # print("Trucks: ", trucks)
     tf = 0.38
     r = 0.014
     Y = 18
@@ -39,7 +38,6 @@ def calc_esal(ll_obj):
     D = 0.5
     G = 1.13
     esal = trucks*tf*G*D*L*Y*365
-    # print("CLACULATE ESAL: ", esal)
     return esal
 
     

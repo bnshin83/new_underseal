@@ -12,9 +12,6 @@ from datetime import date
 
 import re
 
-if os.path.exists('./page_4.docx'):
-    os.remove("page_4.docx")
-
 rp_val = 0
 dmi_val = 0
 
@@ -33,16 +30,9 @@ def m2ft(input_meter):
     return converted_feet
 
 def dir_str(dir):
-    if dir == "EB":
-        return "East Bound"
-    elif dir == "NB":
-        return "North Bound"
-    elif dir == "SB":
-        return "South Bound"
-    elif dir == "WB":
-        return "West Bound"
-    else:
-        return dir
+    """Expand direction abbreviation to full text. Same as report.elab_dir()."""
+    mapping = {"EB": "East Bound", "NB": "North Bound", "SB": "South Bound", "WB": "West Bound"}
+    return mapping.get(dir, dir)
 
 def get_from_rp_to_rp_str(mde_path, args):
 
@@ -405,47 +395,3 @@ def overlay_design_page(document, ll, calc_data, dir_text, mde_path, args, post_
     document = overlay_design_table(document, ll, calc_data, mde_path, dir_text, args, post_design)
 
     return document
-#################################################################################
-
-# mde_path = "./US-30 RP-142+-93 to RP-142+62 (concrete 2)/US-30 LL-205 ramp too/US-30 EB RP-142+-93 to RP-142+62.mde"
-
-# # You can use the result of this function to calculate length!!!!!!!!!!!#######
-# from_rp_list, to_rp_list = get_from_rp_to_rp_str(mde_path)
-
-# file = open("mde.pickle",'rb')
-# mde = pkl.load(file)
-
-# file = open("calc_data.pickle",'rb')
-# calc_data = pkl.load(file)
-
-# file = open("stats_data.pickle",'rb')
-# stats_data = pkl.load(file)
-
-# with open("ll.pickle", "rb") as f:
-#     ll = pkl.load(f)
-
-# #(To be modified)# Values are hard coded here becuase I don't have the "comments" function
-# rp_val, dmi_val = 142, 3635
-
-# dir_text = dir_str(ll["dir"])
-
-# document = create_doc()
-
-# document = header_footer(document, mde_path, ll, "Underseal")
-
-# document = soil_profile_page(document, mde, calc_data,rp_val,dmi_val)
-
-# document.add_page_break()
-
-# document = dm_page(document, calc_data, mde)
-
-# document.add_page_break()
-
-# document = overlay_design_page(document, calc_data, dir_text, mde_path, post_design=False)
-
-# document.add_page_break()
-
-# #(to be modify)# change the "calc_data" in this line to "post underseal" data
-# document = overlay_design_page(document, calc_data, dir_text, mde_path, post_design=True)
-
-# document.save('page_4.docx')

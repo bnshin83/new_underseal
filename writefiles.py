@@ -7,15 +7,10 @@ from roadanalyzer import set_vars, calc_esal
 
 def writeLCC(mde, pavtype):
     h = mde["mod_est"][:,3:7][0]
-    # print(h)
-    # sys.exit(-1)
     thickness = []
     for i in h:
-        # print(i)
         if i != 0.0:
             thickness.append(float(i))
-    # print(thickness)
-    # sys.exit(-1)
     pts = len(mde["mod_est"])
     sensors = 9
     sensor_placement = [abs(float(mde["misc"][0][1])), abs(float(mde["misc"][0][3])), abs(float(mde["misc"][0][5])), abs(float(mde["misc"][0][7])), abs(float(mde["misc"][0][9])), abs(float(mde["misc"][0][11])), abs(float(mde["misc"][0][13])), abs(float(mde["misc"][0][15])), abs(float(mde["misc"][0][17]))]
@@ -43,14 +38,8 @@ def writeLCC(mde, pavtype):
     prstr = prstr + str(1) + "\n"
     prstr = prstr + str(pav) + "\n"
     prstr = prstr + str(radius)
-    # print("***PRINTING prstr******")
-    # print(prstr)
     with open("C:/Aashto/LCC.dat", 'w') as f:
         f.write(prstr)
-    
-    # print("LCC******************************")
-    # print(sensor_placement_rounded)
-    # print(radius)
 
 def writeLCC0():
     sections = 1
@@ -74,20 +63,13 @@ def writeLCC2():
 def writeELMOD_FWD(mde, sensordata):
     # chainage = mde["deflections"][:, 1]
     defl = np.array(sensordata[:, 0:9])
-    # print("PRINTING DEFL")
-    # print(defl)
     points_drops = np.array(mde["deflections_calc"][:, 3:5])
     deflections_all = np.array(mde["deflections"])
     deflections = np.array([tmp for tmp in deflections_all if(list(map(int, tmp[[4,16]])) in points_drops.tolist())])
     chainage = np.array([deflections[:, 1].astype(float)])
-    # print(deflections)
-    # print("Chainage shape")
-    # print(chainage.shape)
     airtemp = np.array([deflections[:, 17].astype(float)])
     surface_temp = np.array([deflections[:, 3].astype(float)])
     pressure = np.array([len(airtemp[0])*[82.06]])
-    # print("Pressure shape")
-    # print(pressure.shape)
     arr = np.array([])
     arr = np.concatenate((np.transpose(chainage), defl), axis = 1)
     arr = np.concatenate((arr, np.transpose(pressure)), axis = 1)
@@ -98,8 +80,6 @@ def writeELMOD_FWD(mde, sensordata):
         for i in ele:
             prstr = prstr + str(i) +" "
         prstr = prstr + "\n"
-    # print("****PRINTING ELMOD FWD*****")
-    # print(prstr)
     with open("C:/Aashto/ELMOD_fwd.dat", 'w') as f:
         f.write(prstr)
 

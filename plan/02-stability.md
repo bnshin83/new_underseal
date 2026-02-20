@@ -1,6 +1,6 @@
 # P1: Stability & Bug Fixes
 
-## Status: PARTIALLY DONE (subprocess fix applied)
+## Status: DONE (all items completed — Sessions 1-6)
 
 ---
 
@@ -50,40 +50,34 @@
 
 ---
 
-### 2.5 Destructive Import Side Effect in `report_page4.py`
+### 2.5 Destructive Import Side Effect in `report_page4.py` (DONE)
 
-**Problem**: Lines 15-16 execute at **import time**:
-```python
-if os.path.exists('./page_4.docx'):
-    os.remove("page_4.docx")
-```
-This silently deletes `page_4.docx` from the current working directory every time the module is imported, even if it's being imported for testing or inspection.
+**Problem**: Lines 15-16 executed at **import time**, deleting `page_4.docx` from the CWD.
 
-**Fix**:
-- [ ] Remove lines 15-16 entirely (the file is never used in production; `gen_report()` saves with a proper filename)
-- [ ] Or move this logic into a function that's explicitly called
+**Fix**: Removed the destructive lines entirely.
+**Status**: DONE — Session 6 (2026-02-20)
 
 **Files**: `report_page4.py`
 
 ---
 
-### 2.6 File Handle Leak in `getGPS()`
+### 2.6 File Handle Leak in `getGPS()` (DONE)
 
-**Problem**: `mde_entry.py:15` opens `f25_path` with `open()` but only closes at line 73. If an exception occurs between these lines, the file handle leaks.
+**Problem**: `mde_entry.py` opened file without context manager.
 
-**Fix**:
-- [ ] Refactor to use `with open(f25_path, "r") as f25file:` context manager
+**Fix**: Converted to `with open()` context manager.
+**Status**: DONE — Session 6 (2026-02-20)
 
 **Files**: `mde_entry.py`
 
 ---
 
-### 2.7 File Handle Leak in `getUnits()`
+### 2.7 File Handle Leak in `getUnits()` (DONE)
 
-**Problem**: Same pattern at `mde_entry.py:96-97`. File opened, closed at line 127, no context manager.
+**Problem**: Same pattern — file opened without context manager.
 
-**Fix**:
-- [ ] Refactor to `with open(f25_path, "r") as f25file:`
+**Fix**: Converted to `with open()` context manager.
+**Status**: DONE — Session 6 (2026-02-20)
 
 **Files**: `mde_entry.py`
 
@@ -106,13 +100,12 @@ This silently deletes `page_4.docx` from the current working directory every tim
 
 ---
 
-### 2.9 Temporary `.accdb` Files Not Cleaned Up
+### 2.9 Temporary `.accdb` Files Not Cleaned Up (DONE)
 
-**Problem**: Both `read_pavtype()` (line 191) and `read_mde()` (line 227) call `shutil.copy(path, newpath)` creating `.accdb` copies but never delete them after use. Over time, the data folder accumulates duplicate files.
+**Problem**: `read_pavtype()` and `read_mde()` create `.accdb` copies but never delete them.
 
-**Fix**:
-- [ ] Add cleanup after subprocess completes: `os.remove(newpath)` in a `finally` block
-- [ ] Or use `tempfile.NamedTemporaryFile` with `.accdb` suffix instead of copying to a predictable path
+**Fix**: Added `try/finally` blocks with `os.remove(newpath)` in both functions. Extracted `_read_mde_inner()` to enable proper cleanup wrapping.
+**Status**: DONE — Session 6 (2026-02-20)
 
 **Files**: `mde_entry.py`
 

@@ -1,6 +1,6 @@
 # P2: Code Quality & Cleanup
 
-## Status: PARTIAL (3.1 done, 3.4 partial — Sessions 2+5)
+## Status: MOSTLY DONE (3.1, 3.2, 3.3 done — Sessions 5+6; 3.4 partial)
 
 ---
 
@@ -29,41 +29,31 @@
 
 ---
 
-### 3.2 Deduplicate Functions
+### 3.2 Deduplicate Functions (DONE)
 
-**Problem**: Several functions are duplicated across files.
+**Problem**: Several functions were duplicated across files.
 
-| Function | File 1 | File 2 | Notes |
-|----------|--------|--------|-------|
-| `putstats()` | `db.py:114` | `calculate.py:276` | Slightly different (db.py has audit fields) |
-| `putdata()` | `calculate.py:239` | `db.py:54` (putcalc) | Old vs new version |
-| `get_pathstring()` | `report.py:569` | `report_page4.py:111` | Identical |
-| `elab_dir()` / `dir_str()` | `report.py:27` | `report_page4.py:35` | Identical logic |
+**Fix**: Session 6 (2026-02-20):
+- [x] Removed dead `putdata()` and `putstats()` from `calculate.py` (not called anywhere; live versions in `db.py`)
+- [x] Simplified `dir_str()` in `report_page4.py` to dict lookup
+- [x] Could NOT consolidate `get_pathstring()` or `dir_str()`/`elab_dir()` between report.py and report_page4.py due to circular import (report.py imports report_page4). Kept separate but simplified.
 
-**Fix**:
-- [ ] Remove `putstats()` and `putdata()` from `calculate.py` (the `db.py` versions are used)
-- [ ] Move `get_pathstring()` to a shared utility module and import from both report files
-- [ ] Consolidate `elab_dir()` / `dir_str()` into one function in one place
-
-**Files**: `calculate.py`, `db.py`, `report.py`, `report_page4.py`
+**Files**: `calculate.py`, `report_page4.py`
 
 ---
 
-### 3.3 Remove Dead/Commented-Out Code
+### 3.3 Remove Dead/Commented-Out Code (DONE)
 
-**Problem**: Significant chunks of commented-out code throughout:
-- `calculate.py` — commented-out test code at bottom (lines 549-554)
-- `report_page4.py` — commented-out test code at bottom (lines 410-451)
-- `mde_entry.py` — scattered commented-out debug prints
-- `db.py` — many commented-out print statements
-- `MR_cal.py` — 40+ lines of commented-out test code (lines 86-125)
+**Problem**: 195 commented-out print statements and dead test blocks across 13 files.
 
-**Fix**:
-- [ ] Remove all commented-out test code (it's preserved in git history)
-- [ ] Remove debug print statements that are commented out
-- [ ] Keep only meaningful code comments
+**Fix**: Session 6 (2026-02-20):
+- [x] Removed all 195 `# print(...)` statements across 13 files
+- [x] Removed dead test blocks at bottom of `calculate.py`, `report_page4.py`, `MR_cal.py`, `comments.py`
+- [x] Removed unused `blockPrint()`/`enablePrint()` functions from `calculate.py`
+- [x] Removed now-unused `import sys,os` from `calculate.py`
+- [x] Kept meaningful formula reference comments (Excel formula documentation)
 
-**Files**: Multiple
+**Files**: `calculate.py`, `db.py`, `report.py`, `writefiles.py`, `comments.py`, `mde_entry.py`, `match_images.py`, `excel.py`, `roadanalyzer.py`, `upload_results_batch_f25only.py`, `split_mde.py`, `upload_ll_batch.py`, `MR_cal.py`, `report_page4.py`
 
 ---
 

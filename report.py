@@ -16,11 +16,6 @@ import excel, comments, report_page4
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from query_db import *
 
-# if os.path.exists("TestDoc.docx"):
-#   os.remove("TestDoc.docx")
-# else:
-#   print("The file does not exist") 
-
 def elab_dir(dir):
     if(dir == "EB"):
         return "East Bound"
@@ -179,9 +174,6 @@ def cover_page(ll_no, year, mde_path, ll, mde, document, con, args):
     cells[0].width = Inches(cell_width)
     run.bold = True
     testing_date_time = mde['deflections'][0][2] ## [0] refers to first row and [2] refers to the 'TheTime' column
-    # print('tesing date:',testing_date)
-    # print('type pf testdate:',type(testing_date))
-    # Refine the time format
     testing_date = testing_date_time.split(' ')[0]
     test_date_splited = testing_date.split('-')
     test_year = test_date_splited[0]
@@ -250,14 +242,9 @@ def underseal_page(rp_str, mde_path, mde, ll, calc_data, document, args):
     cells[4].paragraphs[0].add_run("PCC MODULUS (ksi)")
     underseal_total = 0
     for i in range(1, (len(calc_data["invalid_table"])+1)):
-        # print("Came here")
-        # print(calc_data["invalid_table"][i-1])
         cells = table.add_row().cells
         cells = align_middle_cells(cells)
         for j in range(5):
-            # print(j)
-            # print(calc_data["invalid_table"][i-1][j])
-            # cells[j].text = "a"
             cells[j].paragraphs[0].add_run(str(calc_data["invalid_table"][i-1][j]))
         underseal_total = underseal_total + calc_data["invalid_table"][i-1][2]
     
@@ -335,32 +322,19 @@ def underseal_page(rp_str, mde_path, mde, ll, calc_data, document, args):
     return document
 
 def chart(rp_str, stats_data, calc_data, mde, document):
-    # print('[Chart] mde deflections chainage:{}'.format(mde['deflections'][:,1]))
     d0_crit = stats_data["d0crit"]
     subgd_crit = stats_data["subgd_calc"]
-    # print(calc_data["sensordata"])
     sensordata = np.array(calc_data["sensordata"])
-    # print(sensordata)
-    # print(sensordata.shape)
     d0 = sensordata[:, 0]
-    # print(d0)
     d8 = sensordata[:, 8]
-    # print(d8)
-    d0_crit_arr = len(d0)*[d0_crit] 
+    d0_crit_arr = len(d0)*[d0_crit]
     subgd_crit_arr = len(d8)*[subgd_crit]
-
-    # print(len(d0))
-    # print(len(d8))
-    # print(len(d0_crit_arr))
-    # print(len(subgd_crit_arr))
-    
 
     chainages = []
     for i in range(len(mde["deflections"])):
         if(int(mde["deflections"][i][4]) == 2):
             chainages.append(float(mde["deflections"][i][1]))
-            chainages[-1] = chainages[-1]*3.28084 
-    # print(len(chainages))
+            chainages[-1] = chainages[-1]*3.28084
 
     # Calcualte the max value of chart
     max_value = 0
@@ -602,12 +576,7 @@ def calc_dist(mde_path, mde, args):
         if(d1[till+1] == '-'):
             neg1 = 1
             till = till + 1
-        # print("till: ", till)
         dmi1 = float(d1[till+1:len(d1)])
-        # # print('dmi1_wen',dmi1)
-        # for i in range(till+1, len(d1)):
-        #     dmi1 = dmi1*10+(int(d1[i]))
-        # print('dmi1',dmi1)
     #########################################
         rp2 = 0
         dmi2 = 0
@@ -621,12 +590,7 @@ def calc_dist(mde_path, mde, args):
         if(d2[till+1] == '-'):
             neg2 = 1
             till = till + 1
-        # print("till: ", till)
         dmi2 = float(d2[till+1:len(d2)])
-        # # print('dmi1_wen',dmi1)
-        # for i in range(till+1, len(d1)):
-        #     dmi1 = dmi1*10+(int(d1[i]))
-        # print('dmi2',dmi2)
 
         dist1 = 0
         dist2 = 0
@@ -640,7 +604,6 @@ def calc_dist(mde_path, mde, args):
         else:
             dist2 = int(rp2) + (int(dmi2)/100.0)
 
-        # print("dist1: ", dist1, "\ndist2: ", dist2)
         return round(abs((dist2*5280)-(dist1*5280)))
     
 

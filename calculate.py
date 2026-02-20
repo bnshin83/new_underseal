@@ -6,7 +6,6 @@ import math
 import xlrd
 from writefiles import writeELMOD_FWD, writeLCC, writeLCC0, writeLCC1
 import subprocess
-import sys,os
 
 def temp_correction(temp, thickness):
     temp = 120 if (temp>120) else temp
@@ -27,8 +26,6 @@ def temp_correction(temp, thickness):
         t4 = -0.007565789*temp + 1.514473684
         t2 = -0.004276316*temp + 1.290789474
 
-    # print("Thickness: ", thickness)
-    # print("Temp: ", temp)
     if(thickness >= 12):
         factor = t12
     elif(thickness >= 8):
@@ -50,8 +47,6 @@ def get_E(mde, pavtype, adj_e, special_case):
     arr = arr[:, [3, 4, 5, 6, 9, 10, 11, 12, 13]]
     arr = arr.astype(float)
     arr = np.transpose(arr)
-    # print(arr)
-
     if special_case:
         return arr[4:9, :]
 
@@ -77,35 +72,16 @@ def get_E(mde, pavtype, adj_e, special_case):
         limits = [mod_limits["asphalt"], mod_limits["concrete"], mod_limits["middle"], mod_limits["subgrade"]]
     
     e = arr[4:9, :]
-    # print('e:',e)
-    # print('e.shape:',e.shape)
     limits_mult = np.array(np.shape(e)[1]*[limits])
     limits_mult = np.transpose(limits_mult)
-    # adj_e = 1.319
-    # adj_e = float(input("Enter adjusted elmod modulus please: "))
     calc_e = e
-    # print(np.shape(limits_mult))
     for i in range(0,limits_mult.shape[0]):
         if(i==0 and (pavtype == "asphalt" or pavtype == "composite")):
             calc_e[0] = e[0,:]/adj_e        
             calc_e[0] = np.round(np.minimum(calc_e[0], limits_mult[0]))
         calc_e[i] = np.round(np.minimum(e[i], limits_mult[i]))
     
-    # print("Done with getE")
-    # print(np.shape(limits_mult))
-    # print(np.shape(e[0:limits_mult.shape[0],:]))
-    # calc_e = e[0:limits_mult.shape[0],:]/adj_e
-    # print(np.shape(calc_e))
-    # calc_e = np.minimum(limits_mult, calc_e)
-    # print("Calculated E")
-    # print(calc_e)
-    # e = np.minimum(e, )
-
-    # con.commit()
-    # cursor.close()
     return calc_e
-
-# get_E(db.connect(), 1, "asphalt")
 
 
 def insitu_cbr(mr):
@@ -128,7 +104,6 @@ def aashto_esals(insitu, ashtoo):
     #      +((LOG(0.63))/(0.4+(1094/((AB2+1)^5.19))))+2.32*(LOG(Q2*1000/3))-8.07))
 
     esals =  np.power(10, (9.36*np.log10(tmp+1) - 0.2 + ((np.log10(0.63))/(0.4+(1094/(np.power(tmp+1, 5.19))))) + 2.32*(np.log10(tmp2*1000/3.0)) - 8.07))
-    # print(esals)
     return esals
 
 def indot_esals(surf):
@@ -142,7 +117,6 @@ def limit_esals(ashto_esals):
     lim_esal = None
     ###=IF(AC2="","",(IF(AC2>40000000,40000000,AC2)))
     lim_esal = np.array(ashto_esals)
-    # print(lim_esal)
     min_lim_esal = np.minimum(np.full(np.shape(lim_esal), 40000000), lim_esal)
     return min_lim_esal
 
@@ -167,9 +141,6 @@ def getSurfaceDefCrit(mde):
         defcrit = 12
     return defcrit
 
-# def getSgdCrit(sgd):
-#     logsgd = np.log10(sgd)
-
 
 #For NB-EB/SB-WB ESALS sheet
 def getESALS_reliability(hmeans, pavtype):
@@ -185,17 +156,10 @@ def getESALS_reliability(hmeans, pavtype):
         iri = 130
     
     iri_metric = iri * 0.015875
-    # print("irimetric: ", iri_metric)
     iri_metric = round(iri_metric, 2)
-    # iri_metric = 2.22
-    # print("irimetric: ", iri_metric)
     estimated_psi = 5 + 0.6046*(np.log10(1+(2.2704*(iri_metric**2)))**3) - 2.2217*(np.log10(1+(2.2704*(iri_metric**2))))**2 - 0.0434*(np.log10(1+(2.2704*(iri_metric**2))))
-    # estimated_psi = 5 + 0.6046*(np.log(1+(2.704*(iri_metric**2)))**3) - 2.2217*(np.log(1+(2.2704*(iri_metric**2))))**2 - 0.0434*(np.log(1+(2.2704*(iri_metric**2))))
     estimated_psi = round(min(4.2, estimated_psi), 2)
-    # estimated_psi = 3.1
     baseline_esals = 10**(9.36*np.log10(sn+1) - 0.2 + np.log10((estimated_psi - 2.5)/(4.2-1.5))/(0.4+1094/((sn+1)**5.19)) + 2.32*np.log10(mod_res) -8.07)
-    # baseline_esals = 10**(np.log10((estimated_psi - 2.5)/(4.2-1.5))/(0.4+1094/((sn+1)**5.19)))
-    # baseline_esals = 10**(9.36*math.log10(sn+1) - 0.2)
     baseline_esals = min(40000000, baseline_esals)
     so_coeff = 0.35
     esal_95percent = 10**((-1.645*so_coeff) + 9.36*np.log10(sn+1) - 0.2 + np.log10((estimated_psi - 2.5)/(4.2-1.5))/(0.4+1094/(sn+1)**5.19) + 2.32*np.log10(mod_res) - 8.07)
@@ -207,21 +171,8 @@ def getESALS_reliability(hmeans, pavtype):
     esal_80percent = 10**((-0.841*so_coeff) + 9.36*np.log10(sn+1) - 0.2 + np.log10((estimated_psi - 2.5)/(4.2-1.5))/(0.4+1094/((sn+1)**5.19)) + 2.32*np.log10(mod_res) - 8.07)
     esal_80percent = min(40000000, esal_80percent)
 
-    # print("Stats NB-EB esals")
-    # print("estimated psi: ", estimated_psi)
-    # print("baseline esal: ", baseline_esals)
-    # print("esal 95: ", esal_95percent)
-    # print("esal 90", esal_90percent)
-    # print("esal 80", esal_80percent)
     ans = {"iri": iri, "iri_metric": iri_metric,"hmeans": hmeans, "estimated psi": estimated_psi, "baseline esals": baseline_esals, "esal 95": esal_95percent, "esal 90": esal_90percent, "esal 80": esal_80percent}
     return ans
-    # IF(10^((-1.645*$I$12)+9.36*LOG10($I$3+1)-0.2+LOG10((I9-2.5)/(4.2-1.5))/(0.4+1094/($I$3+1)^5.19)+2.32*LOG10($I$5)-8.07)>40000000,40000000,10^((-1.645*$I$12)+9.36*LOG10($I$3+1)-0.2+LOG10((I9-2.5)/(4.2-1.5))/(0.4+1094/($I$3+1)^5.19)+2.32*LOG10($I$5)-8.07))
-    # IF(10^((-1.282*$I$12)+9.36*LOG10($I$3+1)-0.2+LOG10((I9-2.5)/(4.2-1.5))/(0.4+1094/($I$3+1)^5.19)+2.32*LOG10($I$5)-8.07)>40000000,40000000,10^((-1.282*$I$12)+9.36*LOG10($I$3+1)-0.2+LOG10((I9-2.5)/(4.2-1.5))/(0.4+1094/($I$3+1)^5.19)+2.32*LOG10($I$5)-8.07))
-
-    # IF(10^(9.36*LOG10($I$3+1)-0.2+LOG10(($I$9-2.5)/(4.2-1.5))/(0.4+1094/($I$3+1)^5.19)+2.32*LOG10($I$5)-8.07)>40000000,40000000,10^(9.36*LOG10($I$3+1)-0.2+LOG10(($I$9-2.5)/(4.2-1.5))/(0.4+1094/($I$3+1)^5.19)+2.32*LOG10($I$5)-8.07))
-    #  IF((5+0.6046*(LOG(1+(2.2704*($I$8^2))))^3    -2.2217*(LOG(1+(2.2704*($I$8^2))))^2     -0.0434*(LOG(1+(2.2704*($I$8^2)))))>4.2,4.2,5+0.6046*(LOG(1+(2.2704*($I$8^2))))^3-2.2217*(LOG(1+(2.2704*($I$8^2))))^2-0.0434*(LOG(1+(2.2704*($I$8^2)))))
-
-# getESALS_reliability({"sn": 3.74, "remesals": 1183747, "mod_res": 5834}, "asphalt")
 
 
 def getstats(arr):
@@ -232,76 +183,6 @@ def getstats(arr):
     harmean = hmean(arr, axis = 0)
     return [mean, stddev, max, min, harmean]
 
-def putdata(con, data, id):
-    sensordata = data["sensordata"]
-    # print(sensordata)
-    idarr = np.array([sensordata.shape[0]*[id]])
-    # print("*********ID***********")
-    # print(idarr)
-    # print("Points again2: ")
-    # print(data["point"])
-    tmparr = np.concatenate((np.transpose(idarr), np.transpose([data["point"]])), axis = 1)
-    tmparr = np.concatenate((tmparr, np.transpose([data["drop_no"]])), axis = 1)
-    tmparr = np.concatenate((tmparr, sensordata), axis = 1)
-    tmparr = np.concatenate((tmparr, np.transpose([data["load"]])), axis = 1)
-    tmparr = np.concatenate((tmparr, np.transpose([data["pressure"]])), axis = 1)
-    tmparr = np.concatenate((tmparr, np.transpose([data["sn"]])), axis = 1)
-    tmparr = np.concatenate((tmparr, np.transpose([data["mr"]])), axis = 1)
-    tmparr = np.concatenate((tmparr, np.transpose([data["cbrarr"]])), axis = 1)
-    tmparr = np.concatenate((tmparr, np.transpose([data["aash_esals"]])), axis = 1)
-    tmparr = np.concatenate((tmparr, np.transpose([data["ind_esals"]])), axis = 1)
-    tmparr = np.concatenate((tmparr, np.transpose([data["lim_esals"]])), axis = 1)
-    tmparr = np.concatenate((tmparr, np.transpose([data["insitumr"]])), axis = 1)
-    tmparr = np.concatenate((tmparr, np.transpose([data["logsgd"]])), axis = 1)
-    tmparr = np.concatenate((tmparr, np.transpose([data["logmr"]])), axis = 1)
-    tmparr = np.concatenate((tmparr, np.transpose(data["e"])), axis = 1)
-    
-    # tmparr = np.transpose(tmparr)
-    # print(tmparr.shape)
-    arr = list(map(tuple, tmparr))
-    # print(arr)
-    cursor = con.cursor()
-    # print(arr)
-    cursor.executemany("INSERT INTO CALC VALUES (:1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14, :15, :16, :17, :18, :19, :20, :21, :22, :23, :24, :25, :26, :27, :28)", arr)
-    con.commit()
-    cursor.close()       
-    # sensordata = sensordata.tolist()
-    # cursor = con.cursor()
-    # cursor.executemany("INSERT IN CALC ")
-
-def putstats(con, data, id):
-    arr = []
-
-    # print("*********Printing sensorstats***********")
-    # print((np.transpose(data["sensorstats"])))
-    # print(len(data["sensorstats"]))
-    # print("********************")
-    # arr.append([id, "sensorstats"]+data["sensorstats"].tolist())
-    sensorstats = np.transpose(data["sensorstats"])
-    # print(data["mr_stats"])
-    for i in range(0, 10):
-        label = "D"+str(i)
-        # print(sensorstats[i])
-        arr.append([id, label] + list(sensorstats[i]))
-
-
-    arr.append([id, "mr"]+data["mr_stats"])
-    arr.append([id, "sn"]+data["sn_stats"])
-    arr.append([id, "cbr"]+data["cbr_stats"])
-    arr.append([id, "aash_esals"]+data["aash_esals"])
-    arr.append([id, "ind_esals"]+data["ind_esals"])
-    arr.append([id, "lim_esals"]+data["lim_esal"])
-    arr.append([id, "insitumr"]+data["insitumr"])
-    # arr = np.transpose(arr)
-    # print(np.shape(arr))
-    arr = list(map(tuple, arr))
-    # print(arr)
-    cursor = con.cursor()
-    cursor.executemany("INSERT INTO STATS VALUES (:1, :2, :3, :4, :5, :6)", arr)
-    con.commit()
-    cursor.close()
-
-
 def get_data(mde, pavtype, roadtype, ll_obj):
     #           0         1                2       3       4      5      6      7      8      9     10     11     12     13    14          15       16           17         18           19        20
     # columns: id | Section | CalculationNum | Drop | Point | No1c | No2c | No3c | No4c | No5c | No6c | No7c | No8c | No9c | RMS | Back_type | Stress | minus1_arr | null_arr | minus1_arr | null_arr
@@ -309,10 +190,7 @@ def get_data(mde, pavtype, roadtype, ll_obj):
     #            0          1         2               3         4        5      6    7    8    9   10   11   12   13   14   15        16               17     18     19           20         21           22        23         
     # columns: id | Chainage | TheTime |  Temperature2 | Drop No | Stress | Load | D1 | D2 | D3 | D4 | D5 | D6 | D7 | D8 | D9 | PointNo | AirTemperature | gpsx | gpsy | minus1_arr | null_arr | minus1_arr | null_arr
     deflections_all = np.array(mde["deflections"])
-    # print('Shape of deflections_all: {}'.format(deflections_all.shape))
     deflections = np.array([tmp for tmp in deflections_all if(list(map(int, tmp[[4,16]])) in points_drops.tolist())])
-    # print("DEFLECTIONS in get_data")
-    # print(deflections)
     sensordata = deflections[:, 7:16].astype(float)
     point = np.array(mde["deflections_calc"][:, 4])
     drop_no = np.array(mde["deflections_calc"][:, 3])
@@ -331,13 +209,7 @@ def get_data(mde, pavtype, roadtype, ll_obj):
     thickness = h1[0] + h2[0] + h3[0] + h4[0]
     temp = np.mean(temp)
     tempcorr, adj_elm, pcc_mod, rxn_subg = writeAndExecute(mde, pavtype, roadtype, ll_obj, sensordata)
-    # print("TEMP Corr: ", tempcorr)
-    # print("Adj Elm: ", adj_elm)
-    # tempcorr = temp_correction(temp, thickness)
-    # if(pavtype == "asphalt"):
     tmp = tempcorr*sensordata[:, 0]
-    # else:
-    #     tmp = sensordata[:, 0]
     sensordata = np.insert(sensordata, 0, tmp, axis = 1)
     sensordata = np.round(sensordata, decimals = 2)
     load = np.reshape(load, (load.shape[0],))
@@ -345,32 +217,20 @@ def get_data(mde, pavtype, roadtype, ll_obj):
     pressure_for_calc = np.array(pressure.shape[0]*[82.06])
     pressure_for_calc = np.reshape(pressure_for_calc, (pressure.shape[0],))
     
-    # print("Shapes: ")
-    # print("Sensordata: ", sensordata.shape)
-    # print("deflections: ", deflections.shape)
-    # print("deflections_all: ", deflections_all.shape)
-    # print("pressure: ", pressure_for_calc.shape)
-    # print("load: ", load.shape)
-    # print("thickness: ", thickness.shape)
-
-    
     cal_obj = mr.cal_mr_sn(sensordata,pressure_for_calc, load, thickness)
     cal_obj.main_cal()
     return deflections, sensordata, pressure, load, cal_obj, point, drop_no, adj_elm, pcc_mod, rxn_subg
 
 
 def getInvalidSections(mde, calc_data, d0crit, subgdcrit, pavtype):
-    # print("IS this where it crashed")
     sensordata = calc_data["sensordata"]
     invalid_table = []
     new_stats = {"e1": [], "e2": [], "sn": [], "mr": [], "cbr": [], "k": []}
     for i in range(sensordata.shape[0]):
         # if(sensordata[i][0] > d0crit or sensordata[i][0] < subgdcrit):
         if(sensordata[i][0] > d0crit):
-            # print("Reached here2")
             drop_no = calc_data["drop_no"][i]
             point = calc_data["point"][i]
-            # print("Reached here3")
             if(pavtype == "concrete"):
                 e1 = 0
                 e2 = calc_data["e"][0][i]
@@ -380,32 +240,17 @@ def getInvalidSections(mde, calc_data, d0crit, subgdcrit, pavtype):
             else:
                 e1 = calc_data["e"][0][i]
                 e2 = calc_data["e"][1][i]
-            # print("Reached here")
             chainage = None
             chainage2 = None
             for j in range(np.shape(mde["deflections"])[0]):
-                # print(mde["deflections"][j][4])
-                # print(mde["deflections"][j][16])
-                # print(drop_no)
-                # print(point)
-                # print()
                 if(int(mde["deflections"][j][4]) == int(drop_no) and int(mde["deflections"][j][16]) == int(point)):
-                    # print("Matched!!!")
                     chainage = mde["deflections"][j][1]
                     if((j+2) < np.shape(mde["deflections"])[0]):
-                        # print("Entered if")
                         chainage2 = mde["deflections"][j+2][1]
                     else:
                         chainage2 = chainage + 320
                     break
-            # print("Appending")
-            # print(chainage)
-            # print(chainage2)
             invalid_table.append([round(float(chainage)*3.281), round(float(chainage2)*3.281)-1, abs((round(float(chainage2)*3.281)-1-round(float(chainage)*3.281))), e1, e2])
-            # print(invalid_table)
-            # np.append(invalid_table, np.array([chainage, chainage2, chainage2-chainage, e1, e2]))
-            # print(sensordata[i][0], " ", subgdcrit, " ", d0crit)
-            # print(i, "th entry is out of bounds, please check\n")
         else:
             if(pavtype == "concrete"):
                 new_stats["e1"].append(0)
@@ -418,32 +263,17 @@ def getInvalidSections(mde, calc_data, d0crit, subgdcrit, pavtype):
                 new_stats["e1"].append(calc_data["e"][0][i]) # Asphalt
             
             new_stats["sn"].append(calc_data["sn"][i])
-            # print("Printing for dbg...")
-            # print(calc_data["insitumr"])
             new_stats["mr"].append(calc_data["insitumr"][i])
             new_stats["cbr"].append(calc_data["cbrarr"][i])
-            # print(np.shape(calc_data["pcc_mod"]))
             new_stats["k"].append(calc_data["pcc_mod"][i])
-    # print("Return?")
-    # print("INVALID TABLE")
-    # print(invalid_table)
     return invalid_table, new_stats
 
-def blockPrint():
-    sys.stdout = open(os.devnull, 'w')
-def enablePrint():
-    sys.stdout = sys.__stdout__
-
 def writeAndExecute(mde, pavtype, roadtype, ll_obj, sensordata):
-   # Block the print during execution of Egon's code
-    # blockPrint()
     writeLCC(mde, pavtype)
     writeLCC0()
     writeLCC1(roadtype, pavtype, ll_obj)
     writeELMOD_FWD(mde, sensordata)
     subprocess.call("C:/Aashto/YGJ.exe")
-    # Restore the print after execution of Egon's code
-    # enablePrint()
     temp_corr = None
     adj_elm = None
     with open("C:/Aashto/RESULT.dat") as f:
@@ -452,34 +282,23 @@ def writeAndExecute(mde, pavtype, roadtype, ll_obj, sensordata):
         adj_elm = float(line.split()[-1])
         line = f.readline()
         temp_corr = float(line.split()[1])
-        # print(temp_corr)
-        # print(adj_elm)
-    
+
     with open("C:/Aashto/K_value.dat") as f:
         line = f.readline()
-        # print(line)
         pcc_mod = []
         rxn_subg = []
         line = f.readline()
-        # print(line)
         while(len(line.split()) != 0):
             pcc_mod.append(float(line.split()[1]))
-            # print(float(line.split()[1]))
             rxn_subg.append(float(line.split()[2]))
             line = f.readline()
-            # print(line)
-    
-    # print("PCC MOD incoming")P
-    # print(pcc_mod)
+
     return temp_corr, adj_elm, pcc_mod, rxn_subg
         
 
 def calc(con, id, pavtype, roadtype, ll_obj, mde, args):
     special_case = args.pavtype_special_case
     deflections, sensordata, pressure, load, cal_obj, point, drop_no, adj_elm, pcc_mod, rxn_subg = get_data(mde, pavtype, roadtype, ll_obj)
-    # deflections, sensordata, pressure, load, cal_obj, point, drop_no = get_data(con, id)
-    # print("Points again")
-    # print(point)
     sn = cal_obj.sn
     mr = cal_obj.mr
     cbrarr = insitu_cbr(mr)
@@ -495,8 +314,6 @@ def calc(con, id, pavtype, roadtype, ll_obj, mde, args):
     mr_again = 3 * 4.5
     logmr_again = np.log10(mr_again)
     reg_line = np.polyfit(logmr, logsgd, 1)
-    # print(reg_line)
-    # print("logmr_again: ", str(logmr_again))
     subgd_calc = 10**(logmr_again*reg_line[0]+reg_line[1])
     e = get_E(mde, pavtype, adj_elm, special_case)
 
@@ -508,29 +325,18 @@ def calc(con, id, pavtype, roadtype, ll_obj, mde, args):
     ind_esals_stats = getstats(ind_esals)
     lim_esals_stats = getstats(lim_esals)
     insitu_mr_stats = getstats(insitumr)
-    # print("Roadtype: ", getSurfaceDefCrit(mde))
     d0crit = getSurfaceDefCrit(mde)
-    # print("D0 Crit is done here")
-    # getInvalidSections(mde, sensordata, d0crit, subgd_calc)
-    # print("Invalid sections dealt with here")
     hmeans = {"sn": sn_stats[4], "remesals": lim_esals_stats[4], "mod_res": insitu_mr_stats[4]}
     esals_sheet = getESALS_reliability(hmeans, pavtype)
     misc = mde["misc"][0]
-    # print(misc)
     misc = np.append(misc, esals_sheet["estimated psi"])
     misc = np.append(misc, esals_sheet["baseline esals"])
     misc = np.append(misc, esals_sheet["esal 95"])
     misc = np.append(misc, esals_sheet["esal 90"])
     misc = np.append(misc, esals_sheet["esal 80"])
     mde["misc"] = [misc]
-    # print(misc)
-    # print("MDE misc inside func: ")
-    # print(mde["misc"][0])
-    # print()
     calc_data = {"e": e, "drop_no": drop_no, "point": point, "sensordata": sensordata, "mr": mr, "sn": sn, "aash_esals": aash_esals, "ind_esals": ind_esals, "lim_esals": lim_esals, "insitumr": insitumr, "logsgd": logsgd, "logmr": logmr, "cbrarr": cbrarr, "pressure": pressure, "load": load, "pcc_mod": pcc_mod, "rxn_subg": rxn_subg, "esals_sheet": esals_sheet}
-    # putdata(con, calc_data, id)
     stats_data = {"sensorstats": sensor_stats, "mr_stats": mr_stats, "sn_stats": sn_stats, "cbr_stats": cbr_stats, "aash_esals": aash_esals_stats, "ind_esals": ind_esals_stats, "lim_esal": lim_esals_stats, "insitumr": insitu_mr_stats, "subgd_calc": subgd_calc, "d0crit": d0crit}
-    # putstats(con, stats_data, id)
     invalid_table = []
     new_stats = []
     if(pavtype!="asphalt" and (not special_case)):
@@ -538,13 +344,3 @@ def calc(con, id, pavtype, roadtype, ll_obj, mde, args):
     calc_data["invalid_table"] = invalid_table
     calc_data["new_stats"] = new_stats
     return calc_data, stats_data, mde, pcc_mod, rxn_subg
-
-
-
-
-
-
-
-# get_data(db.connect(), 1)
-# getSurfaceDefCrit(db.connect(), 1)
-# calc(db.connect(), 2, "asphalt")

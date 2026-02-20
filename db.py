@@ -53,11 +53,6 @@ def connect(dev_env):
 
 def putcalc(con, data, id, pcc_mod, rxn_subg):
     sensordata = data["sensordata"]
-    # print(sensordata)
-    # print("PCC_MOD")
-    # print(pcc_mod)
-    # print("RXN_SUBG")
-    # print(rxn_subg)
     if(len(pcc_mod) == 0):
         pcc_mod = np.array([sensordata.shape[0]*[-1]])
     else:
@@ -69,10 +64,6 @@ def putcalc(con, data, id, pcc_mod, rxn_subg):
     idarr = np.array([sensordata.shape[0]*[id]])
     minus1_arr = np.array([sensordata.shape[0]*[-1]])
     null_arr = np.array([sensordata.shape[0]*[None]])
-    # print("*********ID***********")
-    # print(idarr)
-    # print("Points again2: ")
-    # print(data["point"])
     tmparr = np.concatenate((np.transpose(idarr), np.transpose([data["point"]])), axis = 1)
     tmparr = np.concatenate((tmparr, np.transpose([data["drop_no"]])), axis = 1)
     tmparr = np.concatenate((tmparr, sensordata), axis = 1)
@@ -96,34 +87,17 @@ def putcalc(con, data, id, pcc_mod, rxn_subg):
     tmparr = np.concatenate((tmparr, np.transpose(null_arr)), axis = 1)
     tmparr = np.concatenate((tmparr, np.transpose(data["e"][4:5,:])), axis = 1)
     
-    # print("Shape of data['e']",data["e"].shape)
-    
-    # tmparr = np.transpose(tmparr)
-    # print(tmparr.shape)
     arr = list(map(tuple, tmparr))
-    # print(arr)
     cursor = con.cursor()
-    # print(arr)
     cursor.executemany("INSERT INTO stda_CALCULATIONS VALUES (NULL, :1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14, :15, :16, :17, :18, :19, :20, :21, :22, :23, :24, :25, :26, :27, :28, :29, :30, :31, :32, :33, :34, :35)", arr) #30
     con.commit()
-    cursor.close()       
-    # sensordata = sensordata.tolist()
-    # cursor = con.cursor()
-    # cursor.executemany("INSERT IN CALC ")
+    cursor.close()
 
 def putstats(con, data, id):
     arr = []
-
-    # print("*********Printing sensorstats***********")
-    # print((np.transpose(data["sensorstats"])))
-    # print(len(data["sensorstats"]))
-    # print("********************")
-    # arr.append([id, "sensorstats"]+data["sensorstats"].tolist())
     sensorstats = np.transpose(data["sensorstats"])
-    # print(data["mr_stats"])
     for i in range(0, 10):
         label = "D"+str(i)
-        # print(sensorstats[i])
         arr.append([id, label] + list(sensorstats[i]) + [-1, None, -1, None])
 
 
@@ -134,10 +108,7 @@ def putstats(con, data, id):
     arr.append([id, "ind_esals"]+data["ind_esals"]+[-1, None, -1, None])
     arr.append([id, "lim_esals"]+data["lim_esal"]+[-1, None, -1, None])
     arr.append([id, "insitumr"]+data["insitumr"]+[-1, None, -1, None])
-    # arr = np.transpose(arr)
-    # print(np.shape(arr))
     arr = list(map(tuple, arr))
-    # print(arr)
     cursor = con.cursor()
     cursor.executemany("INSERT INTO stda_STATS VALUES (NULL, :1, :2, :3, :4, :5, :6, :7, :8, :9,:10, :11)", arr)#7
     con.commit()
@@ -149,39 +120,16 @@ def putmde(con, mde, stats_data, id, commit=0):
     chainge_ft_arr = copy.deepcopy(mde["deflections"])
     chainge_ft_arr[:,1] = np.around(chainge_ft_arr[:,1].astype(np.double)*3.28084)
     arr = list(map(tuple, chainge_ft_arr))
-    # print('MDE DEFLECTIONS: ')
-    # print(mde["deflections"].shape)
-    # print("Deflections: ")
-    # print(arr)
-    # print("Printing type")
-    
-    # print(arr[0][-1])
-    # print((arr[0][-2]))
-    # print((arr[0][-3]))
-    # print((arr[0][-4]))
-    # print(len(arr[0]))
-    # try:
-    # print("Entering data to deflections")
-    # print(arr)
-    # print(id)
-    cursor.executemany("INSERT INTO stda_DEFLECTIONS VALUES (NULL, :1, :2, TO_TIMESTAMP(:3, 'YYYY-MM-DD HH24:MI:SS'), :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14, :15, :16, :17, :18, :19, :20, CAST(:1 as INT), :22, CAST(:1 as INT), :24)", arr) #was till 20
+    cursor.executemany("INSERT INTO stda_DEFLECTIONS VALUES (NULL, :1, :2, TO_TIMESTAMP(:3, 'YYYY-MM-DD HH24:MI:SS'), :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14, :15, :16, :17, :18, :19, :20, CAST(:1 as INT), :22, CAST(:1 as INT), :24)", arr)
 
     ##********************************************
     arr = list(map(tuple, mde["deflections_calc"]))
-    # print("Entering data to deflections calc")
-    cursor.executemany("INSERT INTO stda_CALCULATED_DEFLECTIONS VALUES (NULL, :1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14, :15, :16, :17, :18, :19, :20, :21)", arr)#17
+    cursor.executemany("INSERT INTO stda_CALCULATED_DEFLECTIONS VALUES (NULL, :1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14, :15, :16, :17, :18, :19, :20, :21)", arr)
     ##********************************************
     arr = mde['mod_est']
     arr = list(map(tuple, arr))
-    # # Convert E1-E5 to psi unit
-    # arr_psi = mde['mod_est']
-    # for i in range(9,13+1):
-    #     arr_psi[:,i] = np.around(arr_psi[:,i].astype(np.double)*1000)
-    # arr = list(map(tuple, arr_psi))
-    # print("Entering data to mod est")
-    cursor.executemany("INSERT INTO stda_MODULI_ESTIMATED VALUES (NULL, :1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14, :15, :16, :17, :18, :19, :20, :21, :22, :23, :24, :25)", arr)#21
+    cursor.executemany("INSERT INTO stda_MODULI_ESTIMATED VALUES (NULL, :1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14, :15, :16, :17, :18, :19, :20, :21, :22, :23, :24, :25)", arr)
     ##********************************************
-    # print(mde["misc"])
     arr = mde["misc"][0]
     arr = np.append(arr, stats_data["d0crit"])
     arr = np.append(arr, stats_data["subgd_calc"])
@@ -189,13 +137,9 @@ def putmde(con, mde, stats_data, id, commit=0):
     arr = np.append(arr, [None])
     arr = np.append(arr, [-1])
     arr = np.append(arr, [None])
-    # arr = np.transpose(arr)
     mde["misc"] = [arr]
     arr = list(map(tuple, mde["misc"]))
-    # print("Printing misc")
-    # print(arr)
-    # print("Entering data to misc")
-    cursor.executemany("INSERT INTO stda_MISC VALUES (NULL, :1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14, :15, :16, :17, :18, :19, :20, :21, :22, :23, :24, :25, :26, :27, :28, :29, :30, :31, :32, :33, :34, :35, :36)", arr)#30
+    cursor.executemany("INSERT INTO stda_MISC VALUES (NULL, :1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14, :15, :16, :17, :18, :19, :20, :21, :22, :23, :24, :25, :26, :27, :28, :29, :30, :31, :32, :33, :34, :35, :36)", arr)
     ##********************************************
     if commit:
         con.commit()

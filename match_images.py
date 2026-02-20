@@ -41,10 +41,7 @@ def match_image_chainage(f25_path,ll_obj,df, server_root):
                     # Use aboslute path
                     logger.info('Copying images ...')
                     source_path = os.path.join(ll_no_folder,f25_basename_no_extension_name,'Cam1')
-                    # print('[Debug info]: source_path:{}'.format(source_path))
-                    # server_root = "\\\\dotwebp016vw/data/FWD/"
                     dist_path = os.path.join(server_root,req_no,sub_item,f25_basename_no_extension_name,'Cam1')
-                    # print('[Debug info]: dist_path:{}'.format(dist_path))
                     if not os.path.exists(dist_path):
                         os.makedirs(dist_path)
                         # Copy image by image, and change the extension name
@@ -122,7 +119,6 @@ def get_chainage_imgname_dict(df, image_filenames, relative_path):
             except Exception:
                 logger.warning('Cannot convert to float image_filename: %s', image_filename)
             matched_chainage = ImageChainToChain(img_chainage, unique_chainage)
-            # print('img_dmi: {}, matched_dmi: {}'.format(img_chainage,matched_chainage))
             image_filepath = os.path.join(relative_path,image_filename)
             chainage_dict[matched_chainage].append(image_filepath)
             img_dmi_dict[image_filepath] = matched_chainage

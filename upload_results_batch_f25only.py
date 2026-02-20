@@ -142,8 +142,6 @@ def upload_single_result(args, f25_path, ll_no, year, con, user_input_dict, comm
     # Assign the new pavement type
     ll_obj['pavtype'] = pavtype
 
-    # print('before ll_query')
-
     longlist_id,dir,lane_type = ll_query(con, ll_no, f25_path, year, start_gps, end_gps, pavtype, args, user_input_dict, commit=1)
 
     ll_obj['dir'] = dir
