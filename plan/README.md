@@ -7,7 +7,7 @@ Created: 2026-02-19
 
 | Phase | Status | Notes |
 |-------|--------|-------|
-| Phase 0: ArcGIS Dashboard Fix | IN PROGRESS | Diagnostic script pushed, awaiting Dr. Shin's output |
+| Phase 0: ArcGIS Dashboard Fix | DONE | Root cause: Category Selector max categories limit in dashboard |
 | Phase 1: Security + Stability | NOT STARTED | Highest priority after dashboard fix |
 | Phase 2: Code Quality | PARTIAL | Logging (3.4) done; rest not started |
 | Phase 3: Architecture | PARTIAL | Logging (4.3) done; rest not started |

@@ -77,17 +77,13 @@ ArcGIS Pro FWD dashboard not showing data for "grey requests" (high LL numbers l
 2. **Created `sql/arcgis_dashboard.sql`**: Saved the current ArcGIS dashboard queries with full documentation — the 3-layer architecture (FWD_Dashboard_numeric point layer, image_layer, route line layer), JOIN chain documentation, and diagnostic notes.
 3. **Updated plan documents**: Marked completed items in 02-stability.md (2.3 done, 2.10 added), 03-code-quality.md (3.4 partial), 04-architecture.md (4.3 done), 05-testing.md (5.1 done). Updated README.md with current status table.
 
-### Most Likely Root Cause (hypothesis)
-The INNER JOIN between `stda_longlist` and `stda_longlist_info` on `(longlist_no, year)` fails for grey requests. Probable reasons:
-- **Year mismatch**: `stda_longlist.year` doesn't match `stda_longlist_info.year` (e.g., `'2025'` vs `'25'`, or the LL info was uploaded with a different year value)
-- **Type mismatch**: One table stores year/longlist_no as NUMBER, the other as VARCHAR
-- The diagnostic script uses Oracle's `DUMP()` function to detect this
+### Root Cause (RESOLVED)
+The Oracle data and upload code were fine. The ArcGIS Dashboard had a **Category Selector** widget with a **Maximum categories** limit that excluded newer requests. The grey requests (LL 9384+) were beyond this limit and not displayed on the dashboard map, even though the data was present in Oracle and the web feature layer.
+
+**Fix**: Increased the Maximum categories limit in the dashboard Category Selector widget.
 
 ### Next Steps
-1. Dr. Shin runs `diagnose_dashboard.py` on work PC with a broken LL number and a working LL number
-2. Push `run_log.txt` for Claude to analyze
-3. Based on results, either fix the data (SQL update) or fix the upload code
-4. Continue to Phase 1 (security + stability fixes)
+1. Continue to Phase 1 (security + stability fixes)
 
 ---
 
