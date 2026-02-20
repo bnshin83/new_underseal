@@ -1,0 +1,17 @@
+2026-02-20 08:09:56,347 [INFO] [upload_results_batch] txt path: V:\FWD\Underseal\Data\2023\todo\ready\12182025_update\D2502140378\LL-9378 SR-14\10.75_ HMA.txt
+2026-02-20 08:09:56,349 [INFO] [upload_results_batch] Error log is saved in: V:\FWD\Underseal\Data\2023\todo\ready\12182025_update\D2502140378\LL-9378 SR-14\10.75_ HMA_error_log.txt
+2026-02-20 08:09:56,381 [INFO] [upload_results_batch] ============================================================
+2026-02-20 08:09:56,414 [INFO] [upload_results_batch] RUN STARTED: 2026-02-20 08:09:56
+2026-02-20 08:09:56,432 [INFO] [upload_results_batch] txt_path: V:\FWD\Underseal\Data\2023\todo\ready\12182025_update\D2502140378\LL-9378 SR-14\10.75_ HMA.txt
+2026-02-20 08:09:56,450 [INFO] [upload_results_batch] args: {'gen_report': True, 'pavtype_special_case': False, 'server_root': '\\\\dotwebp016vw/data/FWD/', 'dev_env': 'shin', 'skip_img_matching': False, 'txt_path': 'V:\\FWD\\Underseal\\Data\\2023\\todo\\ready\\12182025_update\\D2502140378\\LL-9378 SR-14\\10.75_ HMA.txt', 'gui': False, 'user_input': False}
+2026-02-20 08:09:56,463 [INFO] [upload_results_batch] Connecting to Oracle database (dev_env=shin)...
+2026-02-20 08:09:57,359 [INFO] [upload_results_batch] Oracle connected OK
+2026-02-20 08:09:57,400 [INFO] [upload_results_batch] Read 2 lines from txt file
+2026-02-20 08:09:57,416 [INFO] [upload_results_batch] [1/2] Processing: SR-14 EB RP-110+27 to RP-118+58 DL.F25 (LL-9378, year=2025, req=D2502140378)
+2026-02-20 08:09:57,416 [INFO] [upload_results_batch]   upload_single_result starting...
+2026-02-20 08:09:57,416 [ERROR] [upload_results_batch]   EXCEPTION: name 'user_input_dict' is not defined
+2026-02-20 08:09:57,416 [ERROR] [upload_results_batch]   Traceback (most recent call last):
+  File "C:\Users\bshin\Documents\Underseal_new\new_underseal\upload_results_batch_f25only.py", line 317, in <module>
+    upload_single_result(args, f25_path, ll_no, year, con, user_input_dict, commit=1)
+NameError: name 'user_input_dict' is not defined
+
