@@ -1,0 +1,922 @@
+Prioritized Folder Analysis for: V:\FWD\Underseal\Data\2023\todo\ready
+=================================================
+
+PRIORITY FOLDERS:
+-----------------
+Folders with 'unknown', 'Waiting for thickness data', or 'no_comment':
+
+- D2204070219\US-150 LL-255
+- D2204070229\SR-135 LL-265
+- D2304249015\SR-26 LL-23
+- D2304249043\LL 51 I-65
+- D2304249051\I-74 LL-59
+- D2304249085\SR-1 LL-93
+- D2304249090\SR-129 LL-98
+- D2304249147\SR-46 LL-155
+- D2304249150\US-150 LL-158
+- D2403049201\I-74 LL-201
+
+
+SECONDARY FOLDERS:
+------------------
+Folders without .mde files that have .txt files in second-level subfolders:
+
+- .
+
+
+COMPLETE FOLDER STRUCTURE:
+-------------------------
+(excluding cam1 folders and image files)
+
+├── D2204070003/
+│   ├── D2204070003.pdf
+│   ├── I-74 LL-39/
+│   │   ├── I-74 EB DL RP-51+79.1 to RP-57+98.3/
+│   │   ├── I-74 EB DL RP-51+79.1 to RP-57+98.3 DMI.xlsx
+│   │   ├── I-74 EB DL RP-51+79.1 to RP-57+98.3.F25
+│   │   ├── I-74 EB DL RP-51+79.1 to RP-57+98.3.GPX
+│   │   ├── I-74 EB DL RP-51+79.1 to RP-57+98.3.mdb
+│   │   ├── I-74 WB DL RP-51+79.1 to RP-57+98.3/
+│   │   ├── I-74 WB DL RP-51+79.1 to RP-57+98.3 DMI.xlsx
+│   │   ├── I-74 WB DL RP-51+79.1 to RP-57+98.3.F25
+│   │   ├── I-74 WB DL RP-51+79.1 to RP-57+98.3.GPX
+│   │   ├── I-74 WB DL RP-51+79.1 to RP-57+98.3.mdb
+│   │   ├── ML_ 12.25_ HMA on 10.26_ Concrete; SH_ 8.9_ HMA.txt
+│   │   └── gps missing.txt
+│   └── gps missing.txt
+├── D2204070004/
+│   ├── D2204070004.pdf
+│   ├── I-70 LL-54/
+│   │   ├── I-70 EB RP-0+-.1 to RP-5+18.8 DMI.xlsx
+│   │   ├── I-70 EB RP-0+-.1 to RP-5+18.8 gps.csv
+│   │   ├── I-70 EB RP-0+-.1 to RP-5+18.8.F25 backup 2208311113
+│   │   ├── I-70 EB RP-0+-.1 to RP-5+18.8.GPX
+│   │   ├── I-70 EB RP-0+-.1 to RP-5+18.8.mdb
+│   │   ├── I-70 EB RP-0+-.1 to RP-5+18.8.mde
+│   │   ├── I-70 EB RP-0+-0.1 to RP-5+18.8/
+│   │   ├── I-70 EB RP-0+-0.1 to RP-5+18.8.F25
+│   │   ├── I-70 EB RP-0+-0.1 to RP-5+18.8.mde
+│   │   ├── I-70 WB RP-0+-0.1 to RP-5+18.8/
+│   │   ├── I-70 WB RP-0+-0.1 to RP-5+18.8 (2)/
+│   │   ├── I-70 WB RP-0+-0.1 to RP-5+18.8 (2) DMI.xlsx
+│   │   ├── I-70 WB RP-0+-0.1 to RP-5+18.8 (2).GPX
+│   │   ├── I-70 WB RP-0+-0.1 to RP-5+18.8 (2).mdb
+│   │   ├── I-70 WB RP-0+-0.1 to RP-5+18.8.F25
+│   │   ├── I-70 WB RP-0+-0.1 to RP-5+18.8.GPX
+│   │   ├── I-70 WB RP-0+-0.1 to RP-5+18.8.mdb
+│   │   ├── I-70 WB RP-0+-0.1 to RP-5+18.8.mde
+│   │   ├── ML 7_ HMA on 9.5_ Concrete, SH 8_ HMA.txt
+│   │   └── runtime error 13.txt
+│   └── runtime error 13.txt
+├── D2204070006/
+│   ├── D2204070006.pdf
+│   └── I-65 LL-42/
+│       ├── I-65 NB DL RP-129+71.6 to RP-137+18.5.F25
+│       ├── I-65 NB DL RP-129+71.6 to RP-137+18.5.GPX
+│       ├── I-65 NB DL RP-129+71.6 to RP-137+18.5.mdb
+│       ├── I-65 SB DL RP-129+71.6 to RP-137+18.5 (2).F25
+│       ├── I-65 SB DL RP-129+71.6 to RP-137+18.5 (2).GPX
+│       ├── I-65 SB DL RP-129+71.6 to RP-137+18.5 (2).mdb
+│       ├── I-65 SB DL RP-129+71.6 to RP-137+18.5.F25
+│       ├── I-65 SB DL RP-129+71.6 to RP-137+18.5.GPX
+│       ├── I-65 SB DL RP-129+71.6 to RP-137+18.5.mdb
+│       ├── ML_ 7.8_ HMA on 11_ Concrete; SH_ 16.25_ HMA.txt
+│       └── filename.txt
+├── D2204070010/
+│   ├── D2204070010.pdf
+│   └── SR-47 LL-46/
+│       ├── From beginning to RP 38, 10.5_ HMA; from RP 38 to end, 7_ HMA on 14_ Concrete.txt
+│       ├── SR-47 NB RP-33+37.7 to RP-42+61.9/
+│       ├── SR-47 NB RP-33+37.7 to RP-42+61.9.F25
+│       ├── SR-47 NB RP-33+37.7 to RP-42+61.9.GPX
+│       ├── SR-47 NB RP-33+37.7 to RP-42+61.9.mdb
+│       ├── SR-47 SB RP-33+37.7 to RP-42+61.9/
+│       ├── SR-47 SB RP-33+37.7 to RP-42+61.9 (2)/
+│       ├── SR-47 SB RP-33+37.7 to RP-42+61.9 (2).F25
+│       ├── SR-47 SB RP-33+37.7 to RP-42+61.9 (2).GPX
+│       ├── SR-47 SB RP-33+37.7 to RP-42+61.9 (2).mdb
+│       ├── SR-47 SB RP-33+37.7 to RP-42+61.9.F25
+│       ├── SR-47 SB RP-33+37.7 to RP-42+61.9.GPX
+│       ├── SR-47 SB RP-33+37.7 to RP-42+61.9.mdb
+│       └── se.txt
+├── D2204070015/
+│   ├── D2204070015.pdf
+│   └── SR-59 LL-65/
+│       ├── 10.2_ HMA.txt
+│       ├── SR-59 NB RP-46+57.5 to RP-50+4.4/
+│       ├── SR-59 NB RP-46+57.5 to RP-50+4.4 DMI.xlsx
+│       ├── SR-59 NB RP-46+57.5 to RP-50+4.4 gps.csv
+│       ├── SR-59 NB RP-46+57.5 to RP-50+4.4.F25
+│       ├── SR-59 NB RP-46+57.5 to RP-50+4.4.F25 backup 2208300202
+│       ├── SR-59 NB RP-46+57.5 to RP-50+4.4.GPX
+│       ├── SR-59 NB RP-46+57.5 to RP-50+4.4.mdb
+│       ├── SR-59 NB RP-46+57.5 to RP-50+4.4.mde
+│       ├── SR-59 SB RP-46+57.5 to RP-50+4.5/
+│       ├── SR-59 SB RP-46+57.5 to RP-50+4.5 DMI.xlsx
+│       ├── SR-59 SB RP-46+57.5 to RP-50+4.5 gps.csv
+│       ├── SR-59 SB RP-46+57.5 to RP-50+4.5.F25
+│       ├── SR-59 SB RP-46+57.5 to RP-50+4.5.F25 backup 2208300202
+│       ├── SR-59 SB RP-46+57.5 to RP-50+4.5.GPX
+│       ├── SR-59 SB RP-46+57.5 to RP-50+4.5.mdb
+│       └── type mismatch.txt
+├── D2204070037/
+│   ├── D2204070036 - Shortcut.lnk
+│   ├── D2204070037 Request Form.pdf
+│   └── readme.txt
+├── D2204070047/
+│   ├── D2204070047.pdf
+│   └── I-69 LL-83/
+│       ├── 7.15_ HMA on 10.5_ Concrete; SH_ 11.7_ HMA.txt
+│       ├── I-69 NB RP-296+51.5 to RP-300+74/
+│       ├── I-69 NB RP-296+51.5 to RP-300+74.F25
+│       ├── I-69 NB RP-296+51.5 to RP-300+74.GPX
+│       ├── I-69 NB RP-296+51.5 to RP-300+74.mdb
+│       ├── I-69 NB RP-296+51.5 to RP-300+74.mde
+│       ├── I-69 NB RP-296+51.5 to RP-300.74 DMI.xlsx
+│       ├── I-69 NB RP-296+51.5 to RP-300.74 gps.csv
+│       ├── I-69 NB RP-296+51.5 to RP-300.74.F25 backup 2208300244
+│       ├── I-69 SB RP-296+51.5 to RP-300+74/
+│       ├── I-69 SB RP-296+51.5 to RP-300+74.F25
+│       ├── I-69 SB RP-296+51.5 to RP-300+74.GPX
+│       ├── I-69 SB RP-296+51.5 to RP-300+74.mdb
+│       ├── I-69 SB RP-296+51.5 to RP-300.74 DMI.xlsx
+│       ├── I-69 SB RP-296+51.5 to RP-300.74 gps.csv
+│       ├── I-69 SB RP-296+51.5 to RP-300.74.F25 backup 2208300244
+│       └── type mismatch.txt
+├── D2204070059/
+│   ├── D2204070059.pdf
+│   └── SR-3 LL-95/
+│       ├── 6.4_ HMA on 8_ Concrete.txt
+│       ├── SR-3 NB RP-204+-20.9 to RP-209+.2/
+│       ├── SR-3 NB RP-204+-20.9 to RP-209+.2 DMI.xlsx
+│       ├── SR-3 NB RP-204+-20.9 to RP-209+.2 gps.csv
+│       ├── SR-3 NB RP-204+-20.9 to RP-209+.2.F25
+│       ├── SR-3 NB RP-204+-20.9 to RP-209+.2.F25 backup 2208300440
+│       ├── SR-3 NB RP-204+-20.9 to RP-209+.2.GPX
+│       ├── SR-3 NB RP-204+-20.9 to RP-209+.2.mdb
+│       ├── SR-3 NB RP-204+-20.9 to RP-209+.2.mde
+│       ├── SR-3 SB RP-204+-20.9 to RP-209+.2/
+│       ├── SR-3 SB RP-204+-20.9 to RP-209+.2 DMI.xlsx
+│       ├── SR-3 SB RP-204+-20.9 to RP-209+.2 gps.csv
+│       ├── SR-3 SB RP-204+-20.9 to RP-209+.2.F25
+│       ├── SR-3 SB RP-204+-20.9 to RP-209+.2.F25 backup 2208300440
+│       ├── SR-3 SB RP-204+-20.9 to RP-209+.2.GPX
+│       ├── SR-3 SB RP-204+-20.9 to RP-209+.2.mdb
+│       └── type mismatch.txt
+├── D2204070061/
+│   ├── D2204070061.pdf
+│   └── SR-8 LL-97/
+│       ├── From beginning to N Liberty St_ 3.75_ HMA on 4.25_ Brick; From N Liberty St to end_ EB_ 9.4_ HMA; WB_ 5.7_ HMA on 7.6_ Concrete.txt
+│       ├── SR-8 EB RP-43+-7.9 to RP-46+66.5/
+│       ├── SR-8 EB RP-43+-7.9 to RP-46+66.5 DMI.xlsx
+│       ├── SR-8 EB RP-43+-7.9 to RP-46+66.5 gps.csv
+│       ├── SR-8 EB RP-43+-7.9 to RP-46+66.5.F25
+│       ├── SR-8 EB RP-43+-7.9 to RP-46+66.5.F25 backup 2208300440
+│       ├── SR-8 EB RP-43+-7.9 to RP-46+66.5.GPX
+│       ├── SR-8 EB RP-43+-7.9 to RP-46+66.5.mdb
+│       ├── SR-8 WB RP-43+-7.9 to RP-46+66.5/
+│       ├── SR-8 WB RP-43+-7.9 to RP-46+66.5 DMI.xlsx
+│       ├── SR-8 WB RP-43+-7.9 to RP-46+66.5 gps.csv
+│       ├── SR-8 WB RP-43+-7.9 to RP-46+66.5.F25
+│       ├── SR-8 WB RP-43+-7.9 to RP-46+66.5.F25 backup 2208300440
+│       ├── SR-8 WB RP-43+-7.9 to RP-46+66.5.GPX
+│       ├── SR-8 WB RP-43+-7.9 to RP-46+66.5.mdb
+│       └── type error.txt
+├── D2204070063/
+│   ├── D2204070063.pdf
+│   └── SR-13 LL-99/
+│       ├── Beginning to RP 63_ 10.75_ HMA; RP 63 to End_ 7.25_ HMA on 7.6_ Concrete.txt
+│       ├── SR-13 NB RP-60+82.1 to RP-64+74.9/
+│       ├── SR-13 NB RP-60+82.1 to RP-64+74.9 DMI.xlsx
+│       ├── SR-13 NB RP-60+82.1 to RP-64+74.9 gps.csv
+│       ├── SR-13 NB RP-60+82.1 to RP-64+74.9.F25
+│       ├── SR-13 NB RP-60+82.1 to RP-64+74.9.F25 backup 2208300440
+│       ├── SR-13 NB RP-60+82.1 to RP-64+74.9.GPX
+│       ├── SR-13 NB RP-60+82.1 to RP-64+74.9.mdb
+│       ├── SR-13 SB RP-60+82.1 to RP-64+74.9/
+│       ├── SR-13 SB RP-60+82.1 to RP-64+74.9 (2)/
+│       ├── SR-13 SB RP-60+82.1 to RP-64+74.9 (2) DMI.xlsx
+│       ├── SR-13 SB RP-60+82.1 to RP-64+74.9 (2) gps.csv
+│       ├── SR-13 SB RP-60+82.1 to RP-64+74.9 (2).F25
+│       ├── SR-13 SB RP-60+82.1 to RP-64+74.9 (2).F25 backup 2208300440
+│       ├── SR-13 SB RP-60+82.1 to RP-64+74.9 (2).GPX
+│       ├── SR-13 SB RP-60+82.1 to RP-64+74.9 (2).mdb
+│       ├── SR-13 SB RP-60+82.1 to RP-64+74.9.GPX
+│       ├── SR-13 SB RP-60+82.1 to RP-64+74.9.mdb
+│       └── se.txt
+├── D2204070068/
+│   ├── D2204070068.pdf
+│   └── SR-19 LL-104/
+│       ├── 3_ HMA on 8.8_ Concrete.txt
+│       ├── SR-19 NB RP-118+21.5 to RP-123+26.7/
+│       ├── SR-19 NB RP-118+21.5 to RP-123+26.7 DMI.xlsx
+│       ├── SR-19 NB RP-118+21.5 to RP-123+26.7 gps.csv
+│       ├── SR-19 NB RP-118+21.5 to RP-123+26.7.F25
+│       ├── SR-19 NB RP-118+21.5 to RP-123+26.7.F25 backup 2208300440
+│       ├── SR-19 NB RP-118+21.5 to RP-123+26.7.GPX
+│       ├── SR-19 NB RP-118+21.5 to RP-123+26.7.mdb
+│       ├── SR-19 NB RP-118+21.5 to RP-123+26.7.mde
+│       ├── SR-19 SB RP-118+21.5 to RP-123+26.7/
+│       ├── SR-19 SB RP-118+21.5 to RP-123+26.7 DMI.xlsx
+│       ├── SR-19 SB RP-118+21.5 to RP-123+26.7 gps.csv
+│       ├── SR-19 SB RP-118+21.5 to RP-123+26.7.F25
+│       ├── SR-19 SB RP-118+21.5 to RP-123+26.7.F25 backup 2208311113
+│       ├── SR-19 SB RP-118+21.5 to RP-123+26.7.GPX
+│       ├── SR-19 SB RP-118+21.5 to RP-123+26.7.mdb
+│       └── type mismatch.txt
+├── D2204070069/
+│   ├── D2204070069.pdf
+│   └── US-20 LL-105/
+│       ├── 9_ HMA on 7.25_ concrete (beginning of PK to Townline Rd); 10.25_ HMA (Townline Rd to Mountain St); 4_ HMA on 7.75_ concrete (Mountain St to SR 9); 10_ HMA (SR 9 to Poplar St); 6.5_ HMA on 8.75_ concrete (Poplar St to RR Street).txt
+│       ├── US-20 EB RP-121+30.9 to RP-121+45.4/
+│       ├── US-20 EB RP-121+30.9 to RP-121+45.4 DMI.xlsx
+│       ├── US-20 EB RP-121+30.9 to RP-121+45.4 gps.csv
+│       ├── US-20 EB RP-121+30.9 to RP-121+45.4.F25
+│       ├── US-20 EB RP-121+30.9 to RP-121+45.4.F25 backup 2208300440
+│       ├── US-20 EB RP-121+30.9 to RP-121+45.4.GPX
+│       ├── US-20 EB RP-121+30.9 to RP-121+45.4.mdb
+│       ├── US-20 WB RP-121+30.9 to RP-121+45.4/
+│       ├── US-20 WB RP-121+30.9 to RP-121+45.4 DMI.xlsx
+│       ├── US-20 WB RP-121+30.9 to RP-121+45.4 gps.csv
+│       ├── US-20 WB RP-121+30.9 to RP-121+45.4.F25
+│       ├── US-20 WB RP-121+30.9 to RP-121+45.4.F25 backup 2208300440
+│       ├── US-20 WB RP-121+30.9 to RP-121+45.4.GPX
+│       ├── US-20 WB RP-121+30.9 to RP-121+45.4.mdb
+│       └── se.txt
+├── D2204070071/
+│   ├── D2204070071.pdf
+│   └── US-27 LL-107/
+│       ├── NB_ 5.5_ HMA on 6_ Concrete; SB_ 9.5_ HMA on 8_ Concrete.txt
+│       ├── US-27 NB RP-111+6.8 to RP-115+81.9/
+│       ├── US-27 NB RP-111+6.8 to RP-115+81.9 DMI.xlsx
+│       ├── US-27 NB RP-111+6.8 to RP-115+81.9 gps.csv
+│       ├── US-27 NB RP-111+6.8 to RP-115+81.9.F25
+│       ├── US-27 NB RP-111+6.8 to RP-115+81.9.GPX
+│       ├── US-27 NB RP-111+6.8 to RP-115+81.9.mdb
+│       ├── US-27 SB RP-111+6.8 to RP-115+81.9/
+│       ├── US-27 SB RP-111+6.8 to RP-115+81.9 DMI.xlsx
+│       ├── US-27 SB RP-111+6.8 to RP-115+81.9 gps.csv
+│       ├── US-27 SB RP-111+6.8 to RP-115+81.9.F25
+│       ├── US-27 SB RP-111+6.8 to RP-115+81.9.GPX
+│       ├── US-27 SB RP-111+6.8 to RP-115+81.9.mdb
+│       └── gps.txt
+├── D2204070072/
+│   ├── D2204070072.pdf
+│   └── US-33 LL-108/
+│       ├── 13_ HMA.txt
+│       ├── US-33 EB RP-0+-.01 to RP-5+46.7/
+│       ├── US-33 EB RP-0+-.01 to RP-5+46.7.F25
+│       ├── US-33 EB RP-0+-.01 to RP-5+46.7.GPX
+│       ├── US-33 EB RP-0+-.01 to RP-5+46.7.mdb
+│       ├── US-33 NB RP-0+-.01 to RP-5+46.7/
+│       ├── US-33 NB RP-0+-.01 to RP-5+46.7 (2)/
+│       ├── US-33 NB RP-0+-.01 to RP-5+46.7 (2).F25
+│       ├── US-33 NB RP-0+-.01 to RP-5+46.7 (2).GPX
+│       ├── US-33 NB RP-0+-.01 to RP-5+46.7 (2).mdb
+│       ├── US-33 NB RP-0+-.01 to RP-5+46.7 (3)/
+│       ├── US-33 NB RP-0+-.01 to RP-5+46.7 (3).F25
+│       ├── US-33 NB RP-0+-.01 to RP-5+46.7 (3).GPX
+│       ├── US-33 NB RP-0+-.01 to RP-5+46.7 (3).mdb
+│       ├── US-33 NB RP-0+-.01 to RP-5+46.7.GPX
+│       ├── US-33 NB RP-0+-.01 to RP-5+46.7.mdb
+│       └── gps.txt
+├── D2204070074/
+│   ├── D2204070074.pdf
+│   └── SR-33 LL-110/
+│       ├── 10_ HMA on 7_ Concrete.txt
+│       ├── US-33 NB RP-54+0.9 to RP-58+53.8/
+│       ├── US-33 NB RP-54+0.9 to RP-58+53.8 DMI.xlsx
+│       ├── US-33 NB RP-54+0.9 to RP-58+53.8 gps.csv
+│       ├── US-33 NB RP-54+0.9 to RP-58+53.8.F25
+│       ├── US-33 NB RP-54+0.9 to RP-58+53.8.F25 backup 2208300440
+│       ├── US-33 NB RP-54+0.9 to RP-58+53.8.GPX
+│       ├── US-33 NB RP-54+0.9 to RP-58+53.8.mdb
+│       ├── US-33 SB RP-54+0.9 to RP-58+53.8/
+│       ├── US-33 SB RP-54+0.9 to RP-58+53.8 DMI.xlsx
+│       ├── US-33 SB RP-54+0.9 to RP-58+53.8 gps.csv
+│       ├── US-33 SB RP-54+0.9 to RP-58+53.8.F25
+│       ├── US-33 SB RP-54+0.9 to RP-58+53.8.F25 backup 2208300440
+│       ├── US-33 SB RP-54+0.9 to RP-58+53.8.GPX
+│       ├── US-33 SB RP-54+0.9 to RP-58+53.8.mdb
+│       └── gps.txt
+├── D2204070075/
+│   ├── D2204070075.pdf
+│   └── SR-116 LL-111/
+│       ├── 5.5_ HMA.txt
+│       ├── SR-116 EB RP 0+-0.1 to RP-1+27.2/
+│       ├── SR-116 EB RP 0+-0.1 to RP-1+27.2 DMI.xlsx
+│       ├── SR-116 EB RP 0+-0.1 to RP-1+27.2 gps.csv
+│       ├── SR-116 EB RP 0+-0.1 to RP-1+27.2.F25
+│       ├── SR-116 EB RP 0+-0.1 to RP-1+27.2.F25 backup 2208300244
+│       ├── SR-116 EB RP 0+-0.1 to RP-1+27.2.GPX
+│       ├── SR-116 EB RP 0+-0.1 to RP-1+27.2.mdb
+│       ├── SR-116 WB RP 0+-0.1 to RP-1+27.2/
+│       ├── SR-116 WB RP 0+-0.1 to RP-1+27.2 DMI.xlsx
+│       ├── SR-116 WB RP 0+-0.1 to RP-1+27.2 gps.csv
+│       ├── SR-116 WB RP 0+-0.1 to RP-1+27.2.F25
+│       ├── SR-116 WB RP 0+-0.1 to RP-1+27.2.F25 backup 2208300244
+│       ├── SR-116 WB RP 0+-0.1 to RP-1+27.2.GPX
+│       ├── SR-116 WB RP 0+-0.1 to RP-1+27.2.mdb
+│       └── gps.txt
+├── D2204070081/
+│   ├── D2204070081.pdf
+│   └── SR-827 LL-117/
+│       ├── 11_ HMA.txt
+│       ├── SR-827 EB RP-0+-0.1 to RP-0+66/
+│       ├── SR-827 EB RP-0+-0.1 to RP-0+66 DMI.xlsx
+│       ├── SR-827 EB RP-0+-0.1 to RP-0+66 gps.csv
+│       ├── SR-827 EB RP-0+-0.1 to RP-0+66.F25
+│       ├── SR-827 EB RP-0+-0.1 to RP-0+66.F25 backup 2208311100
+│       ├── SR-827 EB RP-0+-0.1 to RP-0+66.F25 backup 2208311113
+│       ├── SR-827 EB RP-0+-0.1 to RP-0+66.GPX
+│       ├── SR-827 EB RP-0+-0.1 to RP-0+66.mdb
+│       ├── SR-827 EB RP-0+-0.1 to RP-0+66.mde
+│       ├── SR-827 WB RP-0+-0.1 to RP-0+66/
+│       ├── SR-827 WB RP-0+-0.1 to RP-0+66 DMI.xlsx
+│       ├── SR-827 WB RP-0+-0.1 to RP-0+66 gps.csv
+│       ├── SR-827 WB RP-0+-0.1 to RP-0+66.F25
+│       ├── SR-827 WB RP-0+-0.1 to RP-0+66.F25 backup 2208311100
+│       ├── SR-827 WB RP-0+-0.1 to RP-0+66.F25 backup 2208311113
+│       ├── SR-827 WB RP-0+-0.1 to RP-0+66.GPX
+│       ├── SR-827 WB RP-0+-0.1 to RP-0+66.mdb
+│       └── type mismatch.txt
+├── D2204070090/
+│   ├── D2204070090.pdf
+│   └── SR-13 LL-126/
+│       ├── From beginning of job (RR track) to SR 42 full depth HMA 10.5_; From SR 42 to end of job composite 11_ HMA on 8_ concrete.txt
+│       └── no data.txt
+├── D2204070096/
+│   ├── D2204070096.pdf
+│   └── SR-19 LL-132/
+│       ├── From beginning to RP 99+.247_ 3.75_ HMA on 4_ brick; From RP 99+.247 to 99+.747_ 17.5_ HMA; From RP 99+.747 to end_ 8.3_ HMA on 9_ Concrete.txt
+│       ├── SR-19 NB RP-98+89 to RP-100+91.6/
+│       ├── SR-19 NB RP-98+89 to RP-100+91.6 DMI.xlsx
+│       ├── SR-19 NB RP-98+89 to RP-100+91.6 gps.csv
+│       ├── SR-19 NB RP-98+89 to RP-100+91.6.F25
+│       ├── SR-19 NB RP-98+89 to RP-100+91.6.F25 backup 2208300244
+│       ├── SR-19 NB RP-98+89 to RP-100+91.6.GPX
+│       ├── SR-19 NB RP-98+89 to RP-100+91.6.mdb
+│       ├── SR-19 SB RP-98+89 to RP-100+91.6/
+│       ├── SR-19 SB RP-98+89 to RP-100+91.6 DMI.xlsx
+│       ├── SR-19 SB RP-98+89 to RP-100+91.6 gps.csv
+│       ├── SR-19 SB RP-98+89 to RP-100+91.6.F25
+│       ├── SR-19 SB RP-98+89 to RP-100+91.6.F25 backup 2208300244
+│       ├── SR-19 SB RP-98+89 to RP-100+91.6.GPX
+│       ├── SR-19 SB RP-98+89 to RP-100+91.6.mdb
+│       └── unknown.txt
+├── D2204070099/
+│   ├── D2204070099.pdf
+│   └── SR-1 LL-135/
+│       ├── From beginning to 124+0.120_ 6.4_ HMA on 6.8_ Concrete; Rest_ 11.3_ HMA.txt
+│       ├── SR-1 NB RP-123+38.7 to RP-125+12.1/
+│       ├── SR-1 NB RP-123+38.7 to RP-125+12.1 DMI.xlsx
+│       ├── SR-1 NB RP-123+38.7 to RP-125+12.1 gps.csv
+│       ├── SR-1 NB RP-123+38.7 to RP-125+12.1.F25
+│       ├── SR-1 NB RP-123+38.7 to RP-125+12.1.F25 backup 2208300244
+│       ├── SR-1 NB RP-123+38.7 to RP-125+12.1.GPX
+│       ├── SR-1 NB RP-123+38.7 to RP-125+12.1.mdb
+│       ├── SR-1 SB RP-123+38.7 to RP-125+12.1/
+│       ├── SR-1 SB RP-123+38.7 to RP-125+12.1 DMI.xlsx
+│       ├── SR-1 SB RP-123+38.7 to RP-125+12.1 gps.csv
+│       ├── SR-1 SB RP-123+38.7 to RP-125+12.1.F25
+│       ├── SR-1 SB RP-123+38.7 to RP-125+12.1.F25 backup 2208300244
+│       ├── SR-1 SB RP-123+38.7 to RP-125+12.1.GPX
+│       ├── SR-1 SB RP-123+38.7 to RP-125+12.1.mdb
+│       └── unknown.txt
+├── D2204070116/
+│   ├── 13.6_ Concrete.txt
+│   ├── D2204070116.pdf
+│   ├── I-465 LL-152/
+│   │   ├── 13.6_ Concrete.txt
+│   │   ├── I-465 EB RP-38+54.6 to RP-41+43 DL.F25
+│   │   ├── I-465 EB RP-38+54.6 to RP-41+43 DL.mde
+│   │   ├── I-465 NB RP-38+54.6 to RP-41+43 DL.F25
+│   │   ├── I-465 NB RP-38+54.6 to RP-41+43 DL.mde
+│   │   └── IndexError list index out of range.txt
+│   └── IndexError list index out of range.txt
+├── D2204070156/
+│   ├── D2204070156.pdf
+│   └── US-35 LL-192/
+│       ├── ML_ Southern Part to RP 155.87_ 5.5_ HMA on 8_ Concrete Northern Part starting at RP 155.87_ 10.75_ HMA; SH 12_ HMA.txt
+│       ├── US-35 NB RP-155+65.6 to RP-155+78.2/
+│       ├── US-35 NB RP-155+65.6 to RP-155+78.2.F25
+│       ├── US-35 SB RP-155+65.6 to RP-155+78.2/
+│       ├── US-35 SB RP-155+65.6 to RP-155+78.2.F25
+│       └── se.txt
+├── D2204070157/
+│   ├── D2204070157.pdf
+│   └── US-35 LL-193/
+│       ├── ML_ Southern Part to RP 155.87_ 5.5_ HMA on 8_ Concrete Northern Part starting at RP 155.87_ 10.75_ HMA; SH 12_ HMA.txt
+│       ├── US-35 NB RP-155+78.2 to RP-156+9.5/
+│       ├── US-35 NB RP-155+78.2 to RP-156+9.5.F25
+│       ├── US-35 SB RP-155+78.2 to RP-156+9.5/
+│       ├── US-35 SB RP-155+78.2 to RP-156+9.5.F25
+│       └── se.txt
+├── D2204070181/
+│   ├── 12.75_ HMA.txt
+│   ├── 12.75_ HMA_filename_error_log.txt
+│   ├── D2204070181.pdf
+│   └── SR-218 LL-217/
+│       ├── 12.75_ HMA.txt
+│       ├── 12.75_ HMA_filename_error_log.txt
+│       ├── SR 218 EB RP-25+22.8 to RP-32+22.2/
+│       ├── SR 218 EB RP-25+22.8 to RP-32+22.2.F25
+│       ├── SR 218 EB RP-25+22.8 to RP-32+22.2.accdb
+│       ├── SR 218 EB RP-25+22.8 to RP-32+22.2.mde
+│       ├── SR-218 WB RP-25+22.8 to RP-32+22.2/
+│       │   └── SR 218 EB RP-25+22.8 to RP-32+22.2/
+│       ├── SR-218 WB RP-25+22.8 to RP-32+22.2.F25
+│       ├── SR-218 WB RP-25+22.8 to RP-32+22.2.GPX
+│       ├── SR-218 WB RP-25+22.8 to RP-32+22.2.accdb
+│       ├── SR-218 WB RP-25+22.8 to RP-32+22.2.mdb
+│       ├── SR-218 WB RP-25+22.8 to RP-32+22.2.mde
+│       └── unknown.txt
+├── D2204070209/
+│   ├── D2204070209.pdf
+│   └── SR-262 LL-245/
+│       ├── ML_ 10.75_ HMA; SH_ 7_ HMA.txt
+│       ├── SR-262 EB RP-0+-0.1 to RP-14+52.9/
+│       ├── SR-262 EB RP-0+-0.1 to RP-14+52.9.F25
+│       ├── SR-262 EB RP-0+-0.1 to RP-14+52.9.mde
+│       ├── SR-262 WB RP-0+-0.1 to RP-14+52.9/
+│       ├── SR-262 WB RP-0+-0.1 to RP-14+52.9.F25
+│       ├── SR-262 WB RP-0+-0.1 to RP-14+52.9.mde
+│       ├── error.txt
+│       └── unknown.txt
+├── D2204070211/
+│   ├── D2204070211.pdf
+│   └── SR-3 LL-247/
+│       ├── 1.65_ HMA on 8_ Concrete.txt
+│       ├── SR-3 NB RP-0+-0.1 to RP-2+73.6/
+│       ├── SR-3 NB RP-0+-0.1 to RP-2+73.6.F25
+│       ├── SR-3 SB RP-0+-0.1 to RP-2+73.6/
+│       ├── SR-3 SB RP-0+-0.1 to RP-2+73.6.F25
+│       └── error.txt
+├── D2204070219/
+│   ├── D2204070219.pdf
+│   └── US-150 LL-255/
+│       ├── Mainline 17.13_ Composite 12.07_ Asphalt 7.5_ Concrete; Shoulder 6.16_ Asphalt.txt
+│       ├── US-150 EB RP-163+17.2 to RP-168+75.9/
+│       ├── US-150 EB RP-163+17.2 to RP-168+75.9.F25
+│       ├── US-150 EB RP-163+17.2 to RP-168+75.9.mde
+│       ├── US-150 WB RP-163+17.2 to RP-168+75.9/
+│       ├── US-150 WB RP-163+17.2 to RP-168+75.9.F25
+│       └── Waiting for thickness data.txt
+├── D2204070229/
+│   ├── D2204070229.pdf
+│   ├── SR-135 LL-265/
+│   │   ├── 10.56_ Asphalt.txt
+│   │   ├── SR-135 NB RP-44+33 to RP-50+60.1/
+│   │   ├── SR-135 NB RP-44+33 to RP-50+60.1 2/
+│   │   ├── SR-135 NB RP-44+33 to RP-50+60.1 2.F25
+│   │   ├── SR-135 NB RP-44+33 to RP-50+60.1.F25
+│   │   ├── SR-135 SB RP-44+33 to RP-50+60.1/
+│   │   ├── SR-135 SB RP-44+33 to RP-50+60.1.F25
+│   │   └── Waiting for thickness data.txt
+│   └── ready.txt
+├── D2204070261/
+│   ├── D2204070261.pdf
+│   ├── SR-56 LL-297/
+│   │   ├── 10.1_ HMA on 7_ Concrete.txt
+│   │   ├── SR-56 EB 54+31.6 to RP-66+10.5/
+│   │   ├── SR-56 EB 54+31.6 to RP-66+10.5.F25
+│   │   ├── SR-56 WB RP-54+31.6 to RP-66+10.5/
+│   │   ├── SR-56 WB RP-54+31.6 to RP-66+10.5.F25
+│   │   └── error.txt
+│   └── error.txt
+├── D2204070271/
+│   ├── D2204070271.pdf
+│   ├── SR-62 LL-307/
+│   │   ├── ML_ 12_ Concrete; SH_ 9.75_ HMA.txt
+│   │   ├── SR-62 EB RP-24+78 to RP-27+49.6/
+│   │   ├── SR-62 EB RP-24+78 to RP-27+49.6.F25
+│   │   ├── SR-62 WB RP-24+78 to RP-27+49.6/
+│   │   ├── SR-62 WB RP-24+78 to RP-27+49.6.F25
+│   │   ├── SR-62 WB RP-24+78 to RP-27+49.6.GPX
+│   │   ├── SR-62 WB RP-24+78 to RP-27+49.6.mdb
+│   │   └── unknown.txt
+│   └── ready.txt
+├── D2304249015/
+│   ├── D2304249015.pdf
+│   ├── Mainline 10.27 Asphalt.txt
+│   └── SR-26 LL-23/
+│       ├── SR-26 EB RP-24+51 to RP-32+126/
+│       ├── SR-26 EB RP-24+51 to RP-32+126.F25
+│       ├── SR-26 WB RP-24+51 to RP-32+126/
+│       ├── SR-26 WB RP-24+51 to RP-32+126.F25
+│       └── Waiting for thickness data.txt
+├── D2304249023/
+│   ├── D2304249023.pdf
+│   ├── US-40 LL-31/
+│   │   ├── 13.5_ Concrete.txt
+│   │   ├── US-40 EB RP- to RP- LN 2.F25
+│   │   └── US-40 WB RP- to RP- LN 2.F25
+│   └── filename.txt
+├── D2304249026/
+│   ├── D2304249026.pdf
+│   ├── SR-218 LL-34/
+│   │   ├── From beginning to RP 83.27_ 9.375_ HMA on 8.125_ Concrete; RP 83.27 to 83.33_ 4.5_ HMA; RP 83.33 to 83.9_ 2.25_ HMA on 4.25_ Brick; RP 83.9 to 84.1_ 14_ HMA; RP 84.1 to end_ 7_ HMA on 9_ Concrete.txt
+│   │   ├── SR-218 EB RP-82+59 to 84+39/
+│   │   ├── SR-218 EB RP-82+59 to 84+39.F25
+│   │   ├── SR-218 WB RP-82+59 to 84+39/
+│   │   └── SR-218 WB RP-82+59 to 84+39.F25
+│   └── se.txt
+├── D2304249040/
+│   ├── D2304249040.pdf
+│   ├── I-65 LL-48/
+│   │   ├── I-65 NB RP-109+49 to RP-110+75 LN 3.F25
+│   │   ├── I-65 SB RP-109+49 to RP-110+75 LN 3.F25
+│   │   └── ML_ 1.75_ HMA on 11.5_ Concrete; SH_ 12.4_ HMA.txt
+│   ├── error.txt
+│   └── operator comment.docx
+├── D2304249042/
+│   ├── D2304249042.pdf
+│   ├── From beginning test to RP 63.84 - Composite 5_ HMA on 7_ Concrete From RP 63.84 to 64.63 - 12_ HMA From 64.63 to 64.89 - Composite 4_ HMA on 3_ Brick From 64.89 to end of test - Composite 4.75_ HMA on 9_ concrete; SH_ 12_ HMA.txt
+│   ├── SR-39 LL-50/
+│   │   ├── From beginning test to RP 63.84 - Composite 5_ HMA on 7_ Concrete From RP 63.84 to 64.63 - 12_ HMA From 64.63 to 64.89 - Composite 4_ HMA on 3_ Brick From 64.89 to end of test - Composite 4.75_ HMA on 9_ concrete; SH_ 12_ HMA.txt
+│   │   ├── SR-39 NB RP-63+1 to 67+17/
+│   │   ├── SR-39 NB RP-63+1 to 67+17.F25
+│   │   ├── SR-39 NB RP-63+1 to 67+17.GPX
+│   │   ├── SR-39 NB RP-63+1 to 67+17.mdb
+│   │   ├── SR-39 SB RP-63+1 to 67+17/
+│   │   ├── SR-39 SB RP-63+1 to 67+17.F25
+│   │   ├── SR-39 SB RP-63+1 to 67+17.GPX
+│   │   ├── SR-39 SB RP-63+1 to 67+17.mdb
+│   │   └── filename error.txt
+│   └── filename error.txt
+├── D2304249043/
+│   ├── 5_ HMA on 9_ Concrete.txt
+│   ├── D2304249043.pdf
+│   └── LL 51 I-65/
+│       ├── 5_ HMA on 9_ Concrete.txt
+│       ├── I-65 NB RP-158+66 to RP-167+64 DL.F25
+│       ├── I-65 SB RP-158+66 to RP-167+64 DL.F25
+│       └── Waiting for thickness data.txt
+├── D2304249051/
+│   ├── D2304249051.pdf
+│   ├── I-74 LL-59/
+│   │   ├── I-74 EB RP-25+41 to RP-33+47 DL/
+│   │   ├── I-74 EB RP-25+41 to RP-33+47 DL.F25
+│   │   ├── I-74 WB RP-25+41 to RP-33+47 DL/
+│   │   ├── I-74 WB RP-25+41 to RP-33+47 DL.F25
+│   │   ├── Mainline 19.11_ Composite 8.83_ Asphalt 10.28 Concrete; 5.55_ Asphalt Shoulder.txt
+│   │   └── Waiting for thickness data.txt
+│   └── Mainline 19.11_ Composite 8.83_ Asphalt 10.28 Concrete; 5.55_ Asphalt Shoulder.txt
+├── D2304249079/
+│   ├── D2304249079.pdf
+│   ├── US-31 LL-87/
+│   │   ├── 12.5_ HMA.txt
+│   │   ├── US-31 NB RP- to RP- LN 3/
+│   │   ├── US-31 NB RP- to RP- LN 3.F25
+│   │   ├── US-31 NB RP- to RP- SHLDR/
+│   │   ├── US-31 NB RP- to RP- SHLDR.F25
+│   │   ├── US-31 SB RP- to RP- LN 3/
+│   │   ├── US-31 SB RP- to RP- LN 3.F25
+│   │   ├── US-31 SB RP- to RP- SHLDR/
+│   │   ├── US-31 SB RP- to RP- SHLDR.F25
+│   │   └── filename.txt
+│   └── filename.txt
+├── D2304249080/
+│   ├── D2304249080.pdf
+│   ├── US-30 LL-88/
+│   │   ├── ML_ 6.5_ HMA on 11_ Concrete; SH_ 13_ HMA.txt
+│   │   ├── US-30 EB RP-00 to RP-00/
+│   │   ├── US-30 EB RP-00 to RP-00.F25
+│   │   ├── US-30 WB RP-00 to RP-00/
+│   │   ├── US-30 WB RP-00 to RP-00.F25
+│   │   └── filename.txt
+│   └── filename.txt
+├── D2304249085/
+│   ├── D2304249085.pdf
+│   ├── Mainline 13.37_ Asphalt.txt
+│   └── SR-1 LL-93/
+│       ├── Mainline 13.37_ Asphalt.txt
+│       ├── SR-1 NB RP- to RP- LN 1/
+│       ├── SR-1 NB RP- to RP- LN 1.F25
+│       ├── SR-1 NB RP- to RP- SHLDER/
+│       ├── SR-1 NB RP- to RP- SHLDER.F25
+│       ├── SR-1 SB RP- to RP- LN 1/
+│       ├── SR-1 SB RP- to RP- LN 1-01.F25
+│       ├── SR-1 SB RP- to RP- LN 1-02.F25
+│       ├── SR-1 SB RP- to RP- SHLDER/
+│       ├── SR-1 SB RP- to RP- SHLDER.F25
+│       └── Waiting for thickness data.txt
+├── D2304249086/
+│   ├── D2304249086.pdf
+│   ├── From beginning to 81+0.300_ 15.2_ HMA; Rest 10.2_ HMA on 8.25_ Concrete.txt
+│   └── SR-218 LL-94/
+│       ├── From beginning to 81+0.300_ 15.2_ HMA; Rest 10.2_ HMA on 8.25_ Concrete.txt
+│       ├── SR-218 EB RP-48+47 to RP-82+59/
+│       ├── SR-218 EB RP-48+47 to RP-82+59.F25
+│       ├── SR-218 WB RP-48+47 to RP-82+59/
+│       ├── SR-218 WB RP-48+47 to RP-82+59.F25
+│       └── unknown.txt
+├── D2304249090/
+│   ├── D2304249090.pdf
+│   ├── Mainline 11.07_ Asphalt.txt
+│   └── SR-129 LL-98/
+│       ├── Mainline 11.07_ Asphalt.txt
+│       ├── SR-129 NB RP- to RP- LN 1/
+│       ├── SR-129 NB RP- to RP- LN 1.F25
+│       ├── SR-129 SB RP- to RP- LN 1/
+│       ├── SR-129 SB RP- to RP- LN 1.F25
+│       └── Waiting for thickness data.txt
+├── D2304249107/
+│   ├── D2304249107.pdf
+│   ├── SR-256 LL-115/
+│   │   ├── 14.17_ HMA.txt
+│   │   ├── SR-256 EB RP-7+13 to RP-7+69 LN 1/
+│   │   ├── SR-256 EB RP-7+13 to RP-7+69 LN 1.F25
+│   │   ├── SR-256 WB RP-7+13 to RP-7+69 LN 1/
+│   │   ├── SR-256 WB RP-7+13 to RP-7+69 LN 1.F25
+│   │   └── fileerror.txt
+│   └── fileerror.txt
+├── D2304249117/
+│   ├── D2304249117.pdf
+│   ├── From beginning to RP 76+0.500_ 8.8_ HMA; Rest_ 10.6_ HMA on 7.7_ Concrete.txt
+│   └── SR-28 LL-125/
+│       ├── From beginning to RP 76+0.500_ 8.8_ HMA; Rest_ 10.6_ HMA on 7.7_ Concrete.txt
+│       ├── SR-28 EB RP-73+48 to RP-79+27 LN1/
+│       ├── SR-28 EB RP-73+48 to RP-79+27 LN1.F25
+│       ├── SR-28 WB RP-73+48 to RP-79+27 LN1/
+│       ├── SR-28 WB RP-73+48 to RP-79+27 LN1.F25
+│       └── no_comment.txt
+├── D2304249122/
+│   ├── D2304249122.pdf
+│   ├── US-12 LL-130/
+│   │   ├── Beginning to RP 31.44_ 12.75_ HMA; Rest_ 10.25_ HMA on 10.25_ Concrete.txt
+│   │   ├── LL 130 US-12 RP-26+11 to RP-37+3/
+│   │   │   ├── US-12 EB RP-26+11 to RP-37+3/
+│   │   │   ├── US-12 EB RP-26+11 to RP-37+3.F25
+│   │   │   ├── US-12 EB RP-26+11 to RP-37+3.GPX
+│   │   │   ├── US-12 EB RP-26+11 to RP-37+3.mdb
+│   │   │   ├── US-12 WB RP-26+11 to RP-37+3/
+│   │   │   ├── US-12 WB RP-26+11 to RP-37+3.F25
+│   │   │   ├── US-12 WB RP-26+11 to RP-37+3.GPX
+│   │   │   └── US-12 WB RP-26+11 to RP-37+3.mdb
+│   │   └── se.txt
+│   └── se.txt
+├── D2304249124/
+│   ├── 10.5_ HMA on 8.5_ Concrete.txt
+│   ├── D2304249124.pdf
+│   └── SR-67 LL-132/
+│       ├── 10.5_ HMA on 8.5_ Concrete.txt
+│       ├── SR-67 NB RP-0+00 to RP-0+01/
+│       ├── SR-67 NB RP-0+00 to RP-0+01.F25
+│       ├── SR-67 NB RP-0+00 to RP-0+01.GPX
+│       ├── SR-67 NB RP-0+00 to RP-0+01.mdb
+│       ├── SR-67 NB RP-0+00 to RP-0+01.mde
+│       ├── SR-67 SB RP-0+00 to RP-0+01/
+│       ├── SR-67 SB RP-0+00 to RP-0+01.F25
+│       ├── SR-67 SB RP-0+00 to RP-0+01.GPX
+│       ├── SR-67 SB RP-0+00 to RP-0+01.mdb
+│       ├── SR-67 SB RP-0+00 to RP-0+01.mde
+│       └── no_comment.txt
+├── D2304249130/
+│   ├── D2304249130.pdf
+│   ├── SR-51 LL-138/
+│   │   ├── From beginning to RP 9.03_ ML - 14.5_ HMA; SH - 8.5_ HMA; From RP 9.03 to end_ 14.25_ Concrete.txt
+│   │   ├── PICS/
+│   │   ├── SR-51 NB RP-9+05 to RP-9+50/
+│   │   ├── SR-51 NB RP-9+05 to RP-9+50.F25
+│   │   ├── SR-51 NB RP-9+05 to RP-9+50.GPX
+│   │   ├── SR-51 NB RP-9+05 to RP-9+50.mdb
+│   │   ├── SR-51 SB RP-9+05 to RP-9+50/
+│   │   ├── SR-51 SB RP-9+05 to RP-9+50.F25
+│   │   ├── SR-51 SB RP-9+05 to RP-9+50.GPX
+│   │   ├── SR-51 SB RP-9+05 to RP-9+50.mdb
+│   │   └── se.txt
+│   └── se.txt
+├── D2304249142/
+│   ├── D2304249142.pdf
+│   ├── SR-39 LL-150/
+│   │   ├── 12_ HMA.txt
+│   │   ├── SR-39 NB/
+│   │   ├── SR-39 NB.F25
+│   │   ├── SR-39 NB.GPX
+│   │   ├── SR-39 NB.mdb
+│   │   ├── SR-39 SB/
+│   │   ├── SR-39 SB.F25
+│   │   ├── SR-39 SB.GPX
+│   │   ├── SR-39 SB.mdb
+│   │   └── filename.txt
+│   └── filename.txt
+├── D2304249147/
+│   ├── D2304249174.pdf
+│   ├── Mainline 16.74_ Composite 11.8_ Asphalt 6.42_ Concrete; Shoulder 14.88_ Composite-9.5 Asphalt 6.75_ Concrete.txt
+│   └── SR-46 LL-155/
+│       ├── Mainline 16.74_ Composite 11.8_ Asphalt 6.42_ Concrete; Shoulder 14.88_ Composite-9.5 Asphalt 6.75_ Concrete.txt
+│       ├── SR-46 EB RP-140+97 to RP-148+61 LN 1/
+│       ├── SR-46 EB RP-140+97 to RP-148+61 LN 1.F25
+│       ├── SR-46 EB RP-140+97 to RP-148+61 LN 1.mde
+│       ├── SR-46 WB RP-140+97 to RP-148+61 LN 1/
+│       ├── SR-46 WB RP-140+97 to RP-148+61 LN 1.F25
+│       ├── SR-46 WB RP-140+97 to RP-148+61 LN 1.mde
+│       └── Waiting for thickness data.txt
+├── D2304249150/
+│   ├── D2304249150.pdf
+│   ├── Mainline 16.47_ Composite 5.86_ Asphalt 10.61_ Concrete; Shoulder 7.13_ Asphalt.txt
+│   └── US-150 LL-158/
+│       ├── Mainline 16.47_ Composite 5.86_ Asphalt 10.61_ Concrete; Shoulder 7.13_ Asphalt.txt
+│       ├── US-150 EB RP-0+00 to RP-0+01 LN 2/
+│       ├── US-150 EB RP-0+00 to RP-0+01 LN 2.F25
+│       ├── US-150 EB RP-0+00 to RP-0+01 LN 2.mde
+│       ├── US-150 EB RP-0+00 to RP-0+01 SH/
+│       ├── US-150 EB RP-0+00 to RP-0+01 SH.F25
+│       ├── US-150 EB RP-0+00 to RP-0+01 SH.mde
+│       ├── US-150 WB RP-0+00 to RP-0+01 LN 2/
+│       ├── US-150 WB RP-0+00 to RP-0+01 LN 2.F25
+│       ├── US-150 WB RP-0+00 to RP-0+01 LN 2.mde
+│       ├── US-150 WB RP-0+00 to RP-0+01 SH/
+│       ├── US-150 WB RP-0+00 to RP-0+01 SH.F25
+│       ├── US-150 WB RP-0+00 to RP-0+01 SH.mde
+│       └── Waiting for thickness data.txt
+├── D2304249175/
+│   ├── D2304249175.pdf
+│   ├── LL 183 OLD SR-930/
+│   │   ├── OLD SR-930 EB RP-00 to RP-00/
+│   │   ├── OLD SR-930 EB RP-00 to RP-00.F25
+│   │   ├── OLD SR-930 EB RP-00 to RP-00.GPX
+│   │   ├── OLD SR-930 EB RP-00 to RP-00.mdb
+│   │   ├── OLD SR-930 WB RP-00 to RP-00/
+│   │   ├── OLD SR-930 WB RP-00 to RP-00.F25
+│   │   ├── OLD SR-930 WB RP-00 to RP-00.GPX
+│   │   ├── OLD SR-930 WB RP-00 to RP-00.mdb
+│   │   ├── Report in ERMS.txt
+│   │   └── img convert error.txt
+│   └── img convert error.txt
+├── D2304249259/
+│   ├── D2304249259.pdf
+│   ├── SR-17 LL-267/
+│   │   ├── From beginning to RP 38.75_ 6.7_ HMA; from RP 38.75 to end_ NB_ 9.5_ HMA; SB_ 3.3_ HMA.txt
+│   │   ├── SR-17 NB RP-36+17 to RP-40+13/
+│   │   ├── SR-17 NB RP-36+17 to RP-40+13.F25
+│   │   ├── SR-17 NB RP-36+17 to RP-40+13.GPX
+│   │   ├── SR-17 NB RP-36+17 to RP-40+13.mdb
+│   │   ├── SR-17 SB RP-36+17 to RP-40+13/
+│   │   ├── SR-17 SB RP-36+17 to RP-40+13.F25
+│   │   ├── SR-17 SB RP-36+17 to RP-40+13.GPX
+│   │   ├── SR-17 SB RP-36+17 to RP-40+13.mdb
+│   │   └── se.txt
+│   └── se.txt
+├── D2403049026/
+│   ├── 5.3_ Concrete on 6_ HMA - thin concrete overlay section.txt
+│   ├── D2403049026.pdf
+│   └── LL-26 SR-9/
+│       ├── 5.3_ Concrete on 6_ HMA - thin concrete overlay section.txt
+│       ├── SR-9 NB RP-126+36 to RP-127+67 DL/
+│       ├── SR-9 NB RP-126+36 to RP-127+67 DL.F25
+│       ├── SR-9 NB RP-126+36 to RP-127+67 DL.GPX
+│       ├── SR-9 NB RP-126+36 to RP-127+67 DL.mdb
+│       ├── SR-9 NB RP-126+36 to RP-127+67 DL.mde
+│       ├── SR-9 SB RP-126+36 to RP-127+67 DL/
+│       ├── SR-9 SB RP-126+36 to RP-127+67 DL.F25
+│       ├── SR-9 SB RP-126+36 to RP-127+67 DL.GPX
+│       ├── SR-9 SB RP-126+36 to RP-127+67 DL.mdb
+│       ├── SR-9 SB RP-126+36 to RP-127+67 DL.mde
+│       └── no_comment.txt
+├── D2403049037/
+│   ├── D2403049037.pdf
+│   ├── LL-37 US-30/
+│   │   ├── ML_ 7.1_ HMA on 8_ Concrete; SH_ 11_ HMA.txt
+│   │   ├── US-30 EB RP-80+11 to RP-93+72 DL/
+│   │   ├── US-30 EB RP-80+11 to RP-93+72 DL.F25
+│   │   ├── US-30 EB RP-80+11 to RP-93+72 DL.GPX
+│   │   ├── US-30 EB RP-80+11 to RP-93+72 DL.mdb
+│   │   ├── US-30 EB RP-80+11 to RP-93+72 DL.mde
+│   │   ├── US-30 EB RP-80+11 to RP-93+72 SHOULDER/
+│   │   ├── US-30 EB RP-80+11 to RP-93+72 SHOULDER.F25
+│   │   ├── US-30 EB RP-80+11 to RP-93+72 SHOULDER.GPX
+│   │   ├── US-30 EB RP-80+11 to RP-93+72 SHOULDER.mdb
+│   │   ├── US-30 EB RP-80+11 to RP-93+72 SHOULDER.mde
+│   │   ├── US-30 WB RP-80+11 to RP-93+72 DL/
+│   │   ├── US-30 WB RP-80+11 to RP-93+72 DL.F25
+│   │   ├── US-30 WB RP-80+11 to RP-93+72 DL.GPX
+│   │   ├── US-30 WB RP-80+11 to RP-93+72 DL.mdb
+│   │   ├── US-30 WB RP-80+11 to RP-93+72 DL.mde
+│   │   ├── US-30 WB RP-80+11 to RP-93+72 SHOULDER/
+│   │   ├── US-30 WB RP-80+11 to RP-93+72 SHOULDER.F25
+│   │   ├── US-30 WB RP-80+11 to RP-93+72 SHOULDER.GPX
+│   │   ├── US-30 WB RP-80+11 to RP-93+72 SHOULDER.mdb
+│   │   ├── US-30 WB RP-80+11 to RP-93+72 SHOULDER.mde
+│   │   └── no_comment.txt
+│   └── ML_ 7.1_ HMA on 8_ Concrete; SH_ 11_ HMA.txt
+├── D2403049040/
+│   ├── 15.5_ HMA.txt
+│   ├── D2403049040.pdf
+│   └── SR-19 LL-40/
+│       ├── 15.5_ HMA.txt
+│       ├── SR-19 NB RP-116+55 to RP-118+22 DL/
+│       ├── SR-19 NB RP-116+55 to RP-118+22 DL.F25
+│       ├── SR-19 NB RP-116+55 to RP-118+22 DL.mde
+│       ├── SR-19 SB RP-116+55 to RP-118+22 DL/
+│       ├── SR-19 SB RP-116+55 to RP-118+22 DL.F25
+│       ├── SR-19 SB RP-116+55 to RP-118+22 DL.mde
+│       └── no_comment.txt
+├── D2403049045/
+│   ├── 15.5_ HMA_filename_error_log.txt
+│   ├── D2403049045.pdf
+│   └── LL-45 US-224/
+│       ├── 15.5_ HMA.txt
+│       ├── 15.5_ HMA_filename_error_log.txt
+│       ├── US-224 EB RP-33+75 to RP- 34+51 DL/
+│       ├── US-224 EB RP-33+75 to RP- 34+51 DL.F25
+│       ├── US-224 EB RP-33+75 to RP- 34+51 DL.GPX
+│       ├── US-224 EB RP-33+75 to RP- 34+51 DL.accdb
+│       ├── US-224 EB RP-33+75 to RP- 34+51 DL.mdb
+│       ├── US-224 EB RP-33+75 to RP- 34+51 DL.mde
+│       ├── US-224 WB RP-33+75 to RP- 34+51 DL/
+│       ├── US-224 WB RP-33+75 to RP- 34+51 DL.F25
+│       ├── US-224 WB RP-33+75 to RP- 34+51 DL.GPX
+│       ├── US-224 WB RP-33+75 to RP- 34+51 DL.accdb
+│       ├── US-224 WB RP-33+75 to RP- 34+51 DL.mdb
+│       ├── US-224 WB RP-33+75 to RP- 34+51 DL.mde
+│       └── WARNING!!! Errors encountered during batch process but it is skipped..txt
+├── D2403049052/
+│   ├── D2403049052.pdf
+│   ├── From beginning to RP 0+0.130_ 5_ HMA on 9.75_ Concrete; Rest_ 18.3_ HMA.txt
+│   └── SR-232 LL-52/
+│       ├── From beginning to RP 0+0.130_ 5_ HMA on 9.75_ Concrete; Rest_ 18.3_ HMA.txt
+│       ├── SR-232 EB RP-0 to RP-2+1 LN 1/
+│       ├── SR-232 EB RP-0 to RP-2+1 LN 1.F25
+│       ├── SR-232 WB RP-0 to RP-2+1 LN 1/
+│       ├── SR-232 WB RP-0 to RP-2+1 LN 1.F25
+│       └── no_comment.txt
+├── D2403049068/
+│   ├── 11.4_ HMA on 7.9_ Concrete.txt
+│   ├── D2403049068.pdf
+│   └── SR-9 LL-68/
+│       ├── 11.4_ HMA on 7.9_ Concrete.txt
+│       ├── SR-9 NB RP-39+91 to RP-45+40 LN 1/
+│       ├── SR-9 NB RP-39+91 to RP-45+40 LN 1.F25
+│       ├── SR-9 NB RP-39+91 to RP-45+40 LN 1.mde
+│       ├── SR-9 SB RP-39+91 to RP-45+40 LN 1/
+│       ├── SR-9 SB RP-39+91 to RP-45+40 LN 1.F25
+│       ├── SR-9 SB RP-39+91 to RP-45+40 LN 1.mde
+│       └── no_comment.txt
+├── D2403049070/
+│   ├── 4.2_ HMA on 10_ Concrete.txt
+│   ├── D2403049070.pdf
+│   └── SR-9 LL-70/
+│       ├── 4.2_ HMA on 10_ Concrete.txt
+│       ├── SR-9 NB RP-46+33 to RP-49+27 LN 2/
+│       ├── SR-9 NB RP-46+33 to RP-49+27 LN 2.F25
+│       ├── SR-9 NB RP-46+33 to RP-49+27 LN 2.mde
+│       ├── SR-9 SB RP-46+33 to RP-49+27 LN 2/
+│       ├── SR-9 SB RP-46+33 to RP-49+27 LN 2.F25
+│       ├── SR-9 SB RP-46+33 to RP-49+27 LN 2.mde
+│       └── no_comment.txt
+├── D2403049092/
+│   ├── D2403049092.pdf
+│   ├── From beginning to RP 86+.546_ 12.25_ HMA; From RP 86+.546 to 86+.946_ 8_ HMA on 8.7_ Concrete (between roundabouts); From RP 86+.946 to end_ 15.9_ HMA.txt
+│   └── SR-32 LL-92/
+│       ├── From beginning to RP 86+.546_ 12.25_ HMA; From RP 86+.546 to 86+.946_ 8_ HMA on 8.7_ Concrete (between roundabouts); From RP 86+.946 to end_ 15.9_ HMA.txt
+│       ├── On to-do list.txt
+│       ├── SR-32 EB RP-85+111 to RP-88+-49 LN 2/
+│       ├── SR-32 EB RP-85+111 to RP-88+-49 LN 2.F25
+│       ├── SR-32 WB RP-85+111 to RP-88+-49 LN 2/
+│       └── SR-32 WB RP-85+111 to RP-88+-49 LN 2.F25
+├── D2403049137/
+│   ├── D2403049137.pdf
+│   ├── From beginning to RP 155+09_ 8.7_ HMA; From RP 155+09 to RP 155+59_ 5.75_ HMA on 4.4_ Brick ;From RP 155+59 to end_ 4.2_ HMA.txt
+│   └── US-35 LL-137/
+│       ├── From beginning to RP 155+09_ 8.7_ HMA; From RP 155+09 to RP 155+59_ 5.75_ HMA on 4.4_ Brick ;From RP 155+59 to end_ 4.2_ HMA.txt
+│       ├── SE.txt
+│       ├── US-35 NB/
+│       ├── US-35 NB.F25
+│       ├── US-35 NB.GPX
+│       ├── US-35 NB.mdb
+│       ├── US-35 SB/
+│       ├── US-35 SB.F25
+│       ├── US-35 SB.GPX
+│       └── US-35 SB.mdb
+├── D2403049201/
+│   ├── D2403049201.pdf
+│   ├── I-74 LL-201/
+│   │   ├── I-74 EB RP-163+24 to RP-170+132 LN 2/
+│   │   ├── I-74 EB RP-163+24 to RP-170+132 LN 2.F25
+│   │   ├── I-74 EB RP-163+24 to RP-170+132 LN 2.accdb
+│   │   ├── I-74 EB RP-163+24 to RP-170+132 LN 2.docx
+│   │   ├── I-74 EB RP-163+24 to RP-170+132 LN 2.mde
+│   │   ├── I-74 WB RP-163+24 to RP-170+132 LN 2/
+│   │   ├── I-74 WB RP-163+24 to RP-170+132 LN 2.F25
+│   │   ├── I-74 WB RP-163+24 to RP-170+132 LN 2.accdb
+│   │   ├── I-74 WB RP-163+24 to RP-170+132 LN 2.mde
+│   │   ├── ML_ 11.74_ HMA on 9.82_ Concrete; SH_ 12.4_ HMA.txt
+│   │   ├── ML_ 11.74_ HMA on 9.82_ Concrete; SH_ 12.4_ HMA_error_log.txt
+│   │   └── Waiting for thickness data.txt
+│   └── error_log.txt
+└── D2403049211/
+    ├── D2403049211.pdf
+    ├── SR-44 LL-211/
+    │   ├── 13.19_ HMA.txt
+    │   ├── SR-44 EB RP-0 to RP-13+62 LN 1/
+    │   ├── SR-44 EB RP-0 to RP-13+62 LN 1.F25
+    │   ├── SR-44 EB RP-0 to RP-13+62 LN 2/
+    │   ├── SR-44 EB RP-0 to RP-13+62 LN 2.F25
+    │   ├── SR-44 WB RP-0 to RP-13+62 LN 1/
+    │   ├── SR-44 WB RP-0 to RP-13+62 LN 1 2/
+    │   ├── SR-44 WB RP-0 to RP-13+62 LN 1 2.F25
+    │   ├── SR-44 WB RP-0 to RP-13+62 LN 1.F25
+    │   └── fire error.txt
+    └── fire error.txt
