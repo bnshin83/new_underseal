@@ -164,3 +164,165 @@ Exception: INSERT INTO stda_LONGLIST
 2026-02-20 08:47:00,150 [WARNING] [upload_results_batch] Check the error log at: V:\FWD\Underseal\Data\2023\todo\ready\12182025_update\D2502140378\LL-9378 SR-14\10.75_ HMA_error_log.txt
 2026-02-20 08:47:00,153 [INFO] [upload_results_batch] RUN ENDED: 2026-02-20 08:47:00
 2026-02-20 08:47:00,160 [INFO] [upload_results_batch] ============================================================
+2026-02-20 08:50:44,437 [INFO] [upload_results_batch] txt path: V:\FWD\Underseal\Data\2023\todo\ready\12182025_update\D2502140378\LL-9378 SR-14\10.75_ HMA.txt
+2026-02-20 08:50:44,438 [INFO] [upload_results_batch] Error log is saved in: V:\FWD\Underseal\Data\2023\todo\ready\12182025_update\D2502140378\LL-9378 SR-14\10.75_ HMA_error_log.txt
+2026-02-20 08:50:44,449 [INFO] [upload_results_batch] ============================================================
+2026-02-20 08:50:44,450 [INFO] [upload_results_batch] RUN STARTED: 2026-02-20 08:50:44
+2026-02-20 08:50:44,450 [INFO] [upload_results_batch] txt_path: V:\FWD\Underseal\Data\2023\todo\ready\12182025_update\D2502140378\LL-9378 SR-14\10.75_ HMA.txt
+2026-02-20 08:50:44,451 [INFO] [upload_results_batch] args: {'gen_report': True, 'pavtype_special_case': False, 'server_root': '\\\\dotwebp016vw/data/FWD/', 'dev_env': 'shin', 'skip_img_matching': False, 'txt_path': 'V:\\FWD\\Underseal\\Data\\2023\\todo\\ready\\12182025_update\\D2502140378\\LL-9378 SR-14\\10.75_ HMA.txt', 'gui': False, 'user_input': False}
+2026-02-20 08:50:44,451 [INFO] [upload_results_batch] Connecting to Oracle database (dev_env=shin)...
+2026-02-20 08:50:44,986 [INFO] [upload_results_batch] Oracle connected OK
+2026-02-20 08:50:45,006 [INFO] [upload_results_batch] Read 2 lines from txt file
+2026-02-20 08:50:45,017 [INFO] [upload_results_batch] [1/2] Processing: SR-14 EB RP-110+27 to RP-118+58 DL.F25 (LL-9378, year=2025, req=D2502140378)
+2026-02-20 08:50:45,019 [INFO] [upload_results_batch]   upload_single_result starting...
+2026-02-20 08:50:52,327 [INFO] [match_images] Copying images ...
+2026-02-20 08:50:55,265 [INFO] [upload_results_batch] Report generation: True
+2026-02-20 08:50:59,010 [INFO] [upload_results_batch]   upload_single_result completed OK
+2026-02-20 08:50:59,016 [INFO] [upload_results_batch] [2/2] Processing: SR-14 WB RP-110+27 to RP-118+58 DL.F25 (LL-9378, year=2025, req=D2502140378)
+2026-02-20 08:50:59,016 [INFO] [upload_results_batch]   upload_single_result starting...
+2026-02-20 08:56:42,303 [INFO] [upload_results_batch] txt path: V:\FWD\Underseal\Data\2023\todo\ready\12182025_update\D2502140378\LL-9378 SR-14\10.75_ HMA.txt
+2026-02-20 08:56:42,304 [INFO] [upload_results_batch] Error log is saved in: V:\FWD\Underseal\Data\2023\todo\ready\12182025_update\D2502140378\LL-9378 SR-14\10.75_ HMA_error_log.txt
+2026-02-20 08:56:42,320 [INFO] [upload_results_batch] ============================================================
+2026-02-20 08:56:42,321 [INFO] [upload_results_batch] RUN STARTED: 2026-02-20 08:56:42
+2026-02-20 08:56:42,321 [INFO] [upload_results_batch] txt_path: V:\FWD\Underseal\Data\2023\todo\ready\12182025_update\D2502140378\LL-9378 SR-14\10.75_ HMA.txt
+2026-02-20 08:56:42,321 [INFO] [upload_results_batch] args: {'gen_report': True, 'pavtype_special_case': False, 'server_root': '\\\\dotwebp016vw/data/FWD/', 'dev_env': 'shin', 'skip_img_matching': False, 'txt_path': 'V:\\FWD\\Underseal\\Data\\2023\\todo\\ready\\12182025_update\\D2502140378\\LL-9378 SR-14\\10.75_ HMA.txt', 'gui': False, 'user_input': False}
+2026-02-20 08:56:42,321 [INFO] [upload_results_batch] Connecting to Oracle database (dev_env=shin)...
+2026-02-20 08:56:42,814 [INFO] [upload_results_batch] Oracle connected OK
+2026-02-20 08:56:42,835 [INFO] [upload_results_batch] Read 1 lines from txt file
+2026-02-20 08:56:42,845 [INFO] [upload_results_batch] [1/1] Processing: SR-14 WB RP-110+27 to RP-118+58 DL.F25 (LL-9378, year=2025, req=D2502140378)
+2026-02-20 08:56:42,845 [INFO] [upload_results_batch]   upload_single_result starting...
+2026-02-20 09:56:37,059 [INFO] [upload_results_batch] txt path: V:\FWD\Underseal\Data\2023\todo\ready\12182025_update\D2502140378\LL-9378 SR-14\10.75_ HMA.txt
+2026-02-20 09:56:37,060 [INFO] [upload_results_batch] Error log is saved in: V:\FWD\Underseal\Data\2023\todo\ready\12182025_update\D2502140378\LL-9378 SR-14\10.75_ HMA_error_log.txt
+2026-02-20 09:56:37,071 [INFO] [upload_results_batch] ============================================================
+2026-02-20 09:56:37,071 [INFO] [upload_results_batch] RUN STARTED: 2026-02-20 09:56:37
+2026-02-20 09:56:37,072 [INFO] [upload_results_batch] txt_path: V:\FWD\Underseal\Data\2023\todo\ready\12182025_update\D2502140378\LL-9378 SR-14\10.75_ HMA.txt
+2026-02-20 09:56:37,072 [INFO] [upload_results_batch] args: {'gen_report': True, 'pavtype_special_case': False, 'server_root': '\\\\dotwebp016vw/data/FWD/', 'dev_env': 'shin', 'skip_img_matching': False, 'txt_path': 'V:\\FWD\\Underseal\\Data\\2023\\todo\\ready\\12182025_update\\D2502140378\\LL-9378 SR-14\\10.75_ HMA.txt', 'gui': False, 'user_input': False}
+2026-02-20 09:56:37,072 [INFO] [upload_results_batch] Connecting to Oracle database (dev_env=shin)...
+2026-02-20 09:56:37,605 [INFO] [upload_results_batch] Oracle connected OK
+2026-02-20 09:56:37,643 [INFO] [upload_results_batch] Read 1 lines from txt file
+2026-02-20 09:56:37,652 [INFO] [upload_results_batch] [1/1] Processing: SR-14 WB RP-110+27 to RP-118+58 DL.F25 (LL-9378, year=2025, req=D2502140378)
+2026-02-20 09:56:37,653 [INFO] [upload_results_batch]   upload_single_result starting...
+2026-02-20 10:00:05,886 [INFO] [upload_results_batch] txt path: V:\FWD\Underseal\Data\2023\todo\ready\12182025_update\D2502140384\LL-9384 SR-15\ML 18.75_ HMA; SHLD 10_ HMA.txt
+2026-02-20 10:00:05,887 [INFO] [upload_results_batch] Error log is saved in: V:\FWD\Underseal\Data\2023\todo\ready\12182025_update\D2502140384\LL-9384 SR-15\ML 18.75_ HMA; SHLD 10_ HMA_error_log.txt
+2026-02-20 10:00:05,898 [INFO] [upload_results_batch] ============================================================
+2026-02-20 10:00:05,899 [INFO] [upload_results_batch] RUN STARTED: 2026-02-20 10:00:05
+2026-02-20 10:00:05,899 [INFO] [upload_results_batch] txt_path: V:\FWD\Underseal\Data\2023\todo\ready\12182025_update\D2502140384\LL-9384 SR-15\ML 18.75_ HMA; SHLD 10_ HMA.txt
+2026-02-20 10:00:05,900 [INFO] [upload_results_batch] args: {'gen_report': True, 'pavtype_special_case': False, 'server_root': '\\\\dotwebp016vw/data/FWD/', 'dev_env': 'shin', 'skip_img_matching': False, 'txt_path': 'V:\\FWD\\Underseal\\Data\\2023\\todo\\ready\\12182025_update\\D2502140384\\LL-9384 SR-15\\ML 18.75_ HMA; SHLD 10_ HMA.txt', 'gui': False, 'user_input': False}
+2026-02-20 10:00:05,900 [INFO] [upload_results_batch] Connecting to Oracle database (dev_env=shin)...
+2026-02-20 10:00:06,396 [INFO] [upload_results_batch] Oracle connected OK
+2026-02-20 10:00:06,435 [INFO] [upload_results_batch] Read 2 lines from txt file
+2026-02-20 10:00:06,445 [INFO] [upload_results_batch] [1/2] Processing: SR-15 NB RP-87+49 to RP-90+27 DL.F25 (LL-9384, year=2025, req=D2502140384)
+2026-02-20 10:00:06,445 [INFO] [upload_results_batch]   upload_single_result starting...
+2026-02-20 10:00:13,235 [INFO] [match_images] Copying images ...
+2026-02-20 10:00:19,488 [INFO] [upload_results_batch] Report generation: True
+2026-02-20 10:00:22,089 [INFO] [upload_results_batch]   upload_single_result completed OK
+2026-02-20 10:00:22,095 [INFO] [upload_results_batch] [2/2] Processing: SR-15 SB RP-87+49 to RP-90+27 DL.F25 (LL-9384, year=2025, req=D2502140384)
+2026-02-20 10:00:22,096 [INFO] [upload_results_batch]   upload_single_result starting...
+2026-02-20 10:00:28,750 [INFO] [match_images] Copying images ...
+2026-02-20 10:00:34,012 [INFO] [upload_results_batch] Report generation: True
+2026-02-20 10:00:36,296 [INFO] [upload_results_batch]   upload_single_result completed OK
+2026-02-20 10:00:36,296 [INFO] [upload_results_batch] Uploading finished!!!
+2026-02-20 10:00:36,297 [INFO] [upload_results_batch] RUN ENDED: 2026-02-20 10:00:36
+2026-02-20 10:00:36,297 [INFO] [upload_results_batch] ============================================================
+2026-02-20 10:40:47,283 [INFO] [diagnose_dashboard] ============================================================
+2026-02-20 10:40:47,283 [INFO] [diagnose_dashboard] ArcGIS Dashboard Diagnostic
+2026-02-20 10:40:47,284 [INFO] [diagnose_dashboard] ============================================================
+2026-02-20 10:40:47,887 [INFO] [diagnose_dashboard] Connected to Oracle (shin)
+2026-02-20 10:40:47,888 [INFO] [diagnose_dashboard] ============================================================
+2026-02-20 10:40:47,888 [INFO] [diagnose_dashboard] DIAGNOSING LL NUMBER: 9384
+2026-02-20 10:40:47,888 [INFO] [diagnose_dashboard] ============================================================
+2026-02-20 10:40:47,889 [INFO] [diagnose_dashboard] 
+[1/8] Checking stda_longlist_info...
+2026-02-20 10:40:47,899 [INFO] [diagnose_dashboard]   stda_longlist_info: info_id=4994, longlist_no=9384, year='2025', request_no='D2502140384'
+2026-02-20 10:40:47,900 [INFO] [diagnose_dashboard] 
+[2/8] Checking stda_longlist...
+2026-02-20 10:40:47,914 [INFO] [diagnose_dashboard]   stda_longlist: id=4746, longlist_no=9384, year='2025', dir='NB', lane='DL', pav='asphalt', begin_lat=41.66975305, begin_lon=-85.82134132, end_lat=41.70475081, end_lon=-85.81708781
+2026-02-20 10:40:47,914 [INFO] [diagnose_dashboard]   stda_longlist: id=4747, longlist_no=9384, year='2025', dir='SB', lane='DL', pav='asphalt', begin_lat=41.70501896, begin_lon=-85.81715401, end_lat=41.66985145, end_lon=-85.8215104
+2026-02-20 10:40:47,915 [INFO] [diagnose_dashboard] 
+[3/8] Checking longlist JOIN longlist_info (the critical join)...
+2026-02-20 10:40:47,931 [INFO] [diagnose_dashboard]   JOIN result: l.id=4746, l.ll_no=9384, l.year='2025' | i.id=4994, i.ll_no=9384, i.year='2025', req='D2502140384'
+2026-02-20 10:40:47,931 [INFO] [diagnose_dashboard]   JOIN result: l.id=4747, l.ll_no=9384, l.year='2025' | i.id=4994, i.ll_no=9384, i.year='2025', req='D2502140384'
+2026-02-20 10:40:47,932 [INFO] [diagnose_dashboard] 
+[4/8] Checking data types (DUMP) for year and longlist_no...
+2026-02-20 10:40:47,964 [INFO] [diagnose_dashboard]   stda_longlist    : longlist_no=9384, year=2025
+2026-02-20 10:40:47,964 [INFO] [diagnose_dashboard]     DUMP(longlist_no)=Typ=2 Len=3: 194,94,85
+2026-02-20 10:40:47,965 [INFO] [diagnose_dashboard]     DUMP(year)=Typ=1 Len=4: 50,48,50,53
+2026-02-20 10:40:47,965 [INFO] [diagnose_dashboard]   stda_longlist    : longlist_no=9384, year=2025
+2026-02-20 10:40:47,965 [INFO] [diagnose_dashboard]     DUMP(longlist_no)=Typ=2 Len=3: 194,94,85
+2026-02-20 10:40:47,965 [INFO] [diagnose_dashboard]     DUMP(year)=Typ=1 Len=4: 50,48,50,53
+2026-02-20 10:40:47,975 [INFO] [diagnose_dashboard]   stda_longlist_info: longlist_no=9384, year=2025
+2026-02-20 10:40:47,975 [INFO] [diagnose_dashboard]     DUMP(longlist_no)=Typ=2 Len=3: 194,94,85
+2026-02-20 10:40:47,975 [INFO] [diagnose_dashboard]     DUMP(year)=Typ=1 Len=4: 50,48,50,53
+2026-02-20 10:40:47,976 [INFO] [diagnose_dashboard] 
+[5/8] Checking per-table row counts...
+2026-02-20 10:40:47,976 [INFO] [diagnose_dashboard]   Row counts for longlist_id=4746:
+2026-02-20 10:40:48,327 [INFO] [diagnose_dashboard]     stda_deflections                  84 rows  [OK]
+2026-02-20 10:40:48,393 [INFO] [diagnose_dashboard]     stda_calculations                 28 rows  [OK]
+2026-02-20 10:40:48,430 [INFO] [diagnose_dashboard]     stda_moduli_estimated             28 rows  [OK]
+2026-02-20 10:40:48,439 [INFO] [diagnose_dashboard]     stda_misc                          1 rows  [OK]
+2026-02-20 10:40:48,447 [INFO] [diagnose_dashboard]     stda_longlist                      1 rows  [OK]
+2026-02-20 10:40:48,499 [INFO] [diagnose_dashboard]     stda_img                          28 rows  [OK]
+2026-02-20 10:40:48,500 [INFO] [diagnose_dashboard]   Row counts for longlist_id=4747:
+2026-02-20 10:40:48,538 [INFO] [diagnose_dashboard]     stda_deflections                  84 rows  [OK]
+2026-02-20 10:40:48,554 [INFO] [diagnose_dashboard]     stda_calculations                 28 rows  [OK]
+2026-02-20 10:40:48,569 [INFO] [diagnose_dashboard]     stda_moduli_estimated             28 rows  [OK]
+2026-02-20 10:40:48,577 [INFO] [diagnose_dashboard]     stda_misc                          1 rows  [OK]
+2026-02-20 10:40:48,584 [INFO] [diagnose_dashboard]     stda_longlist                      1 rows  [OK]
+2026-02-20 10:40:48,602 [INFO] [diagnose_dashboard]     stda_img                          28 rows  [OK]
+2026-02-20 10:40:48,602 [INFO] [diagnose_dashboard] 
+[6/8] Checking GPS coordinates for NULLs...
+2026-02-20 10:40:48,644 [INFO] [diagnose_dashboard]   longlist_id=4746 GPS check: total=84, null_gpsx=0, null_gpsy=0, zero_gpsx=0, zero_gpsy=0
+2026-02-20 10:40:48,682 [INFO] [diagnose_dashboard]   longlist_id=4747 GPS check: total=84, null_gpsx=0, null_gpsy=0, zero_gpsx=0, zero_gpsy=0
+2026-02-20 10:40:48,683 [INFO] [diagnose_dashboard] 
+[7/8] Checking drop_no alignment across tables...
+2026-02-20 10:40:48,753 [WARNING] [diagnose_dashboard]   longlist_id=4746: 10 rows have mismatched drop_no (showing first 10):
+2026-02-20 10:40:48,754 [WARNING] [diagnose_dashboard]     point=25, defl_drop=1, calc_drop=None, mod_drop=None
+2026-02-20 10:40:48,754 [WARNING] [diagnose_dashboard]     point=12, defl_drop=1, calc_drop=None, mod_drop=None
+2026-02-20 10:40:48,754 [WARNING] [diagnose_dashboard]     point=15, defl_drop=1, calc_drop=None, mod_drop=None
+2026-02-20 10:40:48,754 [WARNING] [diagnose_dashboard]     point=27, defl_drop=1, calc_drop=None, mod_drop=None
+2026-02-20 10:40:48,754 [WARNING] [diagnose_dashboard]     point=4, defl_drop=3, calc_drop=None, mod_drop=None
+2026-02-20 10:40:48,756 [WARNING] [diagnose_dashboard]     point=7, defl_drop=3, calc_drop=None, mod_drop=None
+2026-02-20 10:40:48,756 [WARNING] [diagnose_dashboard]     point=18, defl_drop=3, calc_drop=None, mod_drop=None
+2026-02-20 10:40:48,756 [WARNING] [diagnose_dashboard]     point=1, defl_drop=3, calc_drop=None, mod_drop=None
+2026-02-20 10:40:48,757 [WARNING] [diagnose_dashboard]     point=6, defl_drop=3, calc_drop=None, mod_drop=None
+2026-02-20 10:40:48,757 [WARNING] [diagnose_dashboard]     point=14, defl_drop=3, calc_drop=None, mod_drop=None
+2026-02-20 10:40:48,821 [WARNING] [diagnose_dashboard]   longlist_id=4747: 10 rows have mismatched drop_no (showing first 10):
+2026-02-20 10:40:48,823 [WARNING] [diagnose_dashboard]     point=2, defl_drop=1, calc_drop=None, mod_drop=None
+2026-02-20 10:40:48,823 [WARNING] [diagnose_dashboard]     point=14, defl_drop=3, calc_drop=None, mod_drop=None
+2026-02-20 10:40:48,823 [WARNING] [diagnose_dashboard]     point=15, defl_drop=3, calc_drop=None, mod_drop=None
+2026-02-20 10:40:48,824 [WARNING] [diagnose_dashboard]     point=17, defl_drop=1, calc_drop=None, mod_drop=None
+2026-02-20 10:40:48,824 [WARNING] [diagnose_dashboard]     point=6, defl_drop=1, calc_drop=None, mod_drop=None
+2026-02-20 10:40:48,824 [WARNING] [diagnose_dashboard]     point=12, defl_drop=1, calc_drop=None, mod_drop=None
+2026-02-20 10:40:48,826 [WARNING] [diagnose_dashboard]     point=13, defl_drop=3, calc_drop=None, mod_drop=None
+2026-02-20 10:40:48,826 [WARNING] [diagnose_dashboard]     point=4, defl_drop=1, calc_drop=None, mod_drop=None
+2026-02-20 10:40:48,826 [WARNING] [diagnose_dashboard]     point=8, defl_drop=1, calc_drop=None, mod_drop=None
+2026-02-20 10:40:48,827 [WARNING] [diagnose_dashboard]     point=28, defl_drop=1, calc_drop=None, mod_drop=None
+2026-02-20 10:40:48,827 [INFO] [diagnose_dashboard] 
+[8/8] Running full dashboard INNER JOIN query...
+2026-02-20 10:40:48,892 [INFO] [diagnose_dashboard]   Full dashboard query for longlist_id=4746: 28 rows — OK
+2026-02-20 10:40:48,952 [INFO] [diagnose_dashboard]   Full dashboard query for longlist_id=4747: 28 rows — OK
+2026-02-20 10:40:48,953 [INFO] [diagnose_dashboard] ============================================================
+2026-02-20 10:40:48,953 [INFO] [diagnose_dashboard] COMPARISON: working LL 429 vs broken LL 9384
+2026-02-20 10:40:48,954 [INFO] [diagnose_dashboard] ============================================================
+2026-02-20 10:40:48,954 [INFO] [diagnose_dashboard] --- WORKING (LL 429) ---
+2026-02-20 10:40:48,963 [INFO] [diagnose_dashboard]   stda_longlist_info: ll_no=429, year='2022', DUMP(year)=Typ=1 Len=4: 50,48,50,50
+2026-02-20 10:40:48,963 [INFO] [diagnose_dashboard] --- BROKEN (LL 9384) ---
+2026-02-20 10:40:48,977 [INFO] [diagnose_dashboard]   stda_longlist: ll_no=9384, year='2025', DUMP(year)=Typ=1 Len=4: 50,48,50,53
+2026-02-20 10:40:48,978 [INFO] [diagnose_dashboard]   stda_longlist_info: ll_no=9384, year='2025', DUMP(year)=Typ=1 Len=4: 50,48,50,53
+2026-02-20 10:40:48,978 [INFO] [diagnose_dashboard] 
+============================================================
+2026-02-20 10:40:48,979 [INFO] [diagnose_dashboard] DIAGNOSTIC SUMMARY
+2026-02-20 10:40:48,979 [INFO] [diagnose_dashboard] ============================================================
+2026-02-20 10:40:48,979 [INFO] [diagnose_dashboard] Checked LL numbers: [9384]
+2026-02-20 10:40:48,980 [INFO] [diagnose_dashboard] Compare LL: 429
+2026-02-20 10:40:48,981 [INFO] [diagnose_dashboard] 
+2026-02-20 10:40:48,981 [INFO] [diagnose_dashboard] Common causes for missing dashboard data:
+2026-02-20 10:40:48,982 [INFO] [diagnose_dashboard]   1. YEAR MISMATCH: stda_longlist.year != stda_longlist_info.year
+2026-02-20 10:40:48,982 [INFO] [diagnose_dashboard]      (e.g., '2025' vs '25', or NUMBER vs VARCHAR mismatch)
+2026-02-20 10:40:48,982 [INFO] [diagnose_dashboard]   2. LONGLIST_NO TYPE MISMATCH: NUMBER vs VARCHAR comparison failure
+2026-02-20 10:40:48,983 [INFO] [diagnose_dashboard]   3. NULL GPS: gpsx/gpsy NULL in stda_deflections breaks sdo_geometry
+2026-02-20 10:40:48,983 [INFO] [diagnose_dashboard]   4. DROP_NO MISMATCH: drop_no doesn't align across deflections/calculations/moduli
+2026-02-20 10:40:48,983 [INFO] [diagnose_dashboard]   5. MISSING ROWS: one of the 6 tables has no data for this longlist_id
+2026-02-20 10:40:48,984 [INFO] [diagnose_dashboard] 
+2026-02-20 10:40:48,984 [INFO] [diagnose_dashboard] Check run_log.txt for full output.
+2026-02-20 10:40:48,984 [INFO] [diagnose_dashboard] Push run_log.txt to GitHub so Claude can analyze the results.
