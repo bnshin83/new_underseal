@@ -72,3 +72,32 @@ DBQ: V:\FWD\Underseal\Data\2023\todo\ready\12182025_update\D2502140378\LL-9378 S
 2026-02-20 08:21:13,974 [WARNING] [upload_results_batch] Check the error log at: V:\FWD\Underseal\Data\2023\todo\ready\12182025_update\D2502140378\LL-9378 SR-14\10.75_ HMA_error_log.txt
 2026-02-20 08:21:13,974 [INFO] [upload_results_batch] RUN ENDED: 2026-02-20 08:21:13
 2026-02-20 08:21:13,974 [INFO] [upload_results_batch] ============================================================
+2026-02-20 08:34:25,160 [INFO] [upload_results_batch] txt path: V:\FWD\Underseal\Data\2023\todo\ready\12182025_update\D2502140378\LL-9378 SR-14\10.75_ HMA.txt
+2026-02-20 08:34:25,160 [INFO] [upload_results_batch] Error log is saved in: V:\FWD\Underseal\Data\2023\todo\ready\12182025_update\D2502140378\LL-9378 SR-14\10.75_ HMA_error_log.txt
+2026-02-20 08:34:25,177 [INFO] [upload_results_batch] Overwrite previous error log!!!
+2026-02-20 08:34:25,389 [INFO] [upload_results_batch] ============================================================
+2026-02-20 08:34:25,389 [INFO] [upload_results_batch] RUN STARTED: 2026-02-20 08:34:25
+2026-02-20 08:34:25,390 [INFO] [upload_results_batch] txt_path: V:\FWD\Underseal\Data\2023\todo\ready\12182025_update\D2502140378\LL-9378 SR-14\10.75_ HMA.txt
+2026-02-20 08:34:25,390 [INFO] [upload_results_batch] args: {'gen_report': True, 'pavtype_special_case': False, 'server_root': '\\\\dotwebp016vw/data/FWD/', 'dev_env': 'shin', 'skip_img_matching': False, 'txt_path': 'V:\\FWD\\Underseal\\Data\\2023\\todo\\ready\\12182025_update\\D2502140378\\LL-9378 SR-14\\10.75_ HMA.txt', 'gui': False, 'user_input': False}
+2026-02-20 08:34:25,391 [INFO] [upload_results_batch] Connecting to Oracle database (dev_env=shin)...
+2026-02-20 08:34:25,830 [INFO] [upload_results_batch] Oracle connected OK
+2026-02-20 08:34:25,851 [INFO] [upload_results_batch] Read 2 lines from txt file
+2026-02-20 08:34:25,859 [INFO] [upload_results_batch] [1/2] Processing: SR-14 EB RP-110+27 to RP-118+58 DL.F25 (LL-9378, year=2025, req=D2502140378)
+2026-02-20 08:34:25,860 [INFO] [upload_results_batch]   upload_single_result starting...
+2026-02-20 08:34:32,219 [INFO] [match_images] Copying images ...
+2026-02-20 08:35:00,664 [ERROR] [upload_results_batch]   EXCEPTION: [Errno 2] No such file or directory: 'V:\\FWD\\Underseal\\Data\\2023\\todo\\ready\\12182025_update\\D2502140378\\LL-9378 SR-14\\SR-14 EB RP-110+27 to RP-118+58 DL\\Cam1\\SR-14 EB RP-110+27 to RP-118+58 DL 013651.3 1.jpg'
+2026-02-20 08:35:00,665 [ERROR] [upload_results_batch]   Traceback (most recent call last):
+  File "C:\Users\bshin\Documents\Underseal_new\new_underseal\upload_results_batch_f25only.py", line 318, in <module>
+    upload_single_result(args, f25_path, ll_no, year, con, user_input_dict, commit=1)
+  File "C:\Users\bshin\Documents\Underseal_new\new_underseal\upload_results_batch_f25only.py", line 114, in upload_single_result
+    mde, roadtype, roadname, ll_obj = read_mde(con, mde_path, f25_path, id, ll_obj, gpsx, gpsy, gpsx_dict, gpsy_dict, args)
+  File "C:\Users\bshin\Documents\Underseal_new\new_underseal\mde_entry.py", line 263, in read_mde
+    dmi_img_dict, img_dmi_dict, success_match, nomatch_message = match_image_chainage(f25_path, ll_obj, df, server_root)
+  File "C:\Users\bshin\Documents\Underseal_new\new_underseal\match_images.py", line 53, in match_image_chainage
+    shutil.copy(os.path.join(source_path,img_filename), os.path.join(dist_path,img_filename))
+  File "C:\Users\bshin\Miniconda3\lib\shutil.py", line 427, in copy
+    copyfile(src, dst, follow_symlinks=follow_symlinks)
+  File "C:\Users\bshin\Miniconda3\lib\shutil.py", line 264, in copyfile
+    with open(src, 'rb') as fsrc:
+FileNotFoundError: [Errno 2] No such file or directory: 'V:\\FWD\\Underseal\\Data\\2023\\todo\\ready\\12182025_update\\D2502140378\\LL-9378 SR-14\\SR-14 EB RP-110+27 to RP-118+58 DL\\Cam1\\SR-14 EB RP-110+27 to RP-118+58 DL 013651.3 1.jpg'
+
