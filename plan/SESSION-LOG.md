@@ -50,12 +50,53 @@ Performed full codebase review of all Python files. Identified:
 
 ---
 
-## Session 2 — (next session)
+## Session 2 — 2026-02-20
+
+### Context
+Dr. Shin pulled `claude-fix` branch and ran batch upload on INDOT work PC. Pushed `run_log.txt` and reported results.
+
+### Work Done
+1. **Centralized logging**: Created `log_config.py` with `get_logger(name)` function. Integrated into 11 Python files. All output goes to `run_log.txt` + stdout.
+2. **Fixed `user_input_dict` NameError**: Added `user_input_dict = {}` initialization before loop in `upload_results_batch_f25only.py`.
+3. **Fixed pandas/pyodbc import order crash**: Reordered imports in subprocess scripts — `pyodbc.connect()` must happen BEFORE `import pandas` to avoid numpy DLL conflict (0xC0000005).
+4. **Created backup repo**: `bnshin83/Underseal_new_backup` (private) — full copy of Underseal_new folder from INDOT PC.
+5. **Verified end-to-end run**: Both EB and WB directions processed successfully.
+
+### Key Discovery
+Import order matters in subprocess scripts: `pyodbc.connect()` must execute before `import pandas` (which loads numpy). The numpy DLLs interfere with the Access ODBC driver, causing a silent 0xC0000005 crash.
+
+---
+
+## Session 3 — 2026-02-20
+
+### Context
+ArcGIS Pro FWD dashboard not showing data for "grey requests" (high LL numbers like 9384+). All data exists in Oracle tables, but entire requests are missing from the dashboard map.
+
+### Work Done
+1. **Created `diagnose_dashboard.py`**: Comprehensive diagnostic script that Dr. Shin runs on work PC. Checks all 6 tables in the INNER JOIN chain, data types (via Oracle DUMP), NULL GPS coordinates, drop_no alignment, and runs the full dashboard query for specific LL numbers. Also supports comparing a broken LL against a known working one.
+2. **Created `sql/arcgis_dashboard.sql`**: Saved the current ArcGIS dashboard queries with full documentation — the 3-layer architecture (FWD_Dashboard_numeric point layer, image_layer, route line layer), JOIN chain documentation, and diagnostic notes.
+3. **Updated plan documents**: Marked completed items in 02-stability.md (2.3 done, 2.10 added), 03-code-quality.md (3.4 partial), 04-architecture.md (4.3 done), 05-testing.md (5.1 done). Updated README.md with current status table.
+
+### Most Likely Root Cause (hypothesis)
+The INNER JOIN between `stda_longlist` and `stda_longlist_info` on `(longlist_no, year)` fails for grey requests. Probable reasons:
+- **Year mismatch**: `stda_longlist.year` doesn't match `stda_longlist_info.year` (e.g., `'2025'` vs `'25'`, or the LL info was uploaded with a different year value)
+- **Type mismatch**: One table stores year/longlist_no as NUMBER, the other as VARCHAR
+- The diagnostic script uses Oracle's `DUMP()` function to detect this
+
+### Next Steps
+1. Dr. Shin runs `diagnose_dashboard.py` on work PC with a broken LL number and a working LL number
+2. Push `run_log.txt` for Claude to analyze
+3. Based on results, either fix the data (SQL update) or fix the upload code
+4. Continue to Phase 1 (security + stability fixes)
+
+---
+
+## Session 4 — (next session)
 
 ### Start-of-Session Checklist
 - [ ] Read `plan/SESSION-LOG.md` for context
-- [ ] Check if `run_log.txt` has been pushed
-- [ ] Review any new commits on `claude-fix` or `main`
+- [ ] Check if `run_log.txt` has diagnostic output
+- [ ] Review diagnostic results and determine root cause
 - [ ] Check plan status in `plan/*.md` files
 
 ### End-of-Session Checklist

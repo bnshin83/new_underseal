@@ -66,13 +66,15 @@
 
 ---
 
-### 3.4 Consistent Error Handling Pattern
+### 3.4 Consistent Error Handling Pattern (PARTIAL — logging infrastructure done)
 
 **Problem**: Error handling is inconsistent — some functions raise exceptions with messages, some use bare `except:`, some print errors, some write to log files.
 
-**Fix**:
-- [ ] Establish a consistent pattern: use Python `logging` module (already set up in batch script)
-- [ ] Import and use `logger` from a shared module in all files
+**Status**: PARTIAL — `log_config.py` created and integrated into 11 files (Session 2, 2026-02-20). All modules now use `logger = get_logger('module_name')`. Remaining work is converting bare `except:` clauses (see 2.8) and replacing remaining `print()` calls.
+
+**Remaining Fix**:
+- [x] Establish a consistent pattern: use Python `logging` module
+- [x] Import and use `logger` from a shared module in all files
 - [ ] Replace `print()` calls with `logger.info()` / `logger.warning()` / `logger.error()`
 
 **Files**: All Python files

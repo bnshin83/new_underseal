@@ -30,12 +30,12 @@
 
 ---
 
-### 2.3 Undefined `user_input_dict` Variable
+### 2.3 Undefined `user_input_dict` Variable (DONE)
 
 **Problem**: In `upload_results_batch_f25only.py`, when `args.user_input` is False (the normal code path, line 214-227), `user_input_dict` is never defined. It's passed to `upload_single_result()` at line 328. Currently doesn't crash because `compose_ll_entry_string()` only accesses it in the `args.user_input` branch, but it's a latent `NameError`.
 
-**Fix**:
-- [ ] Initialize `user_input_dict = {}` before the `if not args.user_input:` block (around line 213)
+**Fix**: Added `user_input_dict = {}` initialization before the loop (line 200).
+**Status**: DONE — Session 2 (2026-02-20)
 
 **Files**: `upload_results_batch_f25only.py`
 
@@ -120,3 +120,12 @@ This silently deletes `page_4.docx` from the current working directory every tim
 - [ ] Or use `tempfile.NamedTemporaryFile` with `.accdb` suffix instead of copying to a predictable path
 
 **Files**: `mde_entry.py`
+
+---
+
+### 2.10 Import Order: pyodbc Before pandas (DONE)
+
+**Problem**: In the subprocess scripts spawned by `_access_connect()`, `import pandas` must come AFTER `pyodbc.connect()`. NumPy DLLs (loaded by pandas) conflict with the Access ODBC driver, causing a silent crash (exit code 0xC0000005 / ACCESS_VIOLATION).
+
+**Fix**: Reordered imports in subprocess script strings so `pyodbc.connect()` happens first, then `import pandas`.
+**Status**: DONE — Session 2 (2026-02-20). Verified via successful end-to-end batch run.

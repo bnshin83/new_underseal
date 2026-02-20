@@ -96,30 +96,17 @@ new_underseal/
 
 ---
 
-### 4.3 Logging Infrastructure
+### 4.3 Logging Infrastructure (DONE)
 
 **Problem**: Logging was added to `upload_results_batch_f25only.py` (our fix) but other scripts (`upload_ll_batch.py`, `fill_gps.py`, etc.) still use `print()` and manual error log files.
 
-**Fix**:
-- [ ] Create a shared logging setup function:
-  ```python
-  # In config.py or a new logging_config.py
-  def setup_logging(script_name):
-      log_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'run_log.txt')
-      logging.basicConfig(
-          level=logging.INFO,
-          format='%(asctime)s [%(levelname)s] [%(name)s] %(message)s',
-          handlers=[
-              logging.FileHandler(log_path, mode='a', encoding='utf-8'),
-              logging.StreamHandler(sys.stdout)
-          ]
-      )
-      return logging.getLogger(script_name)
-  ```
-- [ ] Apply to `upload_ll_batch.py`, `fill_gps.py`, `find_f25_files.py`
-- [ ] Keep the existing `_error_log.txt` files as a secondary output for user convenience
+**Status**: DONE — Session 2 (2026-02-20).
+- Created `log_config.py` with `get_logger(name)` function
+- Integrated into 11 files: `upload_results_batch_f25only.py`, `mde_entry.py`, `calculate.py`, `db.py`, `ll_query.py`, `ll_info_entry.py`, `report.py`, `report_page4.py`, `match_images.py`, `upload_ll_batch.py`, `comments.py`
+- All output goes to both `run_log.txt` and stdout
+- Existing `_error_log.txt` files kept as secondary output
 
-**Files**: `upload_ll_batch.py`, `fill_gps.py`, `find_f25_files.py`
+**Files**: `log_config.py` (new), all Python files listed above
 
 ---
 

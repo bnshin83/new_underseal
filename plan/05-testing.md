@@ -4,20 +4,21 @@
 
 ---
 
-### 5.1 Validate Subprocess Fix on Work PC
+### 5.1 Validate Subprocess Fix on Work PC (DONE)
 
-**Priority**: HIGH — this is the immediate next step.
+**Priority**: HIGH
 
-**Steps**:
-1. User pulls `claude-fix` branch on work PC
-2. Run the batch upload script with a known-good set of F25 files
-3. Push `run_log.txt` for review
-4. Verify:
-   - All files that previously worked still work
-   - Error messages for bad files are clear and include returncode/stderr
-   - The corrupted SR-14 file fails gracefully (subprocess crash, not main process crash)
-   - No `.accdb` files left behind (if cleanup is implemented)
-   - `run_log.txt` captures all activity
+**Status**: DONE — Session 2 (2026-02-20). Dr. Shin ran batch upload on work PC. Successful end-to-end run (EB + WB) confirmed. Key findings:
+- Subprocess isolation works correctly
+- Import order fix (pyodbc before pandas) prevents 0xC0000005 crash
+- Logging captures all activity in `run_log.txt`
+- Corrupted files fail gracefully without crashing main process
+
+**Steps** (completed):
+1. User pulled `claude-fix` branch on work PC
+2. Ran the batch upload script with known-good F25 files
+3. Pushed `run_log.txt` for review
+4. Verified all items above
 
 ---
 
