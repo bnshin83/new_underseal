@@ -28,24 +28,70 @@ from log_config import get_logger
 logger = get_logger('upload_results_batch')
 
 ################################## Utils ##################################
-def delete_rows(con, tablename, id, verbose=1):
-    delstr = "DELETE FROM "+str(tablename)+" WHERE LONGLIST_ID = "+str(id)
+def delete_rows(con, tablename, longlist_id, verbose=1):
+    delstr = "DELETE FROM "+str(tablename)+" WHERE LONGLIST_ID = "+str(longlist_id)
     cursor = con.cursor()
     cursor.execute(delstr)
     con.commit()
     cursor.close()
     if verbose == 1:
-        logger.info("Removed illegal entries from %s with id %s", tablename, str(id))
+        logger.info("Removed entries from %s with id %s", tablename, str(longlist_id))
+
+RESULT_TABLES = [
+    "stda_DEFLECTIONS",
+    "stda_CALCULATED_DEFLECTIONS",
+    "stda_MODULI_ESTIMATED",
+    "stda_MISC",
+    "stda_CALCULATIONS",
+    "stda_STATS",
+    "stda_IMG",
+]
+
+def check_entry_completeness(con, longlist_id):
+    """Check which tables have data for the given longlist_id.
+    Returns (is_complete, table_counts) where is_complete means all
+    required tables (excluding IMG) have at least 1 row."""
+    cursor = con.cursor()
+    table_counts = {}
+    for table in RESULT_TABLES:
+        cursor.execute("SELECT COUNT(*) FROM {} WHERE LONGLIST_ID = :1".format(table), [longlist_id])
+        table_counts[table] = cursor.fetchone()[0]
+    cursor.close()
+    # Complete means all tables except IMG have data (IMG is optional)
+    required = [t for t in RESULT_TABLES if t != "stda_IMG"]
+    is_complete = all(table_counts[t] > 0 for t in required)
+    return is_complete, table_counts
+
+def cleanup_existing_entry(con, longlist_id):
+    """Delete all data for an existing longlist_id across all result tables + longlist."""
+    for table in RESULT_TABLES:
+        delete_rows(con, table, longlist_id, verbose=0)
+    delete_rows(con, "stda_LONGLIST", longlist_id, verbose=0)
+    logger.info("Cleaned up partial entry for longlist_id=%s", longlist_id)
+
+def find_existing_longlist_id(con, ll_no, year, f25_path):
+    """Find the longlist_id for an existing entry matching ll_no, year, and f25 basename."""
+    base = os.path.basename(f25_path)[:-4]
+    cursor = con.cursor()
+    cursor.execute("""SELECT LONGLIST_ID FROM stda_LONGLIST
+                      WHERE LONGLIST_NO = :1 AND YEAR = :2 AND F25_INFO = :3""",
+                   [int(ll_no), str(year), base])
+    row = cursor.fetchone()
+    cursor.close()
+    return row[0] if row else None
 
 ################################## Major function definition ##################################
 def upload_single_result(args, f25_path, ll_no, year, con, user_input_dict, commit=0):
     """
     Major function responsible for processing the raw FWD and uploading the calculated resutls to Oracle database.
     This function itself calls many other cutomized functions. Please go through the cutomized functions to gain deeper understanding of how it works.
+
+    Returns:
+        longlist_id: The Oracle longlist_id assigned to this entry (used for rollback on error).
     """
 
     mde_path = f25_path[:-3] + 'mde'
-    
+
     if not args.pavtype_special_case:
         # Decide Pavement type automatically using the elastic modulus.
         e1,e2= read_pavtype(mde_path, f25_path)
@@ -78,9 +124,7 @@ def upload_single_result(args, f25_path, ll_no, year, con, user_input_dict, comm
         pavtype = str(clicked.get())
         #### (End) Tkinter code to take user input
 
-    # Preset id to none to prevent termination of batch uploading due to "id cannot find" error
-    global id
-    id = None
+    longlist_id = None
 
     # retrive ll_obj from database
     ll_obj = get_ll_obj(con, ll_no, year)
@@ -100,8 +144,8 @@ def upload_single_result(args, f25_path, ll_no, year, con, user_input_dict, comm
 
     # print('before ll_query')
 
-    id,dir,lane_type = ll_query(con, ll_no, f25_path, year, start_gps, end_gps, pavtype, args, user_input_dict, commit=1)
-    
+    longlist_id,dir,lane_type = ll_query(con, ll_no, f25_path, year, start_gps, end_gps, pavtype, args, user_input_dict, commit=1)
+
     ll_obj['dir'] = dir
 
     mde = None
@@ -111,26 +155,28 @@ def upload_single_result(args, f25_path, ll_no, year, con, user_input_dict, comm
     pcc_mod = None
     rxn_subg = None
 
-    mde, roadtype, roadname, ll_obj = read_mde(con, mde_path, f25_path, id, ll_obj, gpsx, gpsy, gpsx_dict, gpsy_dict, args)
+    mde, roadtype, roadname, ll_obj = read_mde(con, mde_path, f25_path, longlist_id, ll_obj, gpsx, gpsy, gpsx_dict, gpsy_dict, args)
     ll_obj["roadname"] = roadname
 
-    calc_data, stats_data, mde, pcc_mod, rxn_subg = calc(con, id, pavtype, roadtype, ll_obj, mde, args)
+    calc_data, stats_data, mde, pcc_mod, rxn_subg = calc(con, longlist_id, pavtype, roadtype, ll_obj, mde, args)
 
     if commit:
-        db.putmde(con, mde, stats_data, id, commit=1)
+        db.putmde(con, mde, stats_data, longlist_id, commit=1)
 
     if commit:
         if not args.skip_img_matching:
-            db.putimg(con, ll_obj, id, year, lane_type, commit=1)
+            db.putimg(con, ll_obj, longlist_id, year, lane_type, commit=1)
 
     if(commit):
-        db.putcalc(con, calc_data, id, pcc_mod, rxn_subg)
-        db.putstats(con, stats_data, id)
+        db.putcalc(con, calc_data, longlist_id, pcc_mod, rxn_subg)
+        db.putstats(con, stats_data, longlist_id)
 
     logger.info('Report generation: %s', args.gen_report)
 
     if args.gen_report:
         report.gen_report(ll_obj, mde, calc_data, stats_data, mde_path, f25_path, ll_no, year, con, args)
+
+    return longlist_id
 
 if __name__ == "__main__":
     
@@ -148,6 +194,7 @@ if __name__ == "__main__":
     parser.add_argument('--txt_path', type=str, help = "path of txt where each line contains a single F25 path. If use this flag, dont use the --gui flag")
     parser.add_argument('--gui', action='store_true', help = "This is for use that want to use a GUI to pick the path of txt that contains multiple F25 paths. If use this flag, dont use the --txt_path flag")
     parser.add_argument('--user_input', action='store_true', help= "Override the automatic LL NO, Year, Test Direction, and Lane Type detection when the F25 path does not follow pre-specific folder structure.")
+    parser.add_argument('--force', action='store_true', help="Force re-upload even if entry already exists (deletes existing data first).")
     args = parser.parse_args()
     ############## (Args input, end) ###################
 
@@ -313,9 +360,16 @@ if __name__ == "__main__":
         # Use try and except structure to handle error during excuting "upload_single_result".
         # Try and except used because we want to skip the problematic F25 and MDE files.
         # The bug related to problematic F25 and MDE files will be recorded in the error log file.
+        longlist_id = None
         try:
+            # If --force, delete existing entry before re-uploading
+            if args.force:
+                existing_id = find_existing_longlist_id(con, ll_no, year, f25_path)
+                if existing_id:
+                    logger.info("  --force: deleting existing entry (longlist_id=%s) for LL-%s-%s", existing_id, ll_no, year)
+                    cleanup_existing_entry(con, existing_id)
             logger.info("  upload_single_result starting...")
-            upload_single_result(args, f25_path, ll_no, year, con, user_input_dict, commit=1)
+            longlist_id = upload_single_result(args, f25_path, ll_no, year, con, user_input_dict, commit=1)
             logger.info("  upload_single_result completed OK")
         # Roll Back Mechanism: If error occurs in the "upload_single_result" function,
         #                      record the error message in error log file and delete the corresponding row that has been uploaded.
@@ -327,7 +381,21 @@ if __name__ == "__main__":
             logger.error("  EXCEPTION: %s", str(e))
             logger.error("  %s", traceback_str)
             if 'unique constraint' in traceback_str:
-                logger.warning('Repeat entry of %s-%s, this input is ignored...', ll_no, year)
+                existing_id = find_existing_longlist_id(con, ll_no, year, f25_path)
+                if existing_id:
+                    is_complete, counts = check_entry_completeness(con, existing_id)
+                    if is_complete:
+                        logger.info('LL-%s-%s already uploaded (complete). Skipping.', ll_no, year)
+                    else:
+                        logger.warning('LL-%s-%s partially uploaded (counts: %s). Cleaning up and retrying...', ll_no, year, counts)
+                        cleanup_existing_entry(con, existing_id)
+                        try:
+                            longlist_id = upload_single_result(args, f25_path, ll_no, year, con, user_input_dict, commit=1)
+                            logger.info('  Retry succeeded for LL-%s-%s', ll_no, year)
+                        except Exception as retry_err:
+                            logger.error('  Retry also failed for LL-%s-%s: %s', ll_no, year, retry_err)
+                else:
+                    logger.warning('Repeat entry of LL-%s-%s but could not find existing longlist_id. Skipping.', ll_no, year)
             elif "F25 filename does not meet requirement" in traceback_str:
                 with open(filename_error_log_path, "a+") as filename_log_f:
                     print("Following F25 file does not meet the filename requirement, please consider using '--user_input'.",
@@ -340,15 +408,15 @@ if __name__ == "__main__":
                     print(traceback_str,file=f)
                     # If there is error happen before uploading anything, there is nothing to delete.
                     # It would cause error and exit the batch uploading if we try to delete something that does not exist
-                    if id:
-                        delete_rows(con, "stda_DEFLECTIONS", id, verbose = 0)
-                        delete_rows(con, "stda_CALCULATED_DEFLECTIONS", id, verbose=0)
-                        delete_rows(con, "stda_MODULI_ESTIMATED", id, verbose = 0)
-                        delete_rows(con, "stda_MISC", id, verbose = 0)
-                        delete_rows(con, "stda_CALCULATIONS", id, verbose = 0)
-                        delete_rows(con, "stda_STATS", id, verbose = 0)
-                        delete_rows(con, "stda_LONGLIST", id, verbose = 0)
-                        delete_rows(con, "stda_IMG", id, verbose = 0)
+                    if longlist_id:
+                        delete_rows(con, "stda_DEFLECTIONS", longlist_id, verbose = 0)
+                        delete_rows(con, "stda_CALCULATED_DEFLECTIONS", longlist_id, verbose=0)
+                        delete_rows(con, "stda_MODULI_ESTIMATED", longlist_id, verbose = 0)
+                        delete_rows(con, "stda_MISC", longlist_id, verbose = 0)
+                        delete_rows(con, "stda_CALCULATIONS", longlist_id, verbose = 0)
+                        delete_rows(con, "stda_STATS", longlist_id, verbose = 0)
+                        delete_rows(con, "stda_LONGLIST", longlist_id, verbose = 0)
+                        delete_rows(con, "stda_IMG", longlist_id, verbose = 0)
                         logger.warning('Due to unexpected error, LL-%s from year %s is deleted, rolling back...', ll_no, year)
                     print('Due to unexpected error, LL-{} from year {} is deleted...'.format(ll_no,year),file=f)
                     print('(End of error log)#############LL-{} from year {} (Request NO. {})#######################\n\n'.format(ll_no,year,req_no),file=f)

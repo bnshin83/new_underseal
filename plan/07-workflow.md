@@ -1,6 +1,6 @@
 # P1.5: Workflow Improvements
 
-## Status: NOT STARTED
+## Status: PARTIAL (7.1 and 7.2 done — Session 4)
 **Priority**: HIGH — these are daily pain points that slow down batch processing.
 
 ---
@@ -11,13 +11,13 @@
 
 **Seen in**: run_log.txt 2026-02-20 08:35:00 — `FileNotFoundError` on a single Cam1 image caused full rollback of LL-9378 EB.
 
-**Fix**:
-- [ ] Wrap image matching/copying in a try-except inside `read_mde()` or `upload_single_result()`
-- [ ] If image matching fails, log a warning but continue with the upload (calculations, deflections, etc. still get committed)
-- [ ] Set `ll_obj['img_dmi_dict'] = {}` on image failure so `putimg()` is skipped gracefully
-- [ ] Report which images failed in the warning log so they can be fixed later
+**Fix**: DONE — Session 4
+- [x] Wrapped image matching/copying in try-except inside `read_mde()`
+- [x] If image matching fails, logs a warning but continues with the upload
+- [x] Sets `ll_obj['img_dmi_dict'] = {}` on image failure so `putimg()` is skipped gracefully
+- [x] Reports which images failed in the warning log
 
-**Files**: `upload_results_batch_f25only.py`, `mde_entry.py`, `match_images.py`
+**Files**: `mde_entry.py`
 
 ---
 
@@ -25,13 +25,13 @@
 
 **Problem**: If a previous run partially uploaded data (e.g., `stda_longlist` row exists but deflections/calculations are incomplete), re-running hits `ORA-00001: unique constraint (STDA.UNIQUE_STDA_LONGLIST) violated` and the entry is silently skipped with "Repeat entry" warning. The user has no way to complete the partial upload without manually deleting rows in SQL Developer.
 
-**Fix**:
-- [ ] When `unique constraint` is caught, check if the existing entry is complete (has rows in all 6 tables)
-- [ ] If incomplete: delete the partial data and re-upload from scratch (auto-cleanup)
-- [ ] If complete: skip with "Already uploaded" info message (current behavior, but with clearer message)
-- [ ] Add `--force` flag to force re-upload even if entry exists (delete + re-insert)
+**Fix**: DONE — Session 4
+- [x] When `unique constraint` is caught, checks if existing entry is complete (has rows in all 6 tables)
+- [x] If incomplete: deletes partial data and re-uploads from scratch (auto-cleanup)
+- [x] If complete: skips with "Already uploaded (complete)" info message
+- [x] Added `--force` flag to force re-upload even if entry exists (delete + re-insert)
 
-**Files**: `upload_results_batch_f25only.py`, `ll_query.py`
+**Files**: `upload_results_batch_f25only.py`
 
 ---
 

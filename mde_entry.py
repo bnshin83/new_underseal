@@ -232,7 +232,6 @@ def read_mde(con, path, f25_path, id, ll_obj, gpsx, gpsy, gpsx_dict, gpsy_dict, 
     base = os.path.basename(f25_path)
     newpath = pre + '.accdb'
     shutil.copy(path, newpath)
-    cursor = con.cursor()
 
     # Read all Access tables via subprocess to avoid DLL conflict
     tables = _access_connect(newpath)
@@ -260,21 +259,26 @@ def read_mde(con, path, f25_path, id, ll_obj, gpsx, gpsy, gpsx_dict, gpsy_dict, 
     # INCLUDE IMAGE MATCHING HERE
     ### Image matching part ###
     if not skip_img_matching:
-        dmi_img_dict, img_dmi_dict, success_match, nomatch_message = match_image_chainage(f25_path, ll_obj, df, server_root)
-        if success_match:
-            imgnames_list = []
-            for chainage in df['Chainage'].tolist():
-                imgnames_list.append(",".join(dmi_img_dict[chainage]))
-            # Save the DMI-->imgname dict to ll_obj
-            ll_obj['dmi_img_dict'] = dmi_img_dict
-            # Save the img-->DMI dict for STDA_IMG table
-            ll_obj['img_dmi_dict'] = img_dmi_dict
-
-        else:
-            logger.warning(nomatch_message)
-            ll_obj['nomatch_msg'] = nomatch_message
+        try:
+            dmi_img_dict, img_dmi_dict, success_match, nomatch_message = match_image_chainage(f25_path, ll_obj, df, server_root)
+            if success_match:
+                imgnames_list = []
+                for chainage in df['Chainage'].tolist():
+                    imgnames_list.append(",".join(dmi_img_dict[chainage]))
+                # Save the DMI-->imgname dict to ll_obj
+                ll_obj['dmi_img_dict'] = dmi_img_dict
+                # Save the img-->DMI dict for STDA_IMG table
+                ll_obj['img_dmi_dict'] = img_dmi_dict
+            else:
+                logger.warning(nomatch_message)
+                ll_obj['nomatch_msg'] = nomatch_message
+                ll_obj['dmi_img_dict'] = None
+                ll_obj['img_dmi_dict'] = None
+                imgnames_list = df.shape[0]*[None]
+        except Exception as img_err:
+            logger.warning("Image matching/copying failed: %s — continuing without images", img_err)
             ll_obj['dmi_img_dict'] = None
-            ll_obj['img_dmi_dict'] = None
+            ll_obj['img_dmi_dict'] = {}
             imgnames_list = df.shape[0]*[None]
         ### Image matching part ###
     
@@ -363,7 +367,5 @@ def read_mde(con, path, f25_path, id, ll_obj, gpsx, gpsy, gpsx_dict, gpsy_dict, 
     mde['pav_e2'] = df['e2'][0]
     # print('MDE e1 type:',type(mde['pav_e1']))
 
-    # con.commit()
-    cursor.close()
     return mde, base[0].lower(), base.split()[0], ll_obj
     

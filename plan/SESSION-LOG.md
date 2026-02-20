@@ -97,21 +97,39 @@ The Oracle data and upload code were fine. The ArcGIS Dashboard had a **Category
 
 ---
 
-## Session 4 — (next session)
+## Session 4 — 2026-02-20
+
+### Work Done
+1. **Created proper `.gitignore`**: Replaced corrupted UTF-16 gitignore. Added rules for `__pycache__/`, `.env`, `.vscode/`, `*.DMP`, `*.xlsx`, `*.csv`, `unused_var_dict/`, etc. Removed 4818 pkl files + other junk from git tracking.
+2. **Externalized credentials (1.1)**: Removed 4 hardcoded passwords from `db.py`, 2 from `sharepoint_update.py`, 2 from `sharepoint_update copy.py`. Now reads from environment variables (`UNDERSEAL_SHIN_PASSWORD`, `UNDERSEAL_ECN_PASSWORD`, `UNDERSEAL_DEV_WEN_PASSWORD`, `UNDERSEAL_SHAREPOINT_PASSWORD`). Created `.env.example` template.
+3. **Fixed global `id` variable bug (2.2)**: Renamed `global id` to local `longlist_id` in `upload_single_result()`, now returned as a value. Reset at top of each loop iteration. Eliminates stale rollback risk.
+4. **Isolated image failure from entry upload (7.1)**: Wrapped image matching in try-except in `read_mde()`. If images fail, logs warning but calculations/deflections still upload to Oracle. Sets `img_dmi_dict = {}` so `putimg()` is skipped gracefully.
+5. **Implemented unique constraint handling (7.2)**: On `ORA-00001`, checks if existing entry is complete (all tables have data). If partial, auto-cleans and retries. If complete, skips with clear message. Added `--force` flag for forced re-upload.
+6. **Fixed orphaned cursor (2.4)**: Removed unused `cursor = con.cursor()` and `cursor.close()` from `read_mde()`.
+
+### Setup Required by Dr. Shin
+After pulling these changes:
+```
+setx UNDERSEAL_SHIN_PASSWORD "your_password_here"
+```
+Set this as a Windows environment variable (permanent via System Properties > Environment Variables, or per-session via `set`).
+
+### Next Steps (Session 5)
+- Phase 1B: SQL injection fix (`ll_query.py`, `ll_info_entry.py`, `query_db.py`)
+- Phase 2A: Remove unused imports
+- Phase 2B: Bare `except:` → `except Exception:`
+- Password rotation with INDOT IT
+- Consider `git filter-branch` or BFG to purge old passwords from git history
+
+---
+
+## Session 5 — (next session)
 
 ### Start-of-Session Checklist
 - [ ] Read `plan/SESSION-LOG.md` for context
 - [ ] Check plan status in `plan/*.md` files
 
-### Planned Work
-- Phase 1A: Credential externalization (`db.py`)
-- Phase 1B: SQL injection fix (`ll_query.py`, `ll_info_entry.py`, `query_db.py`)
-- Phase 1C: Global `id` variable bug fix
-- Phase 5A: Add `.gitignore`
-
 ### End-of-Session Checklist
 - [ ] Update `SESSION-LOG.md` with work done
 - [ ] Update plan files with task status changes
-- [ ] Update `MEMORY.md` if new patterns discovered
 - [ ] Commit and push changes
-- [ ] Note any pending items for next session

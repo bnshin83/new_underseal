@@ -8,8 +8,8 @@ Created: 2026-02-19
 | Phase | Status | Notes |
 |-------|--------|-------|
 | Phase 0: ArcGIS Dashboard Fix | DONE | Root cause: Category Selector max categories limit in dashboard |
-| Phase 1: Security + Stability | NOT STARTED | Credentials, SQL injection, global id bug |
-| Phase 1.5: Workflow | NOT STARTED | Image failure isolation, re-run support, auto-retry |
+| Phase 1: Security + Stability | PARTIAL | Credentials externalized (1.1), global id fixed (2.2), orphaned cursor fixed (2.4); SQL injection (1.2) still TODO |
+| Phase 1.5: Workflow | PARTIAL | Image failure isolation (7.1) done, re-run support (7.2) done; auto-retry (7.4), speed (7.5) not started |
 | Phase 2: Code Quality | PARTIAL | Logging (3.4) done; rest not started |
 | Phase 3: Architecture | PARTIAL | Logging (4.3) done; rest not started |
 | Phase 4: Testing | PARTIAL | Subprocess validation (5.1) done; rest not started |

@@ -7,8 +7,12 @@ import cx_Oracle
 
 
 
+import os
 cx_Oracle.init_oracle_client(lib_dir=r"C:\Users\bshin\Documents\instantclient-basic-windows.x64-21.3.0.0.0\instantclient_21_3")
-con = cx_Oracle.connect(user='stda', password = 'drwsspadts1031$', dsn="dotorad007vl.state.in.us:1621/INDOT3DEV")
+pw = os.environ.get('UNDERSEAL_SHIN_PASSWORD')
+if not pw:
+    raise Exception("Set UNDERSEAL_SHIN_PASSWORD environment variable")
+con = cx_Oracle.connect(user='stda', password=pw, dsn="dotorad007vl.state.in.us:1621/INDOT3DEV")
 
 
 
@@ -30,7 +34,10 @@ from shareplum import Site
 from shareplum import Office365
 
 # Connect to SharePoint using Office365 auth
-authcookie = Office365('https://ingov.sharepoint.com/sites/INDOTSpecializedTesting', username='bshin@indot.in.gov', password='91*gksk*91!!').GetCookies()
+sp_pw = os.environ.get('UNDERSEAL_SHAREPOINT_PASSWORD')
+if not sp_pw:
+    raise Exception("Set UNDERSEAL_SHAREPOINT_PASSWORD environment variable")
+authcookie = Office365('https://ingov.sharepoint.com/sites/INDOTSpecializedTesting', username='bshin@indot.in.gov', password=sp_pw).GetCookies()
 site = Site('https://ingov.sharepoint.com/sites/INDOTSpecializedTesting', authcookie=authcookie)
 
 # Access the list

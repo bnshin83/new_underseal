@@ -1,10 +1,10 @@
 # P5: DevOps & Git Hygiene
 
-## Status: NOT STARTED
+## Status: PARTIAL (6.1 done — Session 4)
 
 ---
 
-### 6.1 Add `.gitignore`
+### 6.1 Add `.gitignore` (DONE — Session 4)
 
 **Problem**: No `.gitignore` file. Binary files, temp files, and sensitive data can accidentally be committed:
 - `c.DMP`, `EXPDAT.DMP` (Oracle dump files, already in repo)

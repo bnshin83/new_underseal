@@ -4,11 +4,23 @@ import cx_Oracle
 import numpy as np
 import sys, os
 
+# Database credentials are loaded from environment variables.
+# Set these before running:
+#   UNDERSEAL_DEV_WEN_PASSWORD   (for dev_wen)
+#   UNDERSEAL_ECN_PASSWORD       (for ecn_wen and ecn_shin)
+#   UNDERSEAL_SHIN_PASSWORD      (for shin / production)
+
 def connect(dev_env):
     if dev_env=='dev_wen':
+        pw = os.environ.get('UNDERSEAL_DEV_WEN_PASSWORD')
+        if not pw:
+            raise Exception("Set UNDERSEAL_DEV_WEN_PASSWORD environment variable")
         cx_Oracle.init_oracle_client(lib_dir=r"D:\ChromeDownload\instantclient_19_14")
-        con = cx_Oracle.connect(user='c##wen', password = 'Purduehamp4147', dsn="localhost:1522/orcl")
-    elif dev_env=='ecn_wen':
+        con = cx_Oracle.connect(user='c##wen', password=pw, dsn="localhost:1522/orcl")
+    elif dev_env in ('ecn_wen', 'ecn_shin'):
+        pw = os.environ.get('UNDERSEAL_ECN_PASSWORD')
+        if not pw:
+            raise Exception("Set UNDERSEAL_ECN_PASSWORD environment variable")
         dsn = """
                 (DESCRIPTION =
                   (ADDRESS_LIST =
@@ -24,29 +36,17 @@ def connect(dev_env):
                   )
                 )
               """
-        cx_Oracle.init_oracle_client(lib_dir=r"D:\ChromeDownload\instantclient_21_11")
-        con = cx_Oracle.connect(user='SPR4450', password = 'emerald-olive-944', dsn=dsn)
-    elif dev_env=='ecn_shin':
-        dsn = """
-                (DESCRIPTION =
-                  (ADDRESS_LIST =
-                    (ADDRESS =
-                      (PROTOCOL = TCP)
-                      (HOST = oracle.ecn.purdue.edu)
-                      (PORT = 1521)
-                    )
-                  )
-                  (CONNECT_DATA =
-                    (sid = primary)
-                    (SERVICE_NAME = primary.ecn.purdue.edu)
-                  )
-                )
-              """
-        cx_Oracle.init_oracle_client(lib_dir=r"C:\Users\bshin\Documents\instantclient-basic-windows.x64-21.3.0.0.0\instantclient_21_3")
-        con = cx_Oracle.connect(user='SPR4450', password = 'emerald-olive-944', dsn=dsn)
+        if dev_env == 'ecn_wen':
+            cx_Oracle.init_oracle_client(lib_dir=r"D:\ChromeDownload\instantclient_21_11")
+        else:
+            cx_Oracle.init_oracle_client(lib_dir=r"C:\Users\bshin\Documents\instantclient-basic-windows.x64-21.3.0.0.0\instantclient_21_3")
+        con = cx_Oracle.connect(user='SPR4450', password=pw, dsn=dsn)
     elif dev_env=='shin':
+        pw = os.environ.get('UNDERSEAL_SHIN_PASSWORD')
+        if not pw:
+            raise Exception("Set UNDERSEAL_SHIN_PASSWORD environment variable")
         cx_Oracle.init_oracle_client(lib_dir=r"C:\Users\bshin\Documents\instantclient-basic-windows.x64-21.3.0.0.0\instantclient_21_3")
-        con = cx_Oracle.connect(user='stda', password = 'drwsspadts1031$', dsn="dotorad002vl.state.in.us:1621/INDOT3DEV")
+        con = cx_Oracle.connect(user='stda', password=pw, dsn="dotorad002vl.state.in.us:1621/INDOT3DEV")
     else:
         raise Exception ("Invalid dev_env option")
     return con

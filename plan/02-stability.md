@@ -14,19 +14,17 @@
 
 ---
 
-### 2.2 Global `id` Variable Bug
+### 2.2 Global `id` Variable Bug (DONE)
 
 **Problem**: `upload_results_batch_f25only.py:93-94` uses `global id` inside `upload_single_result()`. This:
 1. Shadows Python's built-in `id()` function
 2. The `except` block at line 353 references `id` for rollback — if `ll_query()` fails before setting `id`, it could use a stale value from a previous loop iteration
 3. If the first file fails before `ll_query()`, `id` is `None` (correct), but on subsequent iterations if `id` was set by a previous successful run, the rollback would delete the WRONG entry
 
-**Fix**:
-- [ ] Return `id` from `upload_single_result()` instead of using global
-- [ ] Initialize `id = None` at the top of each loop iteration in `__main__`
-- [ ] Rename to `longlist_id` to avoid shadowing builtin
+**Fix**: Renamed `global id` to local `longlist_id`, returned from `upload_single_result()`, reset at top of each loop iteration.
+**Status**: DONE — Session 4 (2026-02-20)
 
-**Files**: `upload_results_batch_f25only.py`, `ll_query.py`
+**Files**: `upload_results_batch_f25only.py`
 
 ---
 
@@ -41,13 +39,12 @@
 
 ---
 
-### 2.4 Orphaned Cursor in `read_mde()`
+### 2.4 Orphaned Cursor in `read_mde()` (DONE)
 
 **Problem**: `mde_entry.py:228` creates `cursor = con.cursor()` from the Oracle connection, but after the subprocess fix, no Oracle queries are executed in `read_mde()`. The cursor is created and closed (line 360) without use, wasting a database resource.
 
-**Fix**:
-- [ ] Remove `cursor = con.cursor()` at line 228
-- [ ] Remove `cursor.close()` at line 360
+**Fix**: Removed both lines.
+**Status**: DONE — Session 4 (2026-02-20)
 
 **Files**: `mde_entry.py`
 

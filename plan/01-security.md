@@ -1,7 +1,7 @@
 # P0: Security Fixes
 
-## Status: NOT STARTED
-**Priority**: URGENT — credentials are exposed in a public GitHub repo
+## Status: PARTIAL (1.1 code changes done — Session 4)
+**Priority**: URGENT — credentials removed from code, but old passwords still in git history
 
 ---
 
@@ -16,14 +16,10 @@
 **Fix**:
 - [ ] Contact INDOT R&D IT to rotate the production password (`shin` env)
 - [ ] Contact Purdue ECN to rotate `SPR4450` password
-- [ ] Modify `db.py` to read credentials from environment variables:
-  ```python
-  password = os.environ.get('UNDERSEAL_DB_PASSWORD')
-  if not password:
-      raise Exception("Set UNDERSEAL_DB_PASSWORD environment variable")
-  ```
-- [ ] Add a `.env.example` file showing required env vars (without actual values)
-- [ ] Add `.env` to `.gitignore`
+- [x] Modify `db.py` to read credentials from environment variables (Session 4)
+- [x] Also fixed `sharepoint_update.py` and `sharepoint_update copy.py` (Session 4)
+- [x] Add a `.env.example` file showing required env vars (without actual values) (Session 4)
+- [x] Add `.env` to `.gitignore` (Session 4)
 - [ ] Use `git filter-branch` or BFG Repo Cleaner to purge credentials from git history
 - [ ] Consider making the repo private if it should remain accessible only to INDOT/Purdue
 
